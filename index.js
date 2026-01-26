@@ -1,8 +1,12 @@
 import express from "express";
-import bodyParser from "body-parser"
+import bodyParser from "body-parser";
+import ejsMate from "ejs-mate";
 const port = 3000;
 const app = express();
+
+app.engine('ejs',ejsMate);
 app.use(bodyParser.urlencoded({extended:true}));
+
 app.get("/",(req,res)=>{
     res.render("index.ejs");
 });
@@ -34,3 +38,4 @@ app.post("/brand",(req,res)=>{
 app.listen(port,()=>{
     console.log("Sucessfully connected "+port);
 });
+
