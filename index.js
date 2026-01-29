@@ -32,6 +32,7 @@ app.post('/products',async (req,res)=>{
     await product.save();
     res.redirect('/products');
 })
+
 app.listen(3000,()=>{
     console.log(`Server Started:http://localhost:3000/products`);
 })
