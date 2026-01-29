@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Create Products</title>
+</head>
+<body>
+    <h1>Add Product</h1>
+    <form action="/products" method="post">
+        <label for="name">Name:</label>
+        <input type="text" name="products[name]" id="name">
+
+        <label for="price">Price:</label>
+        <input type="number" name="products[price]" id="name">
+
+        <label for="brand">Brand:</label>
+        <input type="text" name="products[brand]" id="brand">
+
+        <label for="type">Type:</label>
+        <select name="products[type]" id="type">
+            <option>Phone</option>
+            <option>Laptop</option>
+            <option>Earbuds</option>
+            <option>Camera</option>
+            <option>Smartwatch</option>
+            <option>Headphone</option>
+        </select>
+
+        <button>Add</button>
+    </form>
+</body>
+</html>
