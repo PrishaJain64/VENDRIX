@@ -1,0 +1,20 @@
+<% layout('layouts/boilerplate') %>
+<h1><%=product.name %></h1>
+<h2>Thumbnail: <%=product.thumbnail %></h2>
+<ul>
+    <li><%=product.model %></li>
+    <li><span><%=product.price.currency %></span><span><%=product.price.amount %></span></li>
+    <li><%=product.brand %></li>
+    <li><%=product.type %></li>
+</ul>
+<h2>specification:</h2>
+<ul>
+    <li><%=product.specifications.ram %></li>
+    <li><%=product.specifications.storage %></li>
+    <li><%=product.specifications.colour %></li>
+</ul>
+
+<h3>Caseroll:</h3>
+<%for (let img of product.images){%>
+    <h4><%=img %></h4>
+<% } %>
