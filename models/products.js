@@ -12,6 +12,7 @@ const priceSchema=new Schema({
         required:[true,"A0mount is required"]
     }
 },{_id:false})
+
 const productSchema=new Schema({
     name:{
         type:String,

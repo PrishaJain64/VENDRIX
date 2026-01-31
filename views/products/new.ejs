@@ -1,6 +1,6 @@
 <% layout('layouts/boilerplate') %>
 <h1>Add Product</h1>
-<form action="/products" method="post">
+<form action="/products" method="post" enctype="multipart/form-data">
     <div>
         <label for="name">Name:</label>
         <input type="text" name="products[name]" id="name">
@@ -12,7 +12,15 @@
         <input type="number" name="products[price][amount]" id="name">
 
         <label for="brand">Brand:</label>
-        <input type="text" name="products[brand]" id="brand">
+        <select name="products[brand]" id="brand">
+            <option>Apple</option>
+            <option>One Plus</option>
+            <option>Samsung</option>
+            <option>Lenevo</option>
+            <option>Boat</option>
+            <option>Hp</option>
+            <option>Canon</option>
+        </select>
 
         <label for="type">Type:</label>
         <select name="products[type]" id="type">
@@ -25,12 +33,12 @@
         </select>
 
         <label for="image">Images:</label>
-        <input type="text" name="products[image]" id="image">
+        <input type="file" multiple accept="image/*" name="products[image]" id="image">
 
         <label for="thumbnail">Thumbnail:</label>
-        <input type="text" name="products[thumbnail]" id="thumbnail">
+        <input type="file" accept="images/*" name="products[thumbnail]" id="thumbnail">
     </div>
-
+    
     <div>
         <label for="ram">Ram:</label>
         <input type="text" name="specification[ram]" id="ram">
@@ -44,3 +52,6 @@
 
     <button>Add</button>
 </form>
+<img id="preview" width="120">
+
+<script src="/img-preview.js" defer></script>
