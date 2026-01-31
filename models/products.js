@@ -1,7 +1,18 @@
 const mongoose=require('mongoose');
 const {Schema}=mongoose;
 
-productSchema=new Schema({
+const priceSchema=new Schema({
+    currency:{
+        type:String,
+        default:"Rs"
+    },
+    amount:{
+        type:Number,
+        min:0,
+        required:[true,"A0mount is required"]
+    }
+},{_id:false})
+const productSchema=new Schema({
     name:{
         type:String,
         trim:true,
@@ -13,9 +24,8 @@ productSchema=new Schema({
         required:[true,"Model Number required"]
     },
     price:{
-        type:Number,
-        min:0,
-        required:[true,"Price Required"]
+        type:priceSchema,
+        required:true
     },
     brand:{
         type:String,
@@ -30,13 +40,13 @@ productSchema=new Schema({
         required:true
     },
     images:{
-        type:[String],
-        validate: {
-            validator: v => v.length > 0,
-            message: "At least one image is required"
-        }
+        type:[String]
     },
-    specification:{
+    thumbnail:{
+        type:String,
+        required:[true,"Thumbnail is required"]
+    },
+    specifications:{
         type:Schema.Types.Mixed,
         required:true
     },
@@ -45,11 +55,5 @@ productSchema=new Schema({
         default:true
     }
 });
-
-specificationSchema=new Schema({
-    
-})
-
-
 
 module.exports.Product=mongoose.model('Product',productSchema);

@@ -1,18 +1,15 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Create Products</title>
-</head>
-<body>
-    <h1>Add Product</h1>
-    <form action="/products" method="post">
+<% layout('layouts/boilerplate') %>
+<h1>Add Product</h1>
+<form action="/products" method="post">
+    <div>
         <label for="name">Name:</label>
         <input type="text" name="products[name]" id="name">
 
+        <label for="model">model:</label>
+        <input type="text" name="products[model]" id="model">
+
         <label for="price">Price:</label>
-        <input type="number" name="products[price]" id="name">
+        <input type="number" name="products[price][amount]" id="name">
 
         <label for="brand">Brand:</label>
         <input type="text" name="products[brand]" id="brand">
@@ -27,7 +24,23 @@
             <option>Headphone</option>
         </select>
 
-        <button>Add</button>
-    </form>
-</body>
-</html>
+        <label for="image">Images:</label>
+        <input type="text" name="products[image]" id="image">
+
+        <label for="thumbnail">Thumbnail:</label>
+        <input type="text" name="products[thumbnail]" id="thumbnail">
+    </div>
+
+    <div>
+        <label for="ram">Ram:</label>
+        <input type="text" name="specification[ram]" id="ram">
+
+        <label for="storage">Storage:</label>
+        <input type="text" name="specification[storage]" id="storage">
+
+        <label for="colour">Colour:</label>
+        <input type="text" name="specification[colour]" id="colour">
+    </div>
+
+    <button>Add</button>
+</form>
