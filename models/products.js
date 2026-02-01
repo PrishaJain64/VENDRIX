@@ -40,11 +40,15 @@ const productSchema=new Schema({
         enum:['laptop','phone','smartwatch','camera','headphone','earbuds','tablet'],
         required:true
     },
-    images:{
-        type:[String]
-    },
+    images:[{
+        url:String,
+        filename:String
+    }],
     thumbnail:{
-        type:String,
+        type:{
+            url:String,
+            filename:String
+        },
         required:[true,"Thumbnail is required"]
     },
     specifications:{
