@@ -1,6 +1,6 @@
 <% layout('layouts/boilerplate') %>
 <h1><%=product.name %></h1>
-<h2>Thumbnail: <%=product.thumbnail %></h2>
+<img src="<%=product.thumbnail.url %>" alt="">
 <ul>
     <li><%=product.model %></li>
     <li><span><%=product.price.currency %></span><span><%=product.price.amount %></span></li>
@@ -16,5 +16,5 @@
 
 <h3>Caseroll:</h3>
 <%for (let img of product.images){%>
-    <h4><%=img %></h4>
+    <img src="<%=img.url %>" alt="">
 <% } %>
