@@ -1,0 +1,59 @@
+<% layout('layouts/boilerplate') %>
+<h1>Edit Product</h1>
+<form action="/products" method="post" enctype="multipart/form-data">
+    <div>
+        <label for="name">Name:</label>
+        <input type="text" name="products[name]" id="name" value="<%=product.name %>">
+
+        <label for="model">model:</label>
+        <input type="text" name="products[model]" id="model" value="<%=product.model %>">
+
+        <label for="price">Price:</label>
+        <input type="number" name="products[price][amount]" id="name" value="<%=product.price.amount %>">
+
+        <label for="brand">Brand:</label>
+        <select name="products[brand]" id="brand">
+            <option>Apple</option>
+            <option>One Plus</option>
+            <option>Samsung</option>
+            <option>Lenevo</option>
+            <option>Boat</option>
+            <option>Hp</option>
+            <option>Canon</option>
+        </select>
+
+        <label for="type">Type:</label>
+        <select name="products[type]" id="type" value="<%=product.type %>">
+            <option>Phone</option>
+            <option>Laptop</option>
+            <option>Earbuds</option>
+            <option>Camera</option>
+            <option>Smartwatch</option>
+            <option>Headphone</option>
+        </select>
+
+        <label for="thumbnail">Thumbnail:</label>
+        <input type="file" accept="images/*" name="image" id="thumbnail" value="<%=product.thumbnail %>">
+        
+        <label for="image">Images:</label>
+        <input type="file" multiple accept="image/*" name="image" id="image" value="<%=product.image %>">
+
+        
+    </div>
+    
+    <div>
+        <label for="ram">Ram:</label>
+        <input type="text" name="specification[ram]" id="ram" value="<%=product.specifications.ram %>">
+
+        <label for="storage">Storage:</label>
+        <input type="text" name="specification[storage]" id="storage" value="<%=product.specifications.storage %>">
+
+        <label for="colour">Colour:</label>
+        <input type="text" name="specification[colour]" id="colour" value="<%=product.specifications.colour %>">
+    </div>
+
+    <button>Add</button>
+</form>
+<img id="preview" width="120">
+
+<script src="/img-preview.js" defer></script>
