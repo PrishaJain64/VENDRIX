@@ -76,16 +76,15 @@
   const start = new Date();
   start.setDate(start.getDate()+3);
   start.setHours(0,0,0,0);
-  const end = new Date();
-  end.setDate(start.getDate()+7);
+  const end = new Date(start);
+  end.setDate(end.getDate()+7);
   end.setHours(0,0,0,0);
 
   const oneDay = 1000 * 60 * 60 * 24;
   const diffDays = Math.ceil((end - start) / oneDay);
 
   const price = document.getElementById("price");
-  price.innerText = diffDays*0.01*Number("<%= spe.variant.price.amount%>");
-  console.log(diffDays);
+  price.innerText = Math.round(diffDays*0.01*Number("<%= spe.variant.price.amount%>"));
   
   document.getElementById("savedata").addEventListener("click", function(){
     const form = document.getElementById("form1");
@@ -110,4 +109,35 @@
    });
   }
   });
+
+  const startInput = document.getElementById("startdate");
+  const endInput = document.getElementById("enddate");
+
+  [startInput, endInput].forEach(input => {
+    input.addEventListener("change", calculateRent);
+  });
+
+  function calculateRent(){
+
+    if (!startInput.value || !endInput.value) return;
+
+    const start = new Date(startInput.value);
+    const end = new Date(endInput.value);
+
+    start.setHours(0,0,0,0);
+    end.setHours(0,0,0,0);
+
+    const oneDay = 1000 * 60 * 60 * 24;
+    const diffDays = Math.ceil((end - start) / oneDay);
+
+    if (diffDays <= 0) {
+      document.getElementById("price").innerText = "Invalid dates";
+      return;
+    }
+
+    const amount = Number("<%= spe.variant.price.amount %>");
+    const rent = Math.round(diffDays * 0.01 * amount);
+
+    document.getElementById("price").innerText = rent;
+  }
 </script>
