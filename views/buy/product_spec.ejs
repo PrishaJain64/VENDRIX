@@ -1,0 +1,68 @@
+<% layout('layouts/questions') %>
+<div class="card mb-3 d-flex flex-column flex-md-row w-100">
+  <div class="row g-0">
+    <div class="col-md-4">
+      <div id="carouselExampleIndicators" class="carousel slide carousel-dark" data-bs-ride="carousel">
+        <div class="carousel-indicators">
+          <button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to= "0" class="active" aria-current="true" aria-label= "Slide 1"></button>
+          <% for(let i in spe.images){ let val = Number(i); %>
+            <button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to= "<%= val+1 %>" aria-label= "<%= 'Slide '+(val+2) %>"></button>
+          <% } %>
+        </div>
+        <div class="carousel-inner">
+            <div class="carousel-item active">
+            <img src= "<%=spe.thumbnail.url %>" class="d-block w-100" >
+            </div>
+            <% for(let val of spe.images){ %>
+              <div class="carousel-item">
+                <img src= "<%=val["url"] %>" class="d-block w-100">
+              </div>
+            <%}%>
+        </div>
+        <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide="prev">
+            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+            <span class="visually-hidden">Previous</span>
+        </button>
+        <button class="carousel-control-next" type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide="next">
+            <span class="carousel-control-next-icon" aria-hidden="true"></span>
+            <span class="visually-hidden">Next</span>
+        </button>
+        </div>
+    </div>
+    <div class="col-md-8">
+      <div class="card-body">
+        <p><%= spe.type %></p>
+        <p id ="brand"><%=spe.brand%></p>
+        <h5 class="card-title" id="name"><%= spe.name %></h5>
+        <form>
+          <label for="variants">Variants:</label>
+                <%for(let [i,md] of spe.variants.entries()){%>
+                  <input type = "submit" formaction="/buydetails/<%= spe._id %>/<%= i %>" value = "Storage : <%=md.storage%> | Ram : <%=md.ram%>" />
+                <%}%>
+                <br>
+                <span>Variant : </span>
+          </form>
+        
+        <p class="card-text">
+            <span>Price: </span>
+            <span id = "price"><%=spe.variants[i].price%></span>
+            
+            <p>
+              <label for="specs">Specification:</label>
+                <%for(let [key,value] of Object.entries(spe.specifications)){ %>
+                  <p><%=key%> : <%=value%></p>
+                <%}%>
+            </p>
+              <p>
+              <label>Colour: </label><br>
+              <% for(let color of spe.colors){ %>
+                <input type = "radio" name = 'color' value = '<%= color %>'/><%= color %><br>
+              <% } %>
+            </p>
+            
+        </p>
+      </div>
+    </div>
+  </div>
+</div>
+<button>Buy</button>

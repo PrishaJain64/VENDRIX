@@ -1,0 +1,42 @@
+  <% let k = 2,j=0;
+  let loc = -1;
+    for(let q of questions){
+      if(q.question == "Additional Issues"){loc = j;break;}%>
+  <div class = "questions q<%= k%>">
+  <h1><%= q.question %></h1>
+
+  <% for(let option of q.options){ %>
+    <input type = "radio" name = 'issues[<%= q.question%>]' value = '<%= option.text %>'/><%= option.text %><br>
+    <% } %>
+
+  <button type = "button" class = "next" data-slideno = '<%= k%>' >next</button>
+  </div>
+      <% k++;j++} %>
+
+<div class = "questions q<%= k%>">
+  <h1><%= questions[loc].question %></h1>
+
+  <% for(let option of questions[loc].options){ %>
+    <input type = "checkbox" name = 'issues[<%= questions[loc].question%>]' value = '<%= option.text %>' /><%= option.text %><br>
+    <% } %>
+    <button type = "button" id="getvalue" class = "next" data-slideno = '<%= k %>' >Get value</button>
+</div>
+<div class = "questions q<%= k+1 %>">
+  <div id = "deductions"></div>
+  
+  <% if(intnt === "sell") {%>
+  <div id = "total"></div>
+  <% } %>
+
+  <p>
+    <label for="thumbnail">Thumbnail:</label>
+    <input type="file" accept="image/*" name="image" id="thumbnail">
+          
+    <label for="image">Images:</label>
+    <input type="file" multiple accept="image/*" name="image" id="image">
+  </p>
+    <button type = "button" id = "passdata">Proceed</button> 
+</div>
+</form>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+<script src = "/js/questionare.js"></script>

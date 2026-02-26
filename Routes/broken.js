@@ -1,7 +1,7 @@
 const express=require('express')
 
 //controller include
-const products=require('../Controller/products')
+const models=require('../Controller/products');
 
 //image cloud storage
 const multer = require('multer');
@@ -12,11 +12,9 @@ const router=express.Router();
 
 
 router.route('/')
-    .get(products.renderAllProducts)
-    .post(upload.array('image'),products.createProduct)
+    .post(upload.array('image'),models.saveBroken)
 
-router.get('/new',products.renderNewPage)
-
-router.get('/:id',products.renderProduct)
+router.post("/valuation",upload.none(),models.findTotalrepair);
+router.post("/recycle",upload.none(),models.findTotalrecycle);
 
 module.exports=router;

@@ -1,0 +1,19 @@
+  <% let k = 2;
+    for(let q of questions){%>
+  <div class = "questions q<%= k%>">
+  <h1><%= q.question %></h1>
+
+  <% for(let option of q.options){ %>
+    <input type = "radio" name = 'issues[<%= q.question%>]' value = '<%= option.text %>'/><%= option.text %><br>
+    <% } %>
+
+  <button type = "button" class = "next" data-slideno = '<%= k%>' >next</button>
+  </div>
+      <% k++;} %>
+<div class = "questions q<%= k%>">
+  <div id = "deductions"></div>
+    <button type = "button" id = "getvalue">Proceed</button> 
+</div>
+</form>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+<script src = "/js/questionare.js"></script>

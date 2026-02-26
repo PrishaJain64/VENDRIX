@@ -1,0 +1,140 @@
+<% layout('layouts/questions') %>
+<div class = "q1">
+<div class="card mb-3 d-flex flex-column flex-md-row w-100">
+  <div class="row g-0">
+    <div class="col-md-4">
+      <div id="carouselExampleIndicators" class="carousel slide carousel-dark" data-bs-ride="carousel">
+        <div class="carousel-indicators">
+          <button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to= "0" class="active" aria-current="true" aria-label= "Slide 1"></button>
+          <% for(let i in spe.images){ let val = Number(i); %>
+            <button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to= "<%= val+1 %>" aria-label= "<%= 'Slide '+(val+2) %>"></button>
+          <% } %>
+        </div>
+        <div class="carousel-inner">
+            <div class="carousel-item active">
+            <img src= "<%=spe.thumbnail.url %>" class="d-block w-100" >
+            </div>
+            <% for(let val of spe.images){ %>
+              <div class="carousel-item">
+                <img src= "<%=val["url"] %>" class="d-block w-100">
+              </div>
+            <%}%>
+        </div>
+        <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide="prev">
+            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+            <span class="visually-hidden">Previous</span>
+        </button>
+        <button class="carousel-control-next" type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide="next">
+            <span class="carousel-control-next-icon" aria-hidden="true"></span>
+            <span class="visually-hidden">Next</span>
+        </button>
+        </div>
+    </div>
+    <div class="col-md-8">
+      <div class="card-body">
+        <p><%= spe.type %></p>
+        <p id ="brand"><%=spe.brand%></p>
+        <h5 class="card-title" id="name"><%= spe.name %></h5>
+        <form>
+          <label for="variants">Variants:</label>
+                <%for(let [i,md] of spe.variants.entries()){%>
+                  <input type = "submit" formaction="/model/details/<%= spe._id %>/<%= i %>/<%=intnt%>" value = "Storage : <%=md.storage%> | Ram : <%=md.ram%>" />
+                <%}%>
+                <br>
+                <span>Model : </span>
+          </form>
+        
+        <p class="card-text">
+            <span>Price: </span>
+            <span id = "price"><%=spe.variants[i].price%></span>
+            
+            <p>
+              <label for="specs">Specification:</label>
+                <%for(let [key,value] of Object.entries(spe.specifications)){ %>
+                  <p><%=key%> : <%=value%></p>
+                <%}%>
+            </p>
+            <form id = "form1" enctype="multipart/form-data">
+              <p>
+              <label>Colour: </label><br>
+              <% for(let color of spe.colors){ %>
+                <input type = "radio" name = 'color' value = '<%= color %>'/><%= color %><br>
+              <% } %>
+            </p>
+            
+        </p>
+      </div>
+    </div>
+  </div>
+</div>
+<button style="display: none;" type="button" class = "next" data-slideno="1"></button>
+<button id="firststep" type = "button">Proceed</button>
+</div>
+
+
+  <%- include("ques.ejs") %>
+
+
+<script>
+  document.getElementById("firststep").addEventListener("click",function(){
+    const form = document.getElementById("form1");
+    const formdata = new FormData(form);
+    const data = Object.fromEntries(formdata.entries());
+
+    if(!data.color){
+      alert("Fill all the requirements");
+    }else{
+      const nextbtn = document.querySelector('.next[data-slideno="1"]');
+      nextbtn.click();
+    }
+  });
+  
+  document.getElementById("getvalue").addEventListener("click",function(){
+    const form = document.getElementById("form1");
+    const formdata = new FormData(form);
+      
+      const device = "<%= spe.type %>";
+      const actual_price = Number("<%= spe.variants[i].price %>");
+
+      formdata.append("device",device);
+      formdata.append("actual_price",actual_price);
+
+    fetch("/answers/valuation",{
+      method : "POST",
+      body : formdata
+    })
+    .then(res=>res.json())
+    .then(data =>{
+      document.getElementById("deductions").innerText = data.deductions;
+      document.getElementById("total").innerText = data.finalprice;
+    });
+  });
+
+  document.getElementById("passdata").addEventListener("click", function(){
+    const deductions = Number(document.getElementById("deductions").textContent);
+
+    const form = document.getElementById("form1");
+    const formdata = new FormData(form);
+
+      const spe = "<%=spe._id %>";
+      const intent = "<%= intnt%>";
+      const i = Number('<%= i %>');
+      const device = "<%= spe.type %>";
+
+      formdata.append("product_id",spe);
+      formdata.append("ctr",i);
+      formdata.append("device",device);
+      formdata.append("intent",intent);
+      formdata.append("deductions",deductions);
+    
+
+      fetch("/answers", {
+      method: "POST",
+      body: formdata
+   }).then(res=>res.json())
+   .then(data =>{
+    window.location.href = data.redirect;
+   });
+   
+  });
+</script>
