@@ -85,6 +85,7 @@
 
   const price = document.getElementById("price");
   price.innerText = diffDays*0.01*Number("<%= spe.variant.price.amount%>");
+  console.log(diffDays);
   
   document.getElementById("savedata").addEventListener("click", function(){
     const form = document.getElementById("form1");
