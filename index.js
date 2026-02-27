@@ -55,7 +55,6 @@ app.get("/",(req,res)=>{
     res.render("features/device");
 })
 
-
 app.listen(3000,()=>{
     console.log(`Server Started`);
     require("./cron/schedular");
