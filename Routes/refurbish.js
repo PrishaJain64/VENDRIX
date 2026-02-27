@@ -5,9 +5,13 @@ const router=express.Router();
 
 
 router.get("/:device",async (req,res)=>{
+    var filter = {};
+    filter["intent"] = "refurbish";
         var device = req.params.device;
+        if(device) filter["type"] = device;
+
         const allmod = await Product.aggregate([
-            {$match : {type:device,intent:"refurbish"}},
+            {$match : filter},
             {$group : {
                 _id : "$name",
                 doc : {$first : "$$ROOT"}

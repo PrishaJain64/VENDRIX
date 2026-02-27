@@ -8,9 +8,14 @@ const {storage}=require('../Cloudinary/index.js');
 const upload = multer({storage});
 
 router.get("/:device",async (req,res)=>{
+    var filter = {};
+    filter["intent"] = "rent";
+    filter["available"] = true;
         var device = req.params.device;
+        if(device) filter["type"] = device;
+
         const allmod = await Product.aggregate([
-            {$match : {type:device,intent:"rent",available:true}},
+            {$match : filter},
             {$group : {
                 _id : "$name",
                 doc : {$first : "$$ROOT"}

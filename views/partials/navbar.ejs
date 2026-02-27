@@ -1,0 +1,49 @@
+<% const features = {"BUY":"/buy",'SELL':'/allmodels/sell',"RENT":"/rent",'REPAIR':"/allmodels/repair",'REFURBISH':"/refurbish",'RECYCLE':"/recycle"} %>
+<% const products = [
+  { category: "phone", brands: ["Apple", "Samsung", "OnePlus"] },
+  { category: "laptop", brands: ["HP", "Lenovo", "Apple"] },
+  { category: "smartwatches", brands: ["Apple", "Samsung"] },
+  { category: "camera", brands: ["Canon", "Samsung"] },
+  { category: "headphones", brands: ["Boat", "Apple"] },
+  { category: "earbuds", brands: ["Boat", "Apple", "Samsung"] },
+  { category: "tablet", brands: ["Apple", "Samsung", "Lenovo"] }
+] %>
+<div class="nav-overlay" id="navOverlay"></div>
+
+<header class="navbar">
+<div class="nav-container">
+<div class="logo">Vendrix</div>
+<ul class="nav-links" id="navLinks">
+
+<% for(let [key,val] of Object.entries(features)){%>
+<li class="dropdown">
+<a href="<%=val%>"><%=key%> <i class="fas fa-chevron-down"></i></a>
+<div class="dropdown-menu">
+<%for (let value of products){ %>
+<div class="has-sub">
+<a href="<%=val%>/<%=value.category%>"><%=value.category.charAt(0).toUpperCase() + value.category.slice(1)%> ▸</a>
+<div class="sub-menu">
+<%for(let brand of value.brands){%>
+<a href="<%=val%>/<%=value.category%>?brand=<%=brand%>"><%=brand%></a>
+<%}%>
+</div>
+</div>
+
+<%}%>
+</div>
+</li>
+<%} %>
+</ul>
+
+<div style="display:flex;align-items:center;gap:10px;position:relative;">
+<span class="hamburger"><i class="fas fa-bars"></i></span>
+<span class="nav-icons">
+<i class="fas fa-user" style="cursor:pointer;margin-left:20px;color:#ffffff;"></i>
+<i class="fas fa-shopping-cart" style="cursor:pointer;margin-left:20px;color:#ffffff;"></i>
+</span>
+</div>
+
+</div>
+</header>
+<br>
+<br>

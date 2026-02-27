@@ -183,7 +183,7 @@ module.exports.saveBroken = async(req,res)=>{
 
   await broken.save();
 
-  return res.json({redirect : "/allmodels/"+device+"/"+req.body.intent});
+  return res.json({redirect : "/allmodels/"+req.body.intent+"/"+device});
 }
 
 module.exports.rental_duration = async(req,res)=>{
@@ -207,56 +207,32 @@ module.exports.createModel = async(req,res)=>{
     const image=images.slice(1);
     const thumbnail=images[0];
 
-    const version = await new Model({
-  name: "iPhone 12",
-  brand: "Apple",
+    const version = new Model({
+  name: "Samsung Galaxy S24",
+  brand: "Samsung",
   type: "phone",
 
   variants: [
-    {
-      label: "64GB+4GB",
-      storage: "64GB",
-      ram: "4GB",
-      price: 79900
-    },
-    {
-      label: "128GB+4GB",
-      storage: "128GB",
-      ram: "4GB",
-      price: 84900
-    },
-    {
-      label: "256GB+4GB",
-      storage: "256GB",
-      ram: "4GB",
-      price: 94900
-    }
+    { label: "8GB+128GB", storage: "128GB", ram: "8GB", price: 48900 },
+    { label: "8GB+256GB", storage: "256GB", ram: "8GB", price: 54900 }
   ],
 
-  images: [
-    {
-      url: "",
-      filename: ""
-    }
-  ],
+  images: [{ url: "", filename: "" }],
 
-  thumbnail: {
-    url: "",
-    filename: ""
-  },
+  thumbnail: { url: "", filename: "" },
 
   specifications: {
-    display: "6.1-inch Super Retina XDR OLED",
-    processor: "A14 Bionic",
-    camera: "12MP Dual Camera (Wide + Ultra Wide)",
-    battery: "2815 mAh"
+    display: "6.2-inch Dynamic AMOLED 2X, 120Hz",
+    processor: "Exynos 2400 / Snapdragon 8 Gen 3",
+    camera: "50MP + 12MP + 10MP Triple Camera",
+    battery: "4000 mAh"
   },
 
-  colors: ["Black", "White", "Red", "Green", "Blue", "Purple"],
+  colors: ["Onyx Black", "Marble Gray", "Cobalt Violet"],
 
-  release_date: new Date("2020-10-23"),
+  release_date: new Date("2024-01-17"),
 
-  base_recycle_value: 1500
+  base_recycle_value: 2500
 });
 
   version.images = image;

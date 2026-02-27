@@ -14,10 +14,14 @@ const router=express.Router();
 
 router.post("/",upload.array('image'),models.createModel)
 
-router.get('/:device/:intent', async (req,res)=>{
-        var device = req.params.device;
+router.get('/:intent/:device', async (req,res)=>{
         var intent = req.params.intent;
-        const allmod = await Model.find({type:device});
+        var brand = req.query.brand;
+               var device = req.params.device;
+               var filter = {};
+               if(brand) filter.brand = brand
+               if(device) filter.type = device;
+                const allmod = await Model.find(filter);
         res.render("sell/sell",{allmod,intent});
 })
 

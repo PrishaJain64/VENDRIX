@@ -13,8 +13,12 @@ const router=express.Router();
 
 
 router.get("/:device",async (req,res)=>{
-        var device = req.params.device;
-        const allmod = await Model.find({type:device});
+    var brand = req.query.brand;
+           var device = req.params.device;
+           var filter = {};
+           if(brand) filter.brand = brand
+           if(device) filter.type = device;
+            const allmod = await Model.find(filter);
         res.render("recycle/recycle",{allmod});
 });
 
