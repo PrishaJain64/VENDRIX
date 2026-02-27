@@ -11,10 +11,17 @@ const upload = multer({storage});
 
 const router=express.Router();
 
+//middleware import
+const {isLoggedIn}=require('../middleware.js');
 
-router.post("/",upload.array('image'),models.createModel)
+router.post("/",isLoggedIn,upload.array('image'),models.createModel)
 
+<<<<<<< HEAD
 router.get('/:intent/:device', async (req,res)=>{
+=======
+router.get('/:device/:intent',isLoggedIn, async (req,res)=>{
+        var device = req.params.device;
+>>>>>>> e1aa311c11ee63483992e64a14dac90f3aae2cf4
         var intent = req.params.intent;
         var brand = req.query.brand;
                var device = req.params.device;
@@ -25,7 +32,7 @@ router.get('/:intent/:device', async (req,res)=>{
         res.render("sell/sell",{allmod,intent});
 })
 
-router.get("/details/:id/:ctr/:intent",async (req,res)=>{
+router.get("/details/:id/:ctr/:intent",isLoggedIn,async (req,res)=>{
     const id = req.params.id;
     const intnt = req.params.intent;
     const i = req.params.ctr;

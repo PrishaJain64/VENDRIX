@@ -1,22 +1,47 @@
 const express=require('express');
 const router=express.Router();
 
+//passport import
+const passport=require('passport');
 
-router.get('/signup',(req,res)=>{
-    res.send('signup page');
+//model import
+const User=require('../models/users');
+//middleware import
+const { storeReturnTo } = require('../middleware');
+
+router.get('/register',(req,res)=>{
+    res.render('user/register')
 })
 
-router.post('/signup',(req,res)=>{
-    res.send('signed up');
-})
-
+router.post('/register',async (req,res)=>{
+    const {username,password,email}=req.body;
+    const user= new User({email,username});
+    const registeredUser=await User.register(user,password);
+    console.log(registeredUser);
+    req.login(registeredUser,err=>{
+        if(err){
+            return next(err)
+        }
+        res.redirect('/');
+    })
+});
 
 router.get('/login',(req,res)=>{
-    res.send('login page');
+    res.render('user/login');
 })
 
-router.post('/login',(req,res)=>{
-    res.send('logged in');
+router.post('/login',storeReturnTo,passport.authenticate('local',{failureFlash:"Invalid Username or Password!",failureRedirect:'/vendrix/login'}),(req,res)=>{
+     const redirectUrl=res.locals.returnTo || '/';
+    req.flash('success','Welcome Back')
+    res.redirect(redirectUrl)
 })
 
+router.get('/logout',(req,res)=>{
+    req.logout(function(err){
+        if(err){
+            return next(err);
+        }
+        res.redirect('/vendrix/login');
+    })
+})
 module.exports=router;

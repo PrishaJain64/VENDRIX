@@ -13,6 +13,11 @@ router.get("/:device",async (req,res)=>{
         const allmod = await Model.find(filter);
         res.render("buy/buy",{allmod});
     })
+router.get("/landing/:device",async (req,res)=>{
+        var device = req.params.device;
+        const allmod = await Model.find({type:device});
+        res.render("landing/landing",{allmod});
+    })
 
 router.get("/:id/:ctr",async (req,res)=>{
     const id = req.params.id;
@@ -21,6 +26,7 @@ router.get("/:id/:ctr",async (req,res)=>{
     res.render("buy/product_spec",{spe,i:ctr});
 })
 
+<<<<<<< HEAD
 router.post("/filters",async(req,res)=>{
     //brand, price,psort,nsort;
     const br = Array.isArray(req.body.brand) ? req.body.brand : [req.body.brand];
@@ -48,3 +54,6 @@ router.post("/filters",async(req,res)=>{
     res.render("buy/buy",{allmod});
 })
 module.exports=router;
+=======
+module.exports=router;
+>>>>>>> e1aa311c11ee63483992e64a14dac90f3aae2cf4

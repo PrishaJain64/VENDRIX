@@ -1,0 +1,14 @@
+<% layout('layouts/boilerplate') %>
+<h1>Login</h1>
+<form action="/vendrix/login" method="post">
+    <div class="mb-3">
+        <label for="username" class="form-label">Username:</label>
+        <input type="text" id="username" name="username" class="form-control">
+    </div>
+    <div class="mb-3">
+        <label for="password" class="form-label">Password:</label>
+        <input type="password" id="password" name="password" class="form-control">
+    </div>
+    <button class="btn btn-success">Login</button>
+</form>
+<a href="/vendrix/register" class="my-3">Register</a>
