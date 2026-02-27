@@ -6,6 +6,8 @@ const passport=require('passport');
 
 //model import
 const User=require('../models/users');
+//middleware import
+const { storeReturnTo } = require('../middleware');
 
 router.get('/register',(req,res)=>{
     res.render('user/register')
@@ -28,8 +30,10 @@ router.get('/login',(req,res)=>{
     res.render('user/login');
 })
 
-router.post('/login',passport.authenticate('local',{failureFlash:"Invalid Username or Password!",failureRedirect:'/vendrix/login'}),(req,res)=>{
-    res.redirect('/');
+router.post('/login',storeReturnTo,passport.authenticate('local',{failureFlash:"Invalid Username or Password!",failureRedirect:'/vendrix/login'}),(req,res)=>{
+     const redirectUrl=res.locals.returnTo || '/';
+    req.flash('success','Welcome Back')
+    res.redirect(redirectUrl)
 })
 
 router.get('/logout',(req,res)=>{
