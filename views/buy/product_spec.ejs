@@ -39,7 +39,7 @@
         <form>
           <label for="variants">Variants:</label>
                 <%for(let [i,md] of spe.variants.entries()){%>
-                  <input type = "submit" formaction="/buydetails/<%= spe._id %>/<%= i %>" value = "Storage : <%=md.storage%> | Ram : <%=md.ram%>" />
+                  <input type = "submit" formaction="/buydetails/<%= spe._id %>/<%= i %>" value = "<%=md.label%>" />
                 <%}%>
                 <br>
                 <span>Variant : </span>

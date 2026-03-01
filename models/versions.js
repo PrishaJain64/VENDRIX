@@ -1,6 +1,9 @@
 const mongoose = require('mongoose');
 const {Schema} = mongoose;
-
+const variantSchema = new Schema({
+    label :String,
+    price : Number
+},{strict:false});
 const modelSchema = new Schema({
     name:{
         type:String,
@@ -19,12 +22,7 @@ const modelSchema = new Schema({
         enum:['laptop','phone','smartwatch','camera','headphone','earbuds','tablet'],
         required:true
     },
-    variants : [{
-        label : String,
-        price : Number,
-        storage : String,
-        ram : String
-    }],
+    variants : [variantSchema],
     images:[{
         url:String,
         filename:String
