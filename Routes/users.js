@@ -31,7 +31,7 @@ router.get('/login',(req,res)=>{
 })
 
 router.post('/login',storeReturnTo,passport.authenticate('local',{failureFlash:"Invalid Username or Password!",failureRedirect:'/vendrix/login'}),(req,res)=>{
-     const redirectUrl=res.locals.returnTo || '/';
+    const redirectUrl=res.locals.returnTo || '/';
     req.flash('success','Welcome Back')
     res.redirect(redirectUrl)
 })

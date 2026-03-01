@@ -16,20 +16,21 @@ const {isLoggedIn}=require('../middleware.js');
 
 router.post("/",isLoggedIn,upload.array('image'),models.createModel)
 
-<<<<<<< HEAD
-router.get('/:intent/:device', async (req,res)=>{
-=======
-router.get('/:device/:intent',isLoggedIn, async (req,res)=>{
+
+router.get('/:intent/:device',isLoggedIn, async (req,res)=>{
         var device = req.params.device;
->>>>>>> e1aa311c11ee63483992e64a14dac90f3aae2cf4
         var intent = req.params.intent;
         var brand = req.query.brand;
-               var device = req.params.device;
-               var filter = {};
-               if(brand) filter.brand = brand
-               if(device) filter.type = device;
-                const allmod = await Model.find(filter);
-        res.render("sell/sell",{allmod,intent});
+        var device = req.params.device;
+        var pr=0;
+       var psort=0;
+       var nsort = 0;
+       var br = [];
+        var filter = {};
+        if(brand) filter.brand = brand
+        if(device && device != "all") filter.type = device;
+        const allmod = await Model.find(filter);
+        res.render("sell/sell",{allmod,intent,device,pr,psort,nsort,br});
 })
 
 router.get("/details/:id/:ctr/:intent",isLoggedIn,async (req,res)=>{
@@ -42,4 +43,34 @@ router.get("/details/:id/:ctr/:intent",isLoggedIn,async (req,res)=>{
     res.render("sell/product_spec",{spe,questions,intnt,i});
 })
 
+router.post("/filters/:device/:intent",async(req,res)=>{
+    //brand, price,psort,nsort;
+    const br = Array.isArray(req.body.brand) ? req.body.brand : [req.body.brand];
+    const pr = Number(req.body.price) || 0;
+    const psort = Number(req.body.psort) || 0;
+    const nsort = Number(req.body.nsort) || 0;
+    const device = req.params.device || "all";
+    const intent = req.params.intent;
+
+    const match = {};
+    const sort = {};
+
+    if(device && device != "all") match["type"] = device;
+    if(pr) match["variants.0.price"] = {$lte : pr}
+    if(br && !br.includes("all")) match["brand"] = {$in : br};
+    if(psort && (psort===1 || psort === -1)) sort["variants.0.price"] = psort;
+    if(nsort) sort["name"] = nsort;
+    console.log(pr);
+
+    const pipeline = [];
+    if(match && Object.keys(match).length >0){
+        pipeline.push({$match : match});
+    }
+    if (sort && Object.keys(sort).length > 0) {
+        pipeline.push({ $sort: sort });
+    }
+
+    const allmod = await Model.aggregate(pipeline).collation({locale :"en",strength : 2});
+    res.render("sell/sell",{allmod,device,pr,psort,nsort,br,intent});
+})
 module.exports=router;

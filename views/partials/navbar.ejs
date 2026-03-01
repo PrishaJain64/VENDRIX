@@ -1,5 +1,5 @@
-<% const features = {"BUY":"/buy",'SELL':'/allmodels/sell',"RENT":"/rent",'REPAIR':"/allmodels/repair",'REFURBISH':"/refurbish",'RECYCLE':"/recycle"} %>
-<% const products = [
+<%const features = {"BUY":"/buy",'SELL':'/allmodels/sell',"RENT":"/rent",'REPAIR':"/allmodels/repair",'REFURBISH':"/refurbish",'RECYCLE':"/recycle"}
+const products = [
   { category: "phone", brands: ["Apple", "Samsung", "OnePlus"] },
   { category: "laptop", brands: ["HP", "Lenovo", "Apple"] },
   { category: "smartwatches", brands: ["Apple", "Samsung"] },
@@ -7,7 +7,7 @@
   { category: "headphones", brands: ["Boat", "Apple"] },
   { category: "earbuds", brands: ["Boat", "Apple", "Samsung"] },
   { category: "tablet", brands: ["Apple", "Samsung", "Lenovo"] }
-] %>
+]%>
 <div class="nav-overlay" id="navOverlay"></div>
 
 <header class="navbar">
@@ -17,12 +17,15 @@
 
 <% for(let [key,val] of Object.entries(features)){%>
 <li class="dropdown">
-<a href="<%=val%>"><%=key%> <i class="fas fa-chevron-down"></i></a>
+<a href="<%=val%>"><%=key%><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-chevron-down" viewBox="0 0 16 16">
+  <path fill-rule="evenodd" d="M1.646 4.646a.5.5 0 0 1 .708 0L8 10.293l5.646-5.647a.5.5 0 0 1 .708.708l-6 6a.5.5 0 0 1-.708 0l-6-6a.5.5 0 0 1 0-.708"/>
+</svg></a>
 <div class="dropdown-menu">
 <%for (let value of products){ %>
 <div class="has-sub">
 <a href="<%=val%>/<%=value.category%>"><%=value.category.charAt(0).toUpperCase() + value.category.slice(1)%> ▸</a>
 <div class="sub-menu">
+<a href="<%=val%>/<%=value.category%>">All</a>
 <%for(let brand of value.brands){%>
 <a href="<%=val%>/<%=value.category%>?brand=<%=brand%>"><%=brand%></a>
 <%}%>

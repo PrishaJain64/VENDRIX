@@ -1,14 +1,16 @@
-<% layout('layouts/boilerplate') %>
+<% layout('layouts/landing-boilerplate') %>
 
 <!-- NAVBAR -->
 <nav class="navbar">
   <div class="nav-container">
     <a href="/" class="logo">Vend<span>rix</span></a>
     <ul class="nav-links">
-      <li><a href="#hero">Home</a></li>
+      <li><a href="/homepage">Home</a></li>
       <li><a href="#about">About Us</a></li>
       <li><a href="#contact">Contact</a></li>
-      <li><button class="btn-primary" id="openModal">Get Started</button></li>
+      <form>
+      <li><button formaction="vendrix/register" class="btn-primary" id="openModal">Get Started</button></li>
+      </form>
     </ul>
   </div>
 </nav>

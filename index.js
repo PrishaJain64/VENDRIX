@@ -87,6 +87,9 @@ app.get("/newmod",(req,res)=>{
     res.render("./features/mod.ejs");
 })
 app.get("/",(req,res)=>{
+    res.render("landing/landing");
+})
+app.get("/homepage",(req,res)=>{
     res.render("features/device");
 })
 

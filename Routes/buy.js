@@ -7,11 +7,15 @@ const router=express.Router();
 router.get("/:device",async (req,res)=>{
        var brand = req.query.brand;
        var device = req.params.device;
+       var pr=0;
+       var psort=0;
+       var nsort = 0;
+       var br = [];
        var filter = {};
        if(brand) filter.brand = brand
-       if(device) filter.type = device;
+       if(device && device!="all") filter.type = device;
         const allmod = await Model.find(filter);
-        res.render("buy/buy",{allmod});
+        res.render("buy/buy",{allmod,device,pr,psort,nsort,br});
     })
 router.get("/landing/:device",async (req,res)=>{
         var device = req.params.device;
@@ -26,21 +30,23 @@ router.get("/:id/:ctr",async (req,res)=>{
     res.render("buy/product_spec",{spe,i:ctr});
 })
 
-<<<<<<< HEAD
-router.post("/filters",async(req,res)=>{
+router.post("/filters/:device",async(req,res)=>{
     //brand, price,psort,nsort;
     const br = Array.isArray(req.body.brand) ? req.body.brand : [req.body.brand];
-    const pr = Number(req.body.price);
-    const psort = Number(req.body.psort);
-    const nsort = Number(req.body.nsort);
+    const pr = Number(req.body.price) || 0;
+    const psort = Number(req.body.psort) || 0;
+    const nsort = Number(req.body.nsort) || 0;
+    const device = req.params.device || "all";
 
     const match = {};
     const sort = {};
 
+    if(device && device != "all") match["type"] = device;
     if(pr) match["variants.0.price"] = {$lte : pr}
     if(br && !br.includes("all")) match["brand"] = {$in : br};
     if(psort && (psort===1 || psort === -1)) sort["variants.0.price"] = psort;
     if(nsort) sort["name"] = nsort;
+    console.log(pr);
 
     const pipeline = [];
     if(match && Object.keys(match).length >0){
@@ -51,9 +57,7 @@ router.post("/filters",async(req,res)=>{
     }
 
     const allmod = await Model.aggregate(pipeline).collation({locale :"en",strength : 2});
-    res.render("buy/buy",{allmod});
+    res.render("buy/buy",{allmod,device,pr,psort,nsort,br});
 })
 module.exports=router;
-=======
-module.exports=router;
->>>>>>> e1aa311c11ee63483992e64a14dac90f3aae2cf4
+
