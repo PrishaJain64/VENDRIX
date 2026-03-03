@@ -27,9 +27,11 @@ module.exports.Deployment = async()=>{
         type : item.device,
         name : item.product_id.name,
         release_date : item.product_id.release_date,
-        color : item.color,
-        images : item.product_id.images,
-        thumbnail : item.product_id.thumbnail,
+        color:{
+            color : item.color.color,
+            images : item.product_id.colors.find(c => c.color === item.color.color)?.images || [],
+            thumbnail : item.product_id.colors.find(c => c.color === item.color.color)?.thumbnail
+        },
         price : {
             amount : Math.round(item.product_id.variants[item.product_variant].price*0.9)
         },

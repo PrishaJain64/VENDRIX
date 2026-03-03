@@ -45,8 +45,8 @@ async function SeverityCheck(issues,allquestions){
     if(issues[aq.question]){
       var option = aq.options.find(o => o.text === issues[aq.question]);
       total += option.severity;
-      ++count;
     }
+    ++count;
   }
   let additional = issues['Additional Issues'];
   if(additional) {
@@ -56,8 +56,8 @@ async function SeverityCheck(issues,allquestions){
     for (let iss of allquestions.options){
       if(additional.includes(iss.text)){
         total += iss.severity;
-        ++count;
       }
+      ++count;
     }
   }
   if(total/count > 3) return "rent";
@@ -151,19 +151,19 @@ module.exports.findTotalrecycle = async(req,res)=>{
 }
 
 module.exports.saveBroken = async(req,res)=>{
-  const broken = new Broken();
+  const images=(req.files||[]).map(f=>({url:f.path,filename:f.filename}));
+  const thumbnail=images[0] || null;
+  const image = images.length > 1 ? images.slice(1) : images;
+  const broken = new Broken({color :{
+    color : req.body.color,
+    images : image,
+    thumbnail : thumbnail
+  }});
   const device = req.body.device;
   broken.device = device;
   broken.product_id = req.body.product_id;
   broken.product_variant = req.body.ctr;
-  broken.color = req.body.color;
-
-  const images=(req.files||[]).map(f=>({url:f.path,filename:f.filename}));
-  const thumbnail=images[0] || null;
-  const image = images.length > 1 ? images.slice(1) : images;
-
-  broken.images = image;
-  broken.thumbnail = thumbnail;
+  const sellorrepair = req.body.intent;
   
   var allquestions = await Question.find({type:device,intent :"repair"},{question :1, options:1});
 
@@ -183,20 +183,21 @@ module.exports.saveBroken = async(req,res)=>{
 
   await broken.save();
 
-  return res.json({redirect : "/allmodels/"+req.body.intent+"/"+device});
+  res.json({redirect:"/allmodels/"+sellorrepair+"/"+device});
 }
 
 module.exports.rental_duration = async(req,res)=>{
   const product_name = req.body.product_name;
-  const clr = req.body.color;
-  const lbl = req.body.product_variant;
+  const clr = req.body.product_color;
+  const lbl = req.body.product_label;
+  
   const startdate = new Date(req.body.startdate);
   startdate.setHours(0,0,0,0);
   const enddate = new Date (req.body.enddate);
   enddate.setHours(0,0,0,0);
 
   const prod = await Product.findOneAndUpdate(
-    { name: product_name, color : clr, "variant.label" : lbl },  
+    { name: product_name, "color.color" : clr, "variant.label" : lbl },  
     { $set: { available: false, "duration.startDate" : startdate, "duration.endDate":enddate } }, 
     { new: true } 
   );
@@ -204,40 +205,47 @@ module.exports.rental_duration = async(req,res)=>{
 }
 module.exports.createModel = async(req,res)=>{
     const images=req.files.map(f=>({url:f.path,filename:f.filename}));
-    const image=images.slice(1);
-    const thumbnail=images[0];
 
     const version = new Model({
-  name: "Samsung Galaxy S24",
-  brand: "Samsung",
-  type: "phone",
+    name: "OnePlus 12",
+    brand: "OnePlus",
+    type: "phone",
 
-  variants: [
-    { label: "8GB+128GB", storage: "128GB", ram: "8GB", price: 48900 },
-    { label: "8GB+256GB", storage: "256GB", ram: "8GB", price: 54900 }
-  ],
+    variants: [
+      { label: "storage : 256GB | ram : 12GB", price: 64999 },
+      { label: "storage : 512GB | ram : 16GB", price: 69999 }
+    ],
 
-  images: [{ url: "", filename: "" }],
+    specifications: {
+      display: "6.82-inch LTPO AMOLED, 120Hz, 2K Resolution",
+      processor: "Qualcomm Snapdragon 8 Gen 3",
+      camera: "50MP + 64MP + 48MP",
+      battery: "5400 mAh"
+    },
 
-  thumbnail: { url: "", filename: "" },
+    colors: [
+      {
+        color: "Silky Black",
+        thumbnail: images[0],
+        images: images.slice(1, 2)
+      },
+      {
+        color: "Flowy Emerald",
+        thumbnail: images[2],
+        images: images.slice(3, 4)
+      },
+      {
+        color: "Glacial White",
+        thumbnail: images[4],
+        images: images.slice(5, 6)
+      }
+    ],
 
-  specifications: {
-    display: "6.2-inch Dynamic AMOLED 2X, 120Hz",
-    processor: "Exynos 2400 / Snapdragon 8 Gen 3",
-    camera: "50MP + 12MP + 10MP Triple Camera",
-    battery: "4000 mAh"
-  },
-
-  colors: ["Onyx Black", "Marble Gray", "Cobalt Violet"],
-
-  release_date: new Date("2024-01-17"),
-
-  base_recycle_value: 2500
-});
-
-  version.images = image;
-  version.thumbnail = thumbnail;
+    release_date: new Date("2023-12-05"),
+    base_recycle_value: 4000
+  });
 
   await version.save();
-  res.redirect("/allmodels/phone/sell");
+  
+  res.redirect("/allmodels/sell/phone");
 }

@@ -6,15 +6,15 @@
       <div id="carouselExampleIndicators" class="carousel slide carousel-dark" data-bs-ride="carousel">
         <div class="carousel-indicators">
           <button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to= "0" class="active" aria-current="true" aria-label= "Slide 1"></button>
-          <% for(let i in spe.images){ let val = Number(i); %>
+          <% for(let i in spe.colors[0].images){ let val = Number(i); %>
             <button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to= "<%= val+1 %>" aria-label= "<%= 'Slide '+(val+2) %>"></button>
           <% } %>
         </div>
         <div class="carousel-inner">
             <div class="carousel-item active">
-            <img src= "<%=spe.thumbnail.url %>" class="d-block w-100" >
+            <img src= "<%=spe.colors[0].thumbnail.url %>" class="d-block w-100" >
             </div>
-            <% for(let val of spe.images){ %>
+            <% for(let val of spe.colors[0].images){ %>
               <div class="carousel-item">
                 <img src= "<%=val["url"] %>" class="d-block w-100">
               </div>

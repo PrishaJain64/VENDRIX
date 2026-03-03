@@ -2,16 +2,7 @@ const mongoose = require("mongoose");
 const {Model} = require("./versions");
 const {Schema} = mongoose;
 
-const repairSchema = new Schema({
-    product_id : {
-        type : mongoose.Schema.Types.ObjectId,
-        ref : 'Model'
-    },
-    product_variant : Number,
-    device : {
-        type : String,
-        enum:['laptop','phone','smartwatch','camera','headphone','earbuds','tablet']
-    },
+const colorSchema = new Schema({
     color : String,
     images:[{
         url:String,
@@ -23,8 +14,19 @@ const repairSchema = new Schema({
             filename:String
         },
         required:[true,"Thumbnail is required"]
+    }
+});
+const repairSchema = new Schema({
+    product_id : {
+        type : mongoose.Schema.Types.ObjectId,
+        ref : 'Model'
     },
-
+    product_variant : Number,
+    device : {
+        type : String,
+        enum:['laptop','phone','smartwatch','camera','headphone','earbuds','tablet']
+    },
+    color : colorSchema,
     issues :[{
         name : String,
         value : Number

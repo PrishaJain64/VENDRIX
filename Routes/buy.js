@@ -23,11 +23,12 @@ router.get("/landing/:device",async (req,res)=>{
         res.render("landing/landing",{allmod});
     })
 
-router.get("/:id/:ctr",async (req,res)=>{
+router.get("/:id/:ctr/:color_key",async (req,res)=>{
     const id = req.params.id;
     const ctr = req.params.ctr;
+    const color_key = req.params.color_key;
     const spe = await Model.findById(id);
-    res.render("buy/product_spec",{spe,i:ctr});
+    res.render("buy/product_spec",{spe,i:ctr,color_key});
 })
 
 router.post("/filters/:device",async(req,res)=>{

@@ -4,6 +4,23 @@ const variantSchema = new Schema({
     label :String,
     price : Number
 },{strict:false});
+const colorSchema = new Schema({
+    color :String,
+    images:[{
+        url:String,
+        filename:String
+    }],
+    thumbnail:{
+    url: {
+        type: String,
+        required: true
+    },
+    filename: {
+        type: String,
+        required: true
+    }
+    }
+})
 const modelSchema = new Schema({
     name:{
         type:String,
@@ -23,26 +40,12 @@ const modelSchema = new Schema({
         required:true
     },
     variants : [variantSchema],
-    images:[{
-        url:String,
-        filename:String
-    }],
-    thumbnail:{
-    url: {
-        type: String,
-        required: true
-    },
-    filename: {
-        type: String,
-        required: true
-    }
-    },
     specifications:{
         type:Schema.Types.Mixed,
         required:true
     },
     colors : {
-        type : [String]
+        type : [colorSchema]
     },
     release_date : {
         type : Date,

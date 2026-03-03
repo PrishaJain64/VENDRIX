@@ -14,10 +14,10 @@ const router=express.Router();
 //middleware import
 const {isLoggedIn}=require('../middleware.js');
 
-router.post("/",isLoggedIn,upload.array('image'),models.createModel)
+router.post("/",upload.array('image'),models.createModel)
 
-
-router.get('/:intent/:device',isLoggedIn, async (req,res)=>{
+//add isLoggedIn (removed for developing)
+router.get('/:intent/:device', async (req,res)=>{
         var device = req.params.device;
         var intent = req.params.intent;
         var brand = req.query.brand;
@@ -33,14 +33,15 @@ router.get('/:intent/:device',isLoggedIn, async (req,res)=>{
         res.render("sell/sell",{allmod,intent,device,pr,psort,nsort,br});
 })
 
-router.get("/details/:id/:ctr/:intent",isLoggedIn,async (req,res)=>{
+router.get("/details/:id/:ctr/:intent/:color_key",async (req,res)=>{
     const id = req.params.id;
     const intnt = req.params.intent;
     const i = req.params.ctr;
+    const color_key = req.params.color_key;
 
     const spe = await Model.findById(id);
     const questions = await Question.find({type:spe.type,intent:"repair"},{_id:0});
-    res.render("sell/product_spec",{spe,questions,intnt,i});
+    res.render("sell/product_spec",{spe,questions,intnt,i,color_key});
 })
 
 router.post("/filters/:device/:intent",async(req,res)=>{

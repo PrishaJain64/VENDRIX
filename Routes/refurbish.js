@@ -27,30 +27,36 @@ router.get("/:device",async (req,res)=>{
         res.render("refurbish/refurbish",{allmod,device,pr,psort,nsort,br});
     })
 
-router.get("/details/:name/:ctr",async (req,res)=>{
+router.get("/details/:name/:label/:color",async (req,res)=>{
     const prod_name = req.params.name;
-    const ctr = Number(req.params.ctr);
+    const label = req.params.label;
+    const color = req.params.color;
 
-    const spe = await Product.aggregate([
-            {$match : {name : prod_name}},
-            {$group : {
-                _id : "$variant",
-                doc : {$first : "$$ROOT"},
-                colors : {$addToSet : "$color"}
-            }},
-            {$addFields : {"doc.colors": "$colors"}},
-            {$replaceRoot : {newRoot : "$doc"}},
-            {$unset : "color"},
-            {$sort : {"variant.price.amount" : 1}}
-        ]); //all models of a product with colors array
+    const [result] = await Product.aggregate([
+  {$match: { name: prod_name,intent:"refurbish"}},
+  {$group: {
+      _id: "$name",
+      variants: { $addToSet: "$variant" },
+      colors: { $addToSet: "$color.color" },
 
-    const unique_variants = spe.map(item => item.variant);// unique model
-
-    res.render("refurbish/product_spec", {allspe : unique_variants,spe : spe[ctr]});
+      selectedDoc: {$first: {
+    $cond: [{
+        $and: [
+          { $eq: ["$color.color", color] },
+          { $eq: ["$variant.label",label] }]},"$$ROOT",null]}}}},
+  {
+    $project: {
+      _id: 0,
+      name: "$_id",
+      variants: 1,
+      colors: 1,
+      selectedDoc: 1
+    }
+  }
+]);
+    res.render("refurbish/product_spec", {result});
 })
-//allspe -- all models 
-//spe -- specific model details check
-//colors -- all colours for a model
+
 router.post("/filters/:device",async(req,res)=>{
     //brand, price,psort,nsort;
     const br = Array.isArray(req.body.brand) ? req.body.brand : [req.body.brand];

@@ -1,6 +1,19 @@
 const mongoose=require('mongoose');
 const {Schema}=mongoose;
-
+const colorSchema = new Schema({
+    color :String,
+    images:[{
+        url:String,
+        filename:String
+    }],
+    thumbnail:{
+        type:{
+            url:String,
+            filename:String
+        },
+        required:[true,"Thumbnail is required"]
+    }
+});
 const priceSchema=new Schema({
     currency:{
         type:String,
@@ -37,17 +50,6 @@ const productSchema=new Schema({
         storage : String,
         ram : String
     },
-    images:[{
-        url:String,
-        filename:String
-    }],
-    thumbnail:{
-        type:{
-            url:String,
-            filename:String
-        },
-        required:[true,"Thumbnail is required"]
-    },
     specifications:{
         type:Schema.Types.Mixed,
         required:true
@@ -73,7 +75,7 @@ const productSchema=new Schema({
             return this.intent === "rent" && this.available === false
         }
     },
-    color: String,
+    color: colorSchema,
     release_date : Date
 });
 
