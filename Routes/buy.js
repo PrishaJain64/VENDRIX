@@ -15,7 +15,7 @@ router.get("/:device",async (req,res)=>{
        if(brand) filter.brand = brand
        if(device && device!="all") filter.type = device;
         const allmod = await Model.find(filter);
-        res.render("buy/buy",{allmod,device,pr,psort,nsort,br});
+        res.render("buy/buy",{allmod,device,pr,psort,nsort,br,currentUrl:req.originalUrl});
     })
 router.get("/landing/:device",async (req,res)=>{
         var device = req.params.device;

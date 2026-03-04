@@ -27,7 +27,7 @@ router.get("/:device",async (req,res)=>{
             {$replaceRoot : {newRoot : "$doc"}},
             {$sort : {name : 1}}
         ]);
-        res.render("rent/rent",{allmod,device,pr,psort,nsort,br});
+        res.render("rent/rent",{allmod,device,pr,psort,nsort,br,currentUrl:req.originalUrl});
     })
 
 router.get("/details/:name/:label/:color",async (req,res)=>{

@@ -17,7 +17,10 @@ const User=require('./models/users.js');
 const sessionConfig={
     secret:'SahyogSessionSecret',
     saveUninitialized:false,
-    resave:false
+    resave:false,
+    cookie:{
+        maxAge:1000*60*60*24
+    }
 }
 const session=require('express-session');
 
