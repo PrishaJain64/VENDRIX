@@ -1,140 +1,269 @@
-<% layout('layouts/boilerplate') %>
-<%- include('../partials/navbar.ejs') %>
-<br><br><br>
-<main class="buy-page">
+<% const categories = {"phone":"mobile",'laptop':'laptop','smartwatch':'clock','camera':'camera','headphone':'headphones','earbud':'headphones','tablet':'tablet'}
+const products = [
+  { category: "phone", brands: ["Apple", "Samsung", "OnePlus"] }, //
+  { category: "laptop", brands: ["HP", "Lenovo", "Apple"] }, //
+  { category: "smartwatch", brands: ["Apple", "Samsung"] }, 
+  { category: "camera", brands: ["Canon", "Nikon"] }, //samsung
+  { category: "headphone", brands: ["Sony", "JBL"] },
+  { category: "earbud", brands: ["Boat", "Apple", "Samsung"] }, //boat 
+  { category: "tablet", brands: ["Apple", "Samsung", "Lenovo"] } 
+]%>
+<% layout('layouts/features-boilerplate') %>
+<!-- CURSOR -->
+<div id="cur-dot"></div>
+<div id="cur-ring"></div>
 
-  <!-- Page Title -->
-  <div class="buy-header">
-    <h1 class="buy-title">ALL PRODUCTS</h1>
+<!-- TOP BAR -->
+<div class="topbar">
+  <div class="topbar-track">
+    <span class="topbar-item">Free Shipping Over ₹2,000</span>
+    <span class="topbar-item">1 Year Warranty Included</span>
+    <span class="topbar-item">Certified Refurbished Devices</span>
+    <span class="topbar-item">Easy EMI Essentials</span>
+    <span class="topbar-item">Expert Repair Services</span>
+    <span class="topbar-item">All Devices Available</span>
+    <span class="topbar-item">Free Shipping Over ₹2,000</span>
+    <span class="topbar-item">1 Year Warranty Included</span>
+    <span class="topbar-item">Certified Refurbished Devices</span>
+    <span class="topbar-item">Easy EMI Essentials</span>
+    <span class="topbar-item">Expert Repair Services</span>
+    <span class="topbar-item">All Devices Available</span>
   </div>
-
-  <!-- Category Pills -->
-  <div class="category-strip-wrap">
-    <div class="category-strip" id="categoryStrip">
-      <div class="cat-pill active" data-filter="all"><span>All</span></div>
-      <div class="cat-pill" data-filter="phones"><a href = "/buy/phone">Phones</a></div>
-      <div class="cat-pill" data-filter="laptops"><span>Laptops</span></div>
-      <div class="cat-pill" data-filter="tablets"><span>Tablets</span></div>
-      <div class="cat-pill" data-filter="smartwatches"><span>Smartwatches</span></div>
-      <div class="cat-pill" data-filter="cameras"><span>Cameras</span></div>
-      <div class="cat-pill" data-filter="headphones"><span>Headphones</span></div>
-      <div class="cat-pill" data-filter="earbuds"><span>Earbuds</span></div>
-    </div>
-  </div>
-
-  <!-- Shop Layout -->
-  <div class="shop-layout">
-
-    <!-- FILTER SIDEBAR -->
-    <aside class="filter-sidebar" id="filterSidebar">
-      <h2>Filters <a href = "/buy/<%=device%>" class="clear-all" id="clearAll">Clear all</a></h2>
-
-      <form method="post" action="/buy/filters/<%=device%>">
-      <!-- Sort -->
-      <div class="filter-section">
-        <div class="filter-section-title" data-target="sort-opts">
-          Sort By
-        </div>
-        <div class="filter-opts" id="sort-opts">
-          <label class="filter-label"><input type="radio" name="psort" value="0" <% if(psort && psort === 0){%><%="checked"%><%}%> > Default</label>
-          <label class="filter-label"><input type="radio" name="psort" value="1" <% if(psort && psort === 1){%><%="checked"%><%}%>> Price: Low to High</label>
-          <label class="filter-label"><input type="radio" name="psort" value="-1" <% if(psort && psort === -1){%><%="checked"%><%}%>> Price: High to Low</label>
-          <label class="filter-label"><input type="radio" name="nsort" value="1" <% if(nsort && nsort === 1){%><%="checked"%><%}%>> Name: A to Z</label>
-        </div>  
-      </div>
-
-      <!-- Price Range -->
-      <div class="filter-section">
-        <div class="filter-section-title" data-target="price-opts">
-          Price Range <i class="fas fa-chevron-down"></i>
-        </div>
-        <div class="filter-opts" id="price-opts">
-          <div class="price-range-wrap">
-            <div class="price-display">
-              <span>&#8377;0</span>
-              <span id="priceVal">&#8377;<%if(pr){%><%=pr%><%}else{%><%=125000%><%}%></span>
-            </div>
-            <input name = "price" value = "<%if(pr){%><%=pr%><%}%>" type="range" class="price-slider" id="priceSlider" min="0" max="250000" step="1000">
-          </div>
-        </div>
-      </div>
-
-      <!-- Brand -->
-      <div class="filter-section">
-        <div class="filter-section-title" data-target="brand-opts">
-          Brand <i class="fas fa-chevron-down"></i>
-        </div>
-        <div class="filter-opts" id="brand-opts">
-          <label   class="filter-label"><input name = "brand"  type="checkbox" class="brand-filter" value="all" <% if(br && br.includes("all")){%><%="checked"%><%}%>> All</label>
-          <label   class="filter-label"><input name = "brand"  type="checkbox" class="brand-filter" value="Apple" <% if(br && br.includes("Apple")){%><%="checked"%><%}%>> Apple</label>
-          <label  class="filter-label"><input name = "brand" type="checkbox" class="brand-filter" value="Samsung" <% if(br && br.includes("Samsung")){%><%="checked"%><%}%>> Samsung</label>
-          <label  class="filter-label"><input name = "brand" type="checkbox" class="brand-filter" value="OnePlus" <% if(br && br.includes("OnePlus")){%><%="checked"%><%}%>> OnePlus</label>
-        </div>
-      </div>
-
-      <button class="apply-btn" id="applyFilters">Apply Filters</button>
-    </aside>
-
-  </form>
-    <!-- GRID AREA -->
-    <div class="grid-area">
-
-      <!-- Active filter chips -->
-      <div class="active-chips" id="activeChips"></div>
-
-      <!-- Product Grid -->
-       <div class="buy-grid" id="buyGrid">
-  <% for(let p of allmod){ %>
-    <div class="buy-card">
-      <form method = "post">
-        <input type="hidden" name="returnTo" value="<%=currentUrl%>">
-      <button class="wish-btn" formaction="/vendrix/cart/buy/<%=p._id%>/<%=p.variants[0]._id%>/<%=p.colors[0]._id%>"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-heart" viewBox="0 0 16 16">
-  <path d="m8 2.748-.717-.737C5.6.281 2.514.878 1.4 3.053c-.523 1.023-.641 2.5.314 4.385.92 1.815 2.834 3.989 6.286 6.357 3.452-2.368 5.365-4.542 6.286-6.357.955-1.886.838-3.362.314-4.385C13.486.878 10.4.28 8.717 2.01zM8 15C-7.333 4.868 3.279-3.04 7.824 1.143q.09.083.176.171a3 3 0 0 1 .176-.17C12.72-3.042 23.333 4.867 8 15"/>
-</svg></button></form>
-      <div class="buy-card-img">
-        <img src="<%= p.colors[0].thumbnail.url %>" alt="<%= p.name %>">
-      </div>
-      <div class="buy-card-info">
-        <p class="buy-brand"><%= p.brand %></p>
-        <h3 class="buy-name"><%= p.name %></h3>
-        <div class="buy-price-row">
-          <span class="buy-price">&#8377;<%= p.variants[0].price %></span>
-          <a href="/buydetails/<%=p._id%>/0/0" class="add-cart-btn">View Details</a>
-        </div>
-      </div>
-    </div>
-  <% } %>
 </div>
 
-      <div class="no-products" id="noProducts" style="display:none;">
-        <i class="fas fa-box-open"></i>
-        <p>No products found matching your filters.</p>
+<!-- NAVBAR -->
+<header class="navbar" id="navbar">
+  <a href="vendrix.html" class="logo">Vend<span class="accent">r</span>ix</a>
+
+  <%- include('../partials/navbar.ejs') %>
+  <div class="nav-right">
+    <a href="#" class="nav-about">About Us</a>
+    <a href="#" class="nav-icon"><i class="fas fa-user"></i></a>
+    <a href="#" class="nav-icon" style="position:relative">
+      <i class="fas fa-shopping-bag"></i>
+      <span class="nav-badge">3</span>
+    </a>
+    <a href="/homepage" class="nav-cta">
+      <i class="fas fa-home"></i> Home
+    </a>
+  </div>
+</header>
+
+<!-- BREADCRUMB -->
+<div class="breadcrumb">
+  <a href="/homepage">Home</a>
+  <span class="sep">›</span>
+  <span class="cur">Buy</span>
+</div>
+
+<!-- PAGE HERO -->
+<div class="buy-hero">
+  <div class="buy-hero-inner">
+    <div class="buy-hero-eyebrow">
+      <span class="buy-hero-line"></span>
+      <span>Vendrix Store</span>
+    </div>
+    <h1>All <span class="og">Products</span></h1>
+    <p class="buy-hero-sub">Certified devices. Premium quality. Shipped in 72 hours.</p>
+  </div>
+</div>
+
+<!-- CATEGORY PILLS -->
+<div class="cat-strip-wrap">
+  <div class="cat-strip" id="categoryStrip">
+    <%for(let [key,value] of Object.entries(categories)){%>
+      <a href = "/buy/<%=key%>">
+    <div class="cat-pill <% if(device===key){%><%="active"%><%}%>">
+      <i class="fas fa-<%=value%> cat-pill-icon"></i><span><%=key[0].toUpperCase()+key.slice(1)%></span>
+    </div></a>
+    <%}%>
+  </div>
+</div>
+
+<!-- SHOP LAYOUT -->
+<div class="shop-layout">
+
+  <!-- SIDEBAR OVERLAY (mobile) -->
+  <div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+  <!-- FILTER SIDEBAR -->
+  <aside class="filter-sidebar" id="filterSidebar">
+    <div class="sidebar-head">
+      <div class="sidebar-title">Filters</div>
+      <a href = "/buy/<%=device%>" class="clear-all-btn" id="clearAll">Clear all</a>
+    </div>
+
+    <form method="post" action="/buy/filters/<%=device%>">
+    <!-- Sort -->
+    <div class="filter-section">
+      <div class="filter-section-title open" data-target="sort-opts">
+        Sort By <i class="fas fa-chevron-down"></i>
+      </div>
+      <div class="filter-opts visible" id="sort-opts">
+        <label class="filter-label"><input type="radio" name="psort" value="0" <% if(psort && psort === 0){%><%="checked"%><%}%>> Default</label>
+        <label class="filter-label"><input type="radio" name="psort" value="1" <% if(psort && psort === 1){%><%="checked"%><%}%>> Price: Low to High</label>
+        <label class="filter-label"><input type="radio" name="psort" value="-1" <% if(psort && psort === -1){%><%="checked"%><%}%>> Price: High to Low</label>
+        <label class="filter-label"><input type="radio" name="nsort" value="1" <% if(nsort && nsort === 1){%><%="checked"%><%}%>> Name: A to Z</label>
       </div>
     </div>
+
+    <!-- Price -->
+    <div class="filter-section">
+      <div class="filter-section-title open" data-target="price-opts">
+        Price Range <i class="fas fa-chevron-down"></i>
+      </div>
+      <div class="filter-opts visible" id="price-opts">
+        <div class="price-display">
+          <span>₹0</span>
+          <span id="priceVal">₹<%if(pr){%><%=pr%><%}else{%><%=250000%><%}%></span>
+        </div>
+        <input name = "price" value = "<%if(pr){%><%=pr%><%}%>" type="range" class="price-slider" id="priceSlider" min="0" max="250000" step="1000">
+      </div>
+    </div>
+
+    <!-- Brand -->
+    <div class="filter-section">
+      <div class="filter-section-title open" data-target="brand-opts">
+        Brand <i class="fas fa-chevron-down"></i>
+      </div>
+      <div class="filter-opts visible" id="brand-opts">
+      <label class="filter-label">
+        <input name="brand" type="checkbox" class="brand-filter" value="all"
+          <% if (br && br.includes("all")) { %> checked <% } %>>
+        All
+      </label>
+
+      <% const cat = products.find(item => item.category === device); %>
+
+      <% if (cat) { 
+          for (let brand of cat.brands) { %>
+
+        <label class="filter-label">
+          <input name="brand" type="checkbox" class="brand-filter"
+            value="<%= brand %>"
+            <% if (br && br.includes(brand)) { %> checked <% } %>>
+          <%= brand %>
+        </label>
+
+      <% } } %>
+    </div>
+    </div>
+
+    <!-- Rating -->
+    <!-- <div class="filter-section">
+      <div class="filter-section-title open" data-target="rating-opts">
+        Min Rating <i class="fas fa-chevron-down"></i>
+      </div>
+      <div class="filter-opts visible" id="rating-opts">
+        <label class="filter-label"><input type="radio" name="rating" value="0" checked> All Ratings</label>
+        <label class="filter-label"><input type="radio" name="rating" value="4"> 4★ & above</label>
+        <label class="filter-label"><input type="radio" name="rating" value="4.5"> 4.5★ & above</label>
+      </div>
+    </div> -->
+
+    <button class="apply-btn" id="applyFilters">
+      <i class="fas fa-check" style="margin-right:8px"></i>Apply Filters
+    </button>
+    </form>
+  </aside>
+
+  <!-- GRID AREA -->
+  <div class="grid-area">
+    <div class="grid-topbar">
+      <span class="results-count" id="resultsCount">Showing <strong><%=allmod.length%></strong> products</span>
+      <div class="topbar-right">
+        <button class="mobile-filter-btn" id="mobileFilterBtn">
+          <i class="fas fa-sliders-h"></i> Filters
+        </button>
+        <!-- SEARCH BAR -->
+        <div class="search-wrap">
+          
+          <input
+            type="text"
+            id="productSearch"
+            class="search-input"
+            placeholder="Search products, brands…"
+            autocomplete="off"
+            spellcheck="false"
+          />
+          <button class="search-clear" id="searchClear" aria-label="Clear search">
+            <i class="fas fa-times"></i>
+          </button>
+          <i class="fas fa-search search-icon"></i>
+        </div>
+      </div>
+    </div>
+
+    <div class="active-chips" id="activeChips"></div>
+
+    <div class="buy-grid" id="buyGrid">
+      <%for(let p of allmod){%>
+        <div class = 'buy-card'>
+      <div class="buy-card-img">
+        <img src="<%=p.colors[0].thumbnail.url%>" loading="lazy">
+      </div>
+      <div class="buy-card-info">
+        <p class="buy-brand"><%=p.brand%></p>
+        <h3 class="buy-name"><%=p.name%></h3>
+        <div class="buy-price-row">
+          <span class="buy-price"><%=p.variants[0].price%></span>
+          <form method = "post">
+        <input type="hidden" name="returnTo" value="<%=currentUrl%>">
+          <button formaction="/vendrix/cart/buy/<%=p._id%>/<%=p.variants[0]._id%>/<%=p.colors[0]._id%>" class="add-cart-btn"><i class="fas fa-plus"></i> Add</button>
+          </form>
+        </div>
+        <a href="/buydetails/<%=p._id%>/0/0" class="buy-card-cta"><i class="fas fa-eye"></i> View Details</a>
+      </div>
+        </div>
+        <%}%>
+    </div>
+
+    <div class="no-products" id="noProducts" style="display:none;">
+      <i class="fas fa-box-open"></i>
+      <p>No products match your filters.</p>
+      <button class="reset-btn" id="resetBtn">Reset Filters</button>
+    </div>
   </div>
-</main>
+</div>
 
 <!-- FOOTER -->
-<footer class="footer">
-  <div class="footer-grid">
+<footer>
+  <div class="footer-top">
     <div>
-      <h4>Vendrix</h4>
-      <p>Minimal accessories for modern professionals.</p>
+      <a href="vendrix.html" class="footer-logo">Vend<span class="og">r</span>ix</a>
+      <div class="footer-about">Premium tech for modern professionals. Every device certified, tested & guaranteed — delivered fast across India.</div>
+      <div class="footer-socials">
+        <a href="#" class="fsoc"><i class="fab fa-instagram"></i></a>
+        <a href="#" class="fsoc"><i class="fab fa-twitter"></i></a>
+        <a href="#" class="fsoc"><i class="fab fa-facebook-f"></i></a>
+        <a href="#" class="fsoc"><i class="fab fa-youtube"></i></a>
+      </div>
     </div>
     <div>
-      <h4>Quick Links</h4>
-      <a href="#">About</a>
-      <a href="#">Shipping</a>
-      <a href="#">Returns</a>
+      <div class="footer-col-title">Company</div>
+      <a href="#" class="footer-link">About Us</a>
+      <a href="#" class="footer-link">Careers</a>
+      <a href="#" class="footer-link">Press</a>
+      <a href="#" class="footer-link">Blog</a>
     </div>
     <div>
-      <h4>Follow</h4>
-      <a href="#">Instagram</a>
-      <a href="#">Facebook</a>
-      <a href="#">Twitter</a>
+      <div class="footer-col-title">Support</div>
+      <a href="#" class="footer-link">Shipping Info</a>
+      <a href="#" class="footer-link">Returns & Refunds</a>
+      <a href="#" class="footer-link">Warranty Policy</a>
+      <a href="#" class="footer-link">Track My Order</a>
+    </div>
+    <div>
+      <div class="footer-col-title">Services</div>
+      <a href="#" class="footer-link">Buy Devices</a>
+      <a href="#" class="footer-link">Sell Your Device</a>
+      <a href="#" class="footer-link">Rent Tech</a>
+      <a href="#" class="footer-link">Expert Repair</a>
     </div>
   </div>
-  <div class="footer-bottom">&#169; 2026 Vendrix. All rights reserved.</div>
+  <div class="footer-bottom">
+    <span>© 2026 Vendrix Technologies Pvt. Ltd. All rights reserved.</span>
+    <span style="font-size:10px;letter-spacing:1px;color:var(--white12)">PREMIUM TECH STORE</span>
+  </div>
 </footer>
-<script src = "/js/features.js"></script>
-
+<script src="/js/features.js"></script>

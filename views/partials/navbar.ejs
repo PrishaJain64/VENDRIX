@@ -1,52 +1,29 @@
 <%const features = {"BUY":"/buy",'SELL':'/allmodels/sell',"RENT":"/rent",'REPAIR':"/allmodels/repair",'REFURBISH':"/refurbish",'RECYCLE':"/recycle"}
 const products = [
-  { category: "phone", brands: ["Apple", "Samsung", "OnePlus"] },
-  { category: "laptop", brands: ["HP", "Lenovo", "Apple"] },
-  { category: "smartwatches", brands: ["Apple", "Samsung"] },
-  { category: "camera", brands: ["Canon", "Samsung"] },
-  { category: "headphones", brands: ["Boat", "Apple"] },
-  { category: "earbuds", brands: ["Boat", "Apple", "Samsung"] },
-  { category: "tablet", brands: ["Apple", "Samsung", "Lenovo"] }
+  { category: "phone", brands: ["Apple", "Samsung", "OnePlus"] }, //
+  { category: "laptop", brands: ["HP", "Lenovo", "Apple"] }, //
+  { category: "smartwatch", brands: ["Apple", "Samsung"] }, 
+  { category: "camera", brands: ["Canon", "Nikon"] }, //samsung
+  { category: "headphone", brands: ["Sony", "JBL"] },
+  { category: "earbud", brands: ["Boat", "Apple", "Samsung"] }, //boat 
+  { category: "tablet", brands: ["Apple", "Samsung", "Lenovo"] } 
 ]%>
-<div class="nav-overlay" id="navOverlay"></div>
-
-<header class="navbar">
-<div class="nav-container">
-<div class="logo">Vendrix</div>
-<ul class="nav-links" id="navLinks">
-
-<% for(let [key,val] of Object.entries(features)){%>
-<li class="dropdown">
-<a href="<%=val%>"><%=key%><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-chevron-down" viewBox="0 0 16 16">
-  <path fill-rule="evenodd" d="M1.646 4.646a.5.5 0 0 1 .708 0L8 10.293l5.646-5.647a.5.5 0 0 1 .708.708l-6 6a.5.5 0 0 1-.708 0l-6-6a.5.5 0 0 1 0-.708"/>
-</svg></a>
-<div class="dropdown-menu">
-<%for (let value of products){ %>
-<div class="has-sub">
-<a href="<%=val%>/<%=value.category%>"><%=value.category.charAt(0).toUpperCase() + value.category.slice(1)%> ▸</a>
-<div class="sub-menu">
-<a href="<%=val%>/<%=value.category%>">All</a>
-<%for(let brand of value.brands){%>
-<a href="<%=val%>/<%=value.category%>?brand=<%=brand%>"><%=brand%></a>
-<%}%>
-</div>
-</div>
-
-<%}%>
-</div>
-</li>
-<%} %>
-</ul>
-
-<div style="display:flex;align-items:center;gap:10px;position:relative;">
-<span class="hamburger"><i class="fas fa-bars"></i></span>
-<span class="nav-icons">
-<i class="fas fa-user" style="cursor:pointer;margin-left:20px;color:#ffffff;"></i>
-<i class="fas fa-shopping-cart" style="cursor:pointer;margin-left:20px;color:#ffffff;"></i>
-</span>
-</div>
-
-</div>
-</header>
-<script src="https://unpkg.com/aos@2.3.4/dist/aos.js"></script>
-<script src="/js/homepage.js"></script>
+<ul class="nav-center">
+    <%for(let [key,value] of Object.entries(features)){%>
+    <li>
+      <a href="#"><%= key%><i class="fas fa-chevron-down chev"></i></a>
+      <div class="drop-menu">
+        <%for(let pr of products){%>
+        <div class="drop-item"><a href="#"><%=pr.category[0].toUpperCase()+pr.category.slice(1)%><i class="fas fa-chevron-right chev-r"></i></a>
+          <div class="sub-menu">
+            <a href="<%=value%>/<%=pr.category%>">All</a>
+            <%for(let br of pr.brands){%>
+              <a href="<%=value%>/<%=pr.category%>?brand=<%=br%>"><%=br%></a>
+              <%}%>
+          </div>
+        </div>
+        <%}%>
+      </div>
+    </li>
+    <%}%>
+  </ul>

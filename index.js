@@ -93,7 +93,7 @@ app.get("/",(req,res)=>{
     res.render("landing/landing");
 })
 app.get("/homepage",(req,res)=>{
-    res.render("features/device");
+    res.render("features/homepage");
 })
 
 app.listen(3000,()=>{

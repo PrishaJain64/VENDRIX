@@ -1,0 +1,477 @@
+<%const features = {"BUY":"/buy",'SELL':'/allmodels/sell',"RENT":"/rent",'REPAIR':"/allmodels/repair",'REFURBISH':"/refurbish",'RECYCLE':"/recycle"}
+const products = [
+  { category: "phone", brands: ["Apple", "Samsung", "OnePlus"] }, //
+  { category: "laptop", brands: ["HP", "Lenovo", "Apple"] }, //
+  { category: "smartwatch", brands: ["Apple", "Samsung"] }, 
+  { category: "camera", brands: ["Canon", "Nikon"] }, //samsung
+  { category: "headphone", brands: ["Sony", "JBL"] },
+  { category: "earbud", brands: ["Boat", "Apple", "Samsung"] }, //boat 
+  { category: "tablet", brands: ["Apple", "Samsung", "Lenovo"] } 
+]%>
+
+<% layout('layouts/homepage-boilerplate') %>
+<!-- CUSTOM CURSOR -->
+<div id="cur-dot"></div>
+<div id="cur-ring"></div>
+
+<!-- TOP BAR -->
+<div class="topbar">
+  <div class="topbar-track" id="tbTrack">
+    <span class="topbar-item">Free Shipping</span>
+    <span class="topbar-item">1 Year Warranty Included</span>
+    <span class="topbar-item">Certified Refurbished Devices</span>
+    
+    <span class="topbar-item">All Devices Available</span>
+    <span class="topbar-item">Expert Repair Services</span>
+    <span class="topbar-item">Free Shipping Over ₹2,000</span>
+    <span class="topbar-item">1 Year Warranty Included</span>
+    <span class="topbar-item">Certified Refurbished Devices</span>
+   
+    <span class="topbar-item">All Devices Available</span>
+    <span class="topbar-item">Expert Repair Services</span>
+  </div>
+</div>
+
+<!-- NAVBAR -->
+<header class="navbar" id="navbar">
+  <a href="#" class="logo">Vend<span class="accent">r</span>ix</a>
+  <%- include('../partials/navbar.ejs') %>
+  <div class="nav-right">
+    <a href="#" class="nav-icon"><i class="fas fa-user"></i></a>
+    <a href="#" class="nav-about">About Us</a>
+    <a href="#" class="nav-cta">
+      <i class="fas fa-shopping-bag"></i> Cart
+      <span class="nav-badge" style="position:relative;top:auto;right:auto;">3</span>
+    </a>
+  </div>
+</header>
+
+<!-- ═══ HERO ═══ -->
+<section class="hero">
+  <div class="hero-slide active" id="slide0">
+    <img src="https://cdn.cosmos.so/0892d087-b199-4e7c-a066-bdc38da3911d?format=jpeg" alt="">
+  </div>
+  <div class="hero-slide" id="slide1">
+    <img src="https://cdn.cosmos.so/84d4dc11-1480-47b1-a1bf-bd8c3516760d?format=jpeg" alt="">
+  </div>
+  <div class="hero-slide" id="slide2">
+    <img src="https://cdn.cosmos.so/6687eff7-f519-4b25-b9b5-69babad3f6fb?format=jpeg" alt="">
+  </div>
+  <div class="hero-overlay"></div>
+  <div class="hero-glow"></div>
+
+  <div class="hero-content">
+    <div class="hero-inner">
+      <h1 class="hero-title">
+        <span class="break">Tech Renewed.</span>
+        <span class="break orange">Value</span>
+        <span class="stroke"> Delivered.</span>
+      </h1>
+      <p class="hero-desc">
+        Premium. <strong>Certified. Guaranteed.</strong><br>
+        The finest gadgets for modern professionals — tested, graded and ready to ship.
+      </p>
+      <div class="hero-btns">
+        <a href="/buy/phone" class="btn-fill">Shop Now <i class="fas fa-arrow-right"></i></a>
+      </div>
+    </div>
+  </div>
+
+  <div class="hero-stats">
+    <div class="hstat">
+      <div class="hstat-num">5K+</div>
+      <div class="hstat-label">Devices Sold</div>
+    </div>
+    <div class="hstat">
+      <div class="hstat-num">4.9★</div>
+      <div class="hstat-label">Avg Rating</div>
+    </div>
+    <div class="hstat">
+      <div class="hstat-num">15+</div>
+      <div class="hstat-label">Brands</div>
+    </div>
+    <div class="hstat">
+      <div class="hstat-num">24H</div>
+      <div class="hstat-label">Fast Delivery</div>
+    </div>
+  </div>
+
+  <div class="hero-dots">
+    <div class="hdot active" onclick="goSlide(0)"></div>
+    <div class="hdot" onclick="goSlide(1)"></div>
+    <div class="hdot" onclick="goSlide(2)"></div>
+  </div>
+</section>
+
+<!-- ═══ TRUST BAR ═══ -->
+<div class="trust-bar">
+  <div class="trust-item reveal">
+    <div class="trust-icon"><i class="fas fa-shipping-fast"></i></div>
+    <div>
+      <div class="trust-title">Free Shipping</div>
+      <div class="trust-sub">On orders above ₹2,000</div>
+    </div>
+  </div>
+  <div class="trust-item reveal reveal-d1">
+    <div class="trust-icon"><i class="fas fa-shield-alt"></i></div>
+    <div>
+      <div class="trust-title">1 Year Warranty</div>
+      <div class="trust-sub">On every certified device</div>
+    </div>
+  </div>
+  <div class="trust-item reveal reveal-d2">
+    <div class="trust-icon"><i class="fas fa-undo-alt"></i></div>
+    <div>
+      <div class="trust-title">Easy 7-Day Returns</div>
+      <div class="trust-sub">Hassle-free, no questions</div>
+    </div>
+  </div>
+  <div class="trust-item reveal reveal-d3">
+    <div class="trust-icon"><i class="fas fa-headset"></i></div>
+    <div>
+      <div class="trust-title">24/7 Support</div>
+      <div class="trust-sub">Real experts, always online</div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ CATEGORIES ═══ -->
+<section class="sec">
+  <div class="sec-top">
+    <div>
+      <div class="sec-label reveal">
+        <span class="sec-label-line"></span>
+        <span>Browse</span>
+      </div>
+      <div class="sec-heading reveal reveal-d1">Shop <span class="dim">by</span> <span class="og">Category</span></div>
+    </div>
+    <a href="#" class="view-link reveal">All Categories <i class="fas fa-arrow-right"></i></a>
+  </div>
+
+  <div class="cat-grid">
+    <a href="/buy/phone" class="cat-tile reveal">
+      <img src="https://cdn.cosmos.so/0892d087-b199-4e7c-a066-bdc38da3911d?format=jpeg" alt="Phones">
+      <div class="cat-tile-overlay">
+        <div class="cat-tag">Trending</div>
+        <div class="cat-name">Smartphones</div>
+        <div class="cat-count">142 products</div>
+      </div>
+    </a>
+    <a href="/buy/laptop" class="cat-tile reveal reveal-d1">
+      <img src="https://cdn.cosmos.so/7d633d1d-8698-497b-b984-8c0765c74057?format=jpeg" alt="Laptops">
+      <div class="cat-tile-overlay">
+        <div class="cat-name">Laptops</div>
+        <div class="cat-count">89 products</div>
+      </div>
+    </a>
+    <a href="/buy/earbuds" class="cat-tile reveal reveal-d2">
+      <img src="https://cdn.cosmos.so/7c9e3010-118f-4efe-a69b-bb2cdde90e98?format=jpeg" alt="Earbuds">
+      <div class="cat-tile-overlay">
+        <div class="cat-name">Earbuds</div>
+        <div class="cat-count">67 products</div>
+      </div>
+    </a>
+    <a href="/buy/camera" class="cat-tile reveal reveal-d3">
+      <img src="https://cdn.cosmos.so/dc4bad09-ecf9-4782-91f8-6741c809d8dd?format=jpeg" alt="Cameras">
+      <div class="cat-tile-overlay">
+        <div class="cat-tag">Hot</div>
+        <div class="cat-name">Cameras</div>
+        <div class="cat-count">53 products</div>
+      </div>
+    </a>
+    <a href="/buy/smartwatch" class="cat-tile reveal reveal-d1">
+      <img src="https://cdn.cosmos.so/84d4dc11-1480-47b1-a1bf-bd8c3516760d?format=jpeg" alt="Smartwatch">
+      <div class="cat-tile-overlay">
+        <div class="cat-name">Smartwatch</div>
+        <div class="cat-count">38 products</div>
+      </div>
+    </a>
+  </div>
+</section>
+
+<!-- ═══ FEATURED PRODUCTS ═══ -->
+<section class="sec sec-alt">
+  <div class="sec-top">
+    <div>
+      <div class="sec-label reveal">
+        <span class="sec-label-line"></span>
+        <span>Handpicked</span>
+      </div>
+      <div class="sec-heading reveal reveal-d1">Featured <span class="og">Products</span></div>
+    </div>
+    <a href="#" class="view-link reveal">View All <i class="fas fa-arrow-right"></i></a>
+  </div>
+
+  <div class="prod-grid">
+    <!-- Card 1 -->
+    <div class="prod-card reveal">
+      <div class="prod-img">
+        <div class="prod-actions">
+          <div class="act-btn"><i class="fas fa-heart"></i></div>
+          <div class="act-btn"><i class="fas fa-eye"></i></div>
+        </div>
+        <img src="https://cdn.cosmos.so/0892d087-b199-4e7c-a066-bdc38da3911d?format=jpeg" alt="Phone" style="border-radius:8px;">
+      </div>
+      <div class="prod-body">
+        <div class="prod-brand">Apple</div>
+        <div class="prod-name">iPhone 16 Pro Max — 256GB</div>
+        <div class="prod-foot">
+          <div>
+          <div class="prod-price">₹1,19,999</div>
+          </div>
+        </div>
+        <button class="prod-cta"><i class="fas fa-shopping-bag"></i> Add to Cart</button>
+      </div>
+    </div>
+
+    <!-- Card 2 -->
+    <div class="prod-card reveal reveal-d1">
+      <div class="prod-img">
+        <div class="prod-actions">
+          <div class="act-btn"><i class="fas fa-heart"></i></div>
+          <div class="act-btn"><i class="fas fa-eye"></i></div>
+        </div>
+        <img src="https://cdn.cosmos.so/7d633d1d-8698-497b-b984-8c0765c74057?format=jpeg" alt="Laptop" style="border-radius:8px;">
+      </div>
+      <div class="prod-body">
+        <div class="prod-brand">Apple</div>
+        <div class="prod-name">MacBook Pro 14" M3 — 16GB</div>
+        <div class="prod-foot">
+          <div>
+            <div class="prod-price">₹1,99,999</div>
+          </div>
+        </div>
+        <button class="prod-cta"><i class="fas fa-shopping-bag"></i> Add to Cart</button>
+      </div>
+    </div>
+
+    <!-- Card 3 -->
+    <div class="prod-card reveal reveal-d2">
+      <div class="prod-img">
+        <div class="prod-actions">
+          <div class="act-btn"><i class="fas fa-heart"></i></div>
+          <div class="act-btn"><i class="fas fa-eye"></i></div>
+        </div>
+        <img src="https://cdn.cosmos.so/7c9e3010-118f-4efe-a69b-bb2cdde90e98?format=jpeg" alt="Earphones" style="border-radius:8px;">
+      </div>
+      <div class="prod-body">
+        <div class="prod-brand">Sony</div>
+        <div class="prod-name">WH-1000XM5 Noise Cancelling</div>
+        <div class="prod-foot">
+          <div>
+          <div class="prod-price">₹27,999</div>
+          </div>
+        </div>
+        <button class="prod-cta"><i class="fas fa-shopping-bag"></i> Add to Cart</button>
+      </div>
+    </div>
+
+    <!-- Card 4 -->
+    <div class="prod-card reveal reveal-d3">
+      <div class="prod-img">
+        <div class="prod-actions">
+          <div class="act-btn"><i class="fas fa-heart"></i></div>
+          <div class="act-btn"><i class="fas fa-eye"></i></div>
+        </div>
+        <img src="https://cdn.cosmos.so/dc4bad09-ecf9-4782-91f8-6741c809d8dd?format=jpeg" alt="Camera" style="border-radius:8px;">
+      </div>
+      <div class="prod-body">
+        <div class="prod-brand">Sony</div>
+        <div class="prod-name">Alpha A7 IV Full-Frame Camera</div>
+        <div class="prod-foot">
+          <div>
+            <div class="prod-price">₹2,59,990</div>
+          </div>
+        </div>
+        <button class="prod-cta"><i class="fas fa-shopping-bag"></i> Add to Cart</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ PROMO BANNERS ═══ -->
+<section class="sec sec-dark3">
+  <div class="promo-grid">
+    
+    <div class="promo-card reveal reveal-d1">
+      <img src="https://cdn.cosmos.so/6687eff7-f519-4b25-b9b5-69babad3f6fb?format=jpeg" alt="">
+      <div class="promo-glow"></div>
+      <div class="promo-card-content">
+        <div class="promo-tag"><span class="promo-tag-dot"></span><span>Trade-In Deal</span></div>
+        <div class="promo-heading">Sell Your<br><span class="og">Old Device</span></div>
+        <div class="promo-sub">Get the best price for your old<br>gadgets. Instant valuation online.</div>
+        <a href="/allmodels/sell/phone" class="promo-link">Get Estimate <i class="fas fa-arrow-right"></i></a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ BRANDS ═══ -->
+<section class="sec brands-sec" style="padding-top:64px;padding-bottom:64px;">
+  <div class="sec-label reveal" style="justify-content:center;margin-bottom:10px;">
+    <span class="sec-label-line"></span>
+    <span>Trusted Brands</span>
+    <span class="sec-label-line" style="transform:scaleX(-1)"></span>
+  </div>
+  <p class="brands-sub reveal">200+ premium brands — all certified, all genuine.</p>
+  <div class="brands-grid reveal">
+    <div class="brand-card"><i class="fab fa-apple"></i><span>Apple</span></div>
+    <div class="brand-card"><span class="brand-txt">SAMSUNG</span></div>
+    <div class="brand-card"><span class="brand-txt">SONY</span></div>
+    <div class="brand-card"><span class="brand-txt">OnePlus</span></div>
+    <div class="brand-card"><span class="brand-txt">BOAT</span></div>
+    <div class="brand-card"><span class="brand-txt">CANON</span></div>
+    <div class="brand-card"><span class="brand-txt">JBL</span></div>
+    <div class="brand-card"><span class="brand-txt">LENOVO</span></div>
+  </div>
+</section>
+
+<!-- ═══ SERVICES ═══ -->
+<section class="sec sec-alt">
+  <div class="sec-top">
+    <div>
+      <div class="sec-label reveal">
+        <span class="sec-label-line"></span>
+        <span>What We Do</span>
+      </div>
+      <div class="sec-heading reveal reveal-d1">Our <span class="og">Services</span></div>
+    </div>
+  </div>
+  <div class="services-grid">
+    <a href="/rent/phone">
+    <div class="svc-card reveal">
+      <i class="fas fa-arrow-right svc-arrow"></i>
+      <div class="svc-icon"><i class="fas fa-shopping-cart"></i></div>
+      <div class="svc-title">Rent Gadgets</div>
+      <div class="svc-desc">Rent certified refurbished devices at the best prices. Every product tested & graded before shipping.</div>
+    </div>
+    </a><a href="/buy/phone">
+    <div class="svc-card reveal">
+      <i class="fas fa-arrow-right svc-arrow"></i>
+      <div class="svc-icon"><i class="fas fa-shopping-cart"></i></div>
+      <div class="svc-title">Buy Factory Gadgets</div>
+      <div class="svc-desc">Buy new & certified devices at the best prices. Every product tested & graded before shipping.</div>
+    </div>
+    </a><a href = "/refurbish/phone">
+    <div class="svc-card reveal">
+      <i class="fas fa-arrow-right svc-arrow"></i>
+      <div class="svc-icon"><i class="fas fa-shopping-cart"></i></div>
+      <div class="svc-title">Buy Refurbished Gadgets</div>
+      <div class="svc-desc">Certified refurbished devices at the best prices. Every product tested & graded before shipping.</div>
+    </div>
+    </a><a href="/allmodels/sell/phone">
+    <div class="svc-card reveal reveal-d1">
+      <i class="fas fa-arrow-right svc-arrow"></i>
+      <div class="svc-icon"><i class="fas fa-tag"></i></div>
+      <div class="svc-title">Sell Your Device</div>
+      <div class="svc-desc">Get instant price estimates for your old gadgets. Free pickup, fast payment directly to your account.</div>
+    </div></a><a href="rent/phone">
+    <div class="svc-card reveal reveal-d2">
+      <i class="fas fa-arrow-right svc-arrow"></i>
+      <div class="svc-icon"><i class="fas fa-calendar-alt"></i></div>
+      <div class="svc-title">Rent Tech</div>
+      <div class="svc-desc">Flexible rentals for phones, laptops & cameras. Daily, weekly or monthly plans with insurance included.</div>
+    </div></a><a href = "/allmodels/repair">
+    <div class="svc-card reveal reveal-d3">
+      <i class="fas fa-arrow-right svc-arrow"></i>
+      <div class="svc-icon"><i class="fas fa-tools"></i></div>
+      <div class="svc-title">Expert Repair</div>
+      <div class="svc-desc">Screen, battery, charging port and more. Same-day service at our certified repair centres nationwide.</div>
+    </div></a>
+  </div>
+</section>
+
+<!-- ═══ TESTIMONIALS ═══ -->
+<section class="sec">
+  <div class="sec-top">
+    <div>
+      <div class="sec-label reveal">
+        <span class="sec-label-line"></span>
+        <span>Reviews</span>
+      </div>
+      <div class="sec-heading reveal reveal-d1">What <span class="og">Customers Say</span></div>
+    </div>
+  </div>
+  <div class="testi-grid">
+    <div class="testi-card reveal">
+      <div class="testi-stars">★★★★★</div>
+      <div class="testi-quote">Ordered a refurbished iPhone 15, arrived in perfect condition. Looked brand new. The 1-year warranty gave me total peace of mind.</div>
+      <div class="testi-user">
+        <div class="testi-avatar">RK</div>
+        <div>
+          <div class="testi-name">Rajan Kumar</div>
+        </div>
+      </div>
+    </div>
+    <div class="testi-card reveal reveal-d1">
+      <div class="testi-stars">★★★★★</div>
+      <div class="testi-quote">Sold my old MacBook through Vendrix. Got a great price and payment was instant. The entire process took under 15 minutes.</div>
+      <div class="testi-user">
+        <div class="testi-avatar">PS</div>
+        <div>
+          <div class="testi-name">Priya Sharma</div>
+        </div>
+      </div>
+    </div>
+    <div class="testi-card reveal reveal-d2">
+      <div class="testi-stars">★★★★★</div>
+      <div class="testi-quote">Rented a Sony camera for my wedding shoot. Flawless quality, delivered on time. Will definitely rent again — best service I've used.</div>
+      <div class="testi-user">
+        <div class="testi-avatar">AM</div>
+        <div>
+          <div class="testi-name">Arjun Mehta</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ FOOTER ═══ -->
+<footer>
+  <div class="footer-top">
+    <div>
+      <a href="#" class="footer-logo">Vend<span class="og">r</span>ix</a>
+      <div class="footer-about">Premium tech for modern professionals. Every device certified, tested & guaranteed — delivered fast across India.</div>
+      <div class="footer-socials">
+        <a href="#" class="fsoc"><i class="fab fa-instagram"></i></a>
+        <a href="#" class="fsoc"><i class="fab fa-twitter"></i></a>
+        <a href="#" class="fsoc"><i class="fab fa-facebook-f"></i></a>
+        <a href="#" class="fsoc"><i class="fab fa-youtube"></i></a>
+      </div>
+    </div>
+    <div>
+      <div class="footer-col-title">Company</div>
+      <a href="#" class="footer-link">About Us</a>
+      <a href="#" class="footer-link">Careers</a>
+      <a href="#" class="footer-link">Press</a>
+      <a href="#" class="footer-link">Blog</a>
+      <a href="#" class="footer-link">Store Locator</a>
+    </div>
+    <div>
+      <div class="footer-col-title">Support</div>
+      <a href="#" class="footer-link">Shipping Info</a>
+      <a href="#" class="footer-link">Returns & Refunds</a>
+      <a href="#" class="footer-link">Warranty Policy</a>
+      <a href="#" class="footer-link">Track My Order</a>
+      <a href="#" class="footer-link">Contact Us</a>
+    </div>
+    <div>
+      <div class="footer-col-title">Services</div>
+      <a href="#" class="footer-link">Buy Devices</a>
+      <a href="#" class="footer-link">Sell Your Device</a>
+      <a href="#" class="footer-link">Rent Tech</a>
+      <a href="#" class="footer-link">Expert Repair</a>
+      <a href="#" class="footer-link">Recycle Program</a>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <span>© 2026 Vendrix Technologies Pvt. Ltd. All rights reserved.</span>
+    <div class="footer-bottom-right">
+      <a href="#">Privacy Policy</a>
+      <a href="#">Terms of Use</a>
+      <a href="#">Cookie Policy</a>
+    </div>
+  </div>
+</footer>
+
+<script src="/js/homepage.js"></script>

@@ -30,6 +30,7 @@ router.get('/:intent/:device', async (req,res)=>{
         if(brand) filter.brand = brand
         if(device && device != "all") filter.type = device;
         const allmod = await Model.find(filter);
+        console.log(filter);
         res.render("sell/sell",{allmod,intent,device,pr,psort,nsort,br});
 })
 

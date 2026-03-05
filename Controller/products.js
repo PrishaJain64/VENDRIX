@@ -207,43 +207,67 @@ module.exports.createModel = async(req,res)=>{
     const images=req.files.map(f=>({url:f.path,filename:f.filename}));
 
     const version = new Model({
-    name: "OnePlus 12",
-    brand: "OnePlus",
-    type: "phone",
+  name: "Samsung Galaxy Watch 8",
+  brand: "Samsung",
+  type: "smartwatch",
 
-    variants: [
-      { label: "storage : 256GB | ram : 12GB", price: 64999 },
-      { label: "storage : 512GB | ram : 16GB", price: 69999 }
-    ],
-
-    specifications: {
-      display: "6.82-inch LTPO AMOLED, 120Hz, 2K Resolution",
-      processor: "Qualcomm Snapdragon 8 Gen 3",
-      camera: "50MP + 64MP + 48MP",
-      battery: "5400 mAh"
+  variants: [
+    { 
+      label: "40mm Bluetooth | 2GB RAM | 32GB Storage",
+      size: "40mm",
+      connectivity: "Bluetooth",
+      ram: "2GB",
+      storage: "32GB",
+      price: 32999 
     },
+    { 
+      label: "44mm Bluetooth | 2GB RAM | 32GB Storage",
+      size: "44mm",
+      connectivity: "Bluetooth",
+      ram: "2GB",
+      storage: "32GB",
+      price: 35999 
+    },
+    { 
+      label: "40mm LTE | 2GB RAM | 32GB Storage",
+      size: "40mm",
+      connectivity: "LTE",
+      ram: "2GB",
+      storage: "32GB",
+      price: 36999 
+    },
+    { 
+      label: "44mm LTE | 2GB RAM | 32GB Storage",
+      size: "44mm",
+      connectivity: "LTE",
+      ram: "2GB",
+      storage: "32GB",
+      price: 39999 
+    }
+  ],
 
-    colors: [
-      {
-        color: "Silky Black",
-        thumbnail: images[0],
-        images: images.slice(1, 2)
-      },
-      {
-        color: "Flowy Emerald",
-        thumbnail: images[2],
-        images: images.slice(3, 4)
-      },
-      {
-        color: "Glacial White",
-        thumbnail: images[4],
-        images: images.slice(5, 6)
-      }
-    ],
+  specifications: {
+    display: "Super AMOLED (1.34″ / 1.47″), 3000 nits peak, Sapphire Crystal",
+    processor: "Exynos W1000 (3nm)",
+    battery: "325 mAh (40mm) / 435 mAh (44mm)"
+  },
 
-    release_date: new Date("2023-12-05"),
-    base_recycle_value: 4000
-  });
+  colors: [
+    {
+      color: "Graphite",
+      thumbnail: images[0],
+      images: images.slice(1, 2)
+    },
+    {
+      color: "Silver",
+      thumbnail: images[2],
+      images: images.slice(3, 4)
+    }
+  ],
+
+  release_date: new Date("2025-07-25"),
+  base_recycle_value: 5000
+});
 
   await version.save();
   

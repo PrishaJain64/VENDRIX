@@ -1,0 +1,140 @@
+<% layout('layouts/boilerplate') %>
+<%- include('../partials/navbar.ejs') %>
+<br><br><br>
+<main class="buy-page">
+
+  <!-- Page Title -->
+  <div class="buy-header">
+    <h1 class="buy-title">ALL PRODUCTS</h1>
+  </div>
+
+  <!-- Category Pills -->
+  <div class="category-strip-wrap">
+    <div class="category-strip" id="categoryStrip">
+      <div class="cat-pill active" data-filter="all"><span>All</span></div>
+      <div class="cat-pill" data-filter="phones"><a href = "/buy/phone">Phones</a></div>
+      <div class="cat-pill" data-filter="laptops"><span>Laptops</span></div>
+      <div class="cat-pill" data-filter="tablets"><span>Tablets</span></div>
+      <div class="cat-pill" data-filter="smartwatches"><span>Smartwatches</span></div>
+      <div class="cat-pill" data-filter="cameras"><span>Cameras</span></div>
+      <div class="cat-pill" data-filter="headphones"><span>Headphones</span></div>
+      <div class="cat-pill" data-filter="earbuds"><span>Earbuds</span></div>
+    </div>
+  </div>
+
+  <!-- Shop Layout -->
+  <div class="shop-layout">
+
+    <!-- FILTER SIDEBAR -->
+    <aside class="filter-sidebar" id="filterSidebar">
+      <h2>Filters <a href = "/buy/<%=device%>" class="clear-all" id="clearAll">Clear all</a></h2>
+
+      <form method="post" action="/buy/filters/<%=device%>">
+      <!-- Sort -->
+      <div class="filter-section">
+        <div class="filter-section-title" data-target="sort-opts">
+          Sort By
+        </div>
+        <div class="filter-opts" id="sort-opts">
+          <label class="filter-label"><input type="radio" name="psort" value="0" <% if(psort && psort === 0){%><%="checked"%><%}%> > Default</label>
+          <label class="filter-label"><input type="radio" name="psort" value="1" <% if(psort && psort === 1){%><%="checked"%><%}%>> Price: Low to High</label>
+          <label class="filter-label"><input type="radio" name="psort" value="-1" <% if(psort && psort === -1){%><%="checked"%><%}%>> Price: High to Low</label>
+          <label class="filter-label"><input type="radio" name="nsort" value="1" <% if(nsort && nsort === 1){%><%="checked"%><%}%>> Name: A to Z</label>
+        </div>  
+      </div>
+
+      <!-- Price Range -->
+      <div class="filter-section">
+        <div class="filter-section-title" data-target="price-opts">
+          Price Range <i class="fas fa-chevron-down"></i>
+        </div>
+        <div class="filter-opts" id="price-opts">
+          <div class="price-range-wrap">
+            <div class="price-display">
+              <span>&#8377;0</span>
+              <span id="priceVal">&#8377;<%if(pr){%><%=pr%><%}else{%><%=125000%><%}%></span>
+            </div>
+            <input name = "price" value = "<%if(pr){%><%=pr%><%}%>" type="range" class="price-slider" id="priceSlider" min="0" max="250000" step="1000">
+          </div>
+        </div>
+      </div>
+
+      <!-- Brand -->
+      <div class="filter-section">
+        <div class="filter-section-title" data-target="brand-opts">
+          Brand <i class="fas fa-chevron-down"></i>
+        </div>
+        <div class="filter-opts" id="brand-opts">
+          <label   class="filter-label"><input name = "brand"  type="checkbox" class="brand-filter" value="all" <% if(br && br.includes("all")){%><%="checked"%><%}%>> All</label>
+          <label   class="filter-label"><input name = "brand"  type="checkbox" class="brand-filter" value="Apple" <% if(br && br.includes("Apple")){%><%="checked"%><%}%>> Apple</label>
+          <label  class="filter-label"><input name = "brand" type="checkbox" class="brand-filter" value="Samsung" <% if(br && br.includes("Samsung")){%><%="checked"%><%}%>> Samsung</label>
+          <label  class="filter-label"><input name = "brand" type="checkbox" class="brand-filter" value="OnePlus" <% if(br && br.includes("OnePlus")){%><%="checked"%><%}%>> OnePlus</label>
+        </div>
+      </div>
+
+      <button class="apply-btn" id="applyFilters">Apply Filters</button>
+    </aside>
+
+  </form>
+    <!-- GRID AREA -->
+    <div class="grid-area">
+
+      <!-- Active filter chips -->
+      <div class="active-chips" id="activeChips"></div>
+
+      <!-- Product Grid -->
+       <div class="buy-grid" id="buyGrid">
+  <% for(let p of allmod){ %>
+    <div class="buy-card">
+      <form method = "post">
+        <input type="hidden" name="returnTo" value="<%=currentUrl%>">
+      <button class="wish-btn" formaction="/vendrix/cart/buy/<%=p._id%>/<%=p.variants[0]._id%>/<%=p.colors[0]._id%>"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-heart" viewBox="0 0 16 16">
+  <path d="m8 2.748-.717-.737C5.6.281 2.514.878 1.4 3.053c-.523 1.023-.641 2.5.314 4.385.92 1.815 2.834 3.989 6.286 6.357 3.452-2.368 5.365-4.542 6.286-6.357.955-1.886.838-3.362.314-4.385C13.486.878 10.4.28 8.717 2.01zM8 15C-7.333 4.868 3.279-3.04 7.824 1.143q.09.083.176.171a3 3 0 0 1 .176-.17C12.72-3.042 23.333 4.867 8 15"/>
+</svg></button></form>
+      <div class="buy-card-img">
+        <img src="<%= p.colors[0].thumbnail.url %>" alt="<%= p.name %>">
+      </div>
+      <div class="buy-card-info">
+        <p class="buy-brand"><%= p.brand %></p>
+        <h3 class="buy-name"><%= p.name %></h3>
+        <div class="buy-price-row">
+          <span class="buy-price">&#8377;<%= p.variants[0].price %></span>
+          <a href="/buydetails/<%=p._id%>/0/0" class="add-cart-btn">View Details</a>
+        </div>
+      </div>
+    </div>
+  <% } %>
+</div>
+
+      <div class="no-products" id="noProducts" style="display:none;">
+        <i class="fas fa-box-open"></i>
+        <p>No products found matching your filters.</p>
+      </div>
+    </div>
+  </div>
+</main>
+
+<!-- FOOTER -->
+<footer class="footer">
+  <div class="footer-grid">
+    <div>
+      <h4>Vendrix</h4>
+      <p>Minimal accessories for modern professionals.</p>
+    </div>
+    <div>
+      <h4>Quick Links</h4>
+      <a href="#">About</a>
+      <a href="#">Shipping</a>
+      <a href="#">Returns</a>
+    </div>
+    <div>
+      <h4>Follow</h4>
+      <a href="#">Instagram</a>
+      <a href="#">Facebook</a>
+      <a href="#">Twitter</a>
+    </div>
+  </div>
+  <div class="footer-bottom">&#169; 2026 Vendrix. All rights reserved.</div>
+</footer>
+<script src = "/js/features.js"></script>
+
