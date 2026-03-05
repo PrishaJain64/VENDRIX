@@ -177,8 +177,9 @@ const products = [
         </button>
         <!-- SEARCH BAR -->
         <div class="search-wrap">
-          
+          <form action="/buy/<%=device%>" method = "get">
           <input
+          name = "search"
             type="text"
             id="productSearch"
             class="search-input"
@@ -186,6 +187,7 @@ const products = [
             autocomplete="off"
             spellcheck="false"
           />
+          </form>
           <button class="search-clear" id="searchClear" aria-label="Clear search">
             <i class="fas fa-times"></i>
           </button>

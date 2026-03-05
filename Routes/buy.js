@@ -51,7 +51,8 @@ router.post("/filters/:device",async(req,res)=>{
     const allmod = await Model.aggregate(pipeline).collation({locale :"en",strength : 2});
     res.render("buy/buy",{allmod,device,pr,psort,nsort,br,currentUrl:req.originalUrl});
 })
-router.get("/:device",async (req,res)=>{
+router.get("/:device",async (req,res)=>{    
+    var search = req.query.search;
        var brand = req.query.brand;
        var device = req.params.device;
        var pr=0;
@@ -59,11 +60,11 @@ router.get("/:device",async (req,res)=>{
        var nsort = 0;
        var br = [];
        var filter = {};
-       if(search) filter.match = {$regex:"^"+search, $options:"i"};
+       if(search) filter.name = {$regex:"^"+search, $options:"i"};
        if(brand) filter.brand = brand
        if(device && device!="all") filter.type = device;
         const allmod = await Model.find(filter);
-        res.render("buy/buy",{allmod,device,pr,psort,nsort,br,currentUrl:req.originalUrl});
+        res.render("buy/buy",{allmod,device,pr,psort,nsort,br,currentUrl:req.originalUrl,search});
     })
 module.exports=router;
 
