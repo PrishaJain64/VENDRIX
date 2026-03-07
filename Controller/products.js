@@ -60,7 +60,7 @@ async function SeverityCheck(issues,allquestions){
       ++count;
     }
   }
-  if(total/count > 3) return "rent";
+  if(total/count > 2) return "rent";
   else return "refurbish";
 }
 
@@ -157,7 +157,8 @@ module.exports.saveBroken = async(req,res)=>{
   const broken = new Broken({color :{
     color : req.body.color,
     images : image,
-    thumbnail : thumbnail
+    thumbnail : thumbnail,
+    hexcode : req.body.hexcode
   }});
   const device = req.body.device;
   broken.device = device;
@@ -207,66 +208,33 @@ module.exports.createModel = async(req,res)=>{
     const images=req.files.map(f=>({url:f.path,filename:f.filename}));
 
     const version = new Model({
-  name: "Samsung Galaxy Watch 8",
-  brand: "Samsung",
-  type: "smartwatch",
+  name: "Sony WH-CH720N",
+  brand: "Sony",
+  type: "headphone",
 
   variants: [
-    { 
-      label: "40mm Bluetooth | 2GB RAM | 32GB Storage",
-      size: "40mm",
-      connectivity: "Bluetooth",
-      ram: "2GB",
-      storage: "32GB",
-      price: 32999 
-    },
-    { 
-      label: "44mm Bluetooth | 2GB RAM | 32GB Storage",
-      size: "44mm",
-      connectivity: "Bluetooth",
-      ram: "2GB",
-      storage: "32GB",
-      price: 35999 
-    },
-    { 
-      label: "40mm LTE | 2GB RAM | 32GB Storage",
-      size: "40mm",
-      connectivity: "LTE",
-      ram: "2GB",
-      storage: "32GB",
-      price: 36999 
-    },
-    { 
-      label: "44mm LTE | 2GB RAM | 32GB Storage",
-      size: "44mm",
-      connectivity: "LTE",
-      ram: "2GB",
-      storage: "32GB",
-      price: 39999 
+    {
+      label: "Bluetooth 5.2 | ANC | 35hr Battery",
+      connectivity: "Bluetooth 5.2",
+      battery_life: "Up to 35 Hours",
+      price: 9990
     }
   ],
 
   specifications: {
-    display: "Super AMOLED (1.34″ / 1.47″), 3000 nits peak, Sapphire Crystal",
-    processor: "Exynos W1000 (3nm)",
-    battery: "325 mAh (40mm) / 435 mAh (44mm)"
+    audio: "Sony Integrated Processor V1",
+    noise_cancellation: "Active Noise Cancelling",
+    battery: "Up to 35 hours",
+    charging: "USB-C Fast Charging"
   },
 
   colors: [
-    {
-      color: "Graphite",
-      thumbnail: images[0],
-      images: images.slice(1, 2)
-    },
-    {
-      color: "Silver",
-      thumbnail: images[2],
-      images: images.slice(3, 4)
-    }
+    { color: "Black", thumbnail: images[0], images: images.slice(1,2) },
+    { color: "Pink", thumbnail: images[2], images: images.slice(3,4) }
   ],
 
-  release_date: new Date("2025-07-25"),
-  base_recycle_value: 5000
+  release_date: new Date("2023-01-01"),
+  base_recycle_value: 1500
 });
 
   await version.save();

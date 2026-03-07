@@ -1,63 +1,143 @@
-<% layout('layouts/questions') %>
-<div class = "q1">
-<div class="card mb-3 d-flex flex-column flex-md-row w-100">
-  <div class="row g-0">
-    <div class="col-md-4">
-      <div id="carouselExampleIndicators" class="carousel slide carousel-dark" data-bs-ride="carousel">
-        <div class="carousel-indicators">
-          <button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to= "0" class="active" aria-current="true" aria-label= "Slide 1"></button>
-          <% for(let i in spe.colors[0].images){ let val = Number(i); %>
-            <button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to= "<%= val+1 %>" aria-label= "<%= 'Slide '+(val+2) %>"></button>
-          <% } %>
-        </div>
-        <div class="carousel-inner">
-            <div class="carousel-item active">
-            <img src= "<%=spe.colors[0].thumbnail.url %>" class="d-block w-100" >
-            </div>
-            <% for(let val of spe.colors[0].images){ %>
-              <div class="carousel-item">
-                <img src= "<%=val["url"] %>" class="d-block w-100">
-              </div>
-            <%}%>
-        </div>
-        <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide="prev">
-            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-            <span class="visually-hidden">Previous</span>
-        </button>
-        <button class="carousel-control-next" type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide="next">
-            <span class="carousel-control-next-icon" aria-hidden="true"></span>
-            <span class="visually-hidden">Next</span>
-        </button>
-        </div>
-    </div>
-    <div class="col-md-8">
-      <div class="card-body">
-        <p><%= spe.type %></p>
-        <p id ="brand"><%=spe.brand%></p>
-        <h5 class="card-title" id="name"><%= spe.name %></h5>
-        
-        <p class="card-text">
-            <span>Base Recycle Value: </span>
-            <span id = "price"><%=spe.base_recycle_value%></span>
-            
-            <p>
-              <label for="specs">Specification:</label>
-                <%for(let [key,value] of Object.entries(spe.specifications)){ %>
-                  <p><%=key%> : <%=value%></p>
-                <%}%>
-            </p>
-            <form id = "form1">    
-        </p>
-      </div>
-    </div>
+<% layout('layouts/specifications-boilerplate') %>
+<div id="cur-dot"></div>
+<div id="cur-ring"></div>
+
+<!-- TOP BAR -->
+<div class="topbar">
+  <div class="topbar-track">
+    <span class="topbar-item">Free Shipping Over ₹2,000</span>
+    <span class="topbar-item">1 Year Warranty Included</span>
+    <span class="topbar-item">Certified Refurbished Devices</span>
+    <span class="topbar-item">Easy EMI Essentials</span>
+    <span class="topbar-item">Expert Repair Services</span>
+    <span class="topbar-item">All Devices Available</span>
+    <span class="topbar-item">Free Shipping Over ₹2,000</span>
+    <span class="topbar-item">1 Year Warranty Included</span>
+    <span class="topbar-item">Certified Refurbished Devices</span>
+    <span class="topbar-item">Easy EMI Essentials</span>
+    <span class="topbar-item">Expert Repair Services</span>
+    <span class="topbar-item">All Devices Available</span>
   </div>
 </div>
-<button class = "next" data-slideno="1" type = "button">Proceed</button>
+
+<!-- NAVBAR -->
+<header class="v-navbar" id="navbar">
+  <a href="#" class="logo">Vend<span class="accent">r</span>ix</a>
+  <%- include('../partials/navbar.ejs') %>
+  <div class="nav-right">
+    <a href="#" class="nav-about">About Us</a>
+    <a href="#" class="nav-icon"><i class="fas fa-user"></i></a>
+    <a href="#" class="nav-icon" style="position:relative"><i class="fas fa-shopping-bag"></i><span class="nav-badge">3</span></a>
+    <a href="/recycle/<%=spe.type%>" class="nav-cta"><i class="fas fa-arrow-left"></i> Back</a>
+  </div>
+</header>
+
+<!-- BREADCRUMB -->
+<div class="breadcrumb-bar">
+  <a href="#">Home</a><span class="sep">›</span>
+  <a href="/recycle/<%=spe.type%>">Recycle</a><span class="sep">›</span>
+  <span class="cur"><%=spe.name%></span>
 </div>
 
+<main class="product-page">
 
-  <%- include("ques.ejs") %>
+  <!-- ══ LEFT: GALLERY PANEL ══ -->
+   <div class="gallery-panel" id="galleryPanel">
 
+  <!-- ══ BOOTSTRAP CAROUSEL ══ -->
+  <div id="productCarousel" class="carousel slide" data-bs-ride="false">
+
+    <!-- indicators -->
+    <div class="carousel-indicators" id="bsIndicators">
+      <button 
+        type="button" 
+        data-bs-target="#productCarousel" 
+        data-bs-slide-to="0" 
+        class="active"
+        aria-current="true"
+        aria-label="Slide 1">
+      </button>
+
+      <% for(let i in spe.colors[0].images){ 
+           let val = Number(i); %>
+
+        <button 
+          type="button" 
+          data-bs-target="#productCarousel" 
+          data-bs-slide-to="<%= val + 1 %>" 
+          aria-label="<%= 'Slide ' + (val + 2) %>">
+        </button>
+
+      <% } %>
+    </div>
+
+    <div class="carousel-inner" id="bsInner">
+
+      <div class="carousel-item active">
+        <img src="<%= spe.colors[0].thumbnail.url %>" class="d-block w-50 mx-auto">
+      </div>
+
+      <% for(let val of spe.colors[0].images){ %>
+        <div class="carousel-item">
+          <img src="<%= val.url %>" class="d-block w-50 mx-auto">
+        </div>
+      <% } %>
+
+    </div>
+
+    <button class="carousel-control-prev" type="button" data-bs-target="#productCarousel" data-bs-slide="prev">
+      <div class="v-arrow"><i class="fas fa-chevron-left"></i></div>
+      <span class="visually-hidden">Previous</span>
+    </button>
+
+    <button class="carousel-control-next" type="button" data-bs-target="#productCarousel" data-bs-slide="next">
+      <div class="v-arrow"><i class="fas fa-chevron-right"></i></div>
+      <span class="visually-hidden">Next</span>
+    </button>
+
+  </div>
+
+</div>
+
+  <div class="info-panel" id="infoPanel">
+
+    <div class="product-eyebrow reveal"><span class="eyebrow-line"></span><span class="eyebrow-tag"><%=spe.type%></span></div>
+    <div class="product-brand-label reveal"><%=spe.brand%></div>
+    <h1 class="product-title reveal"><%=spe.name%></h1>
+
+    <div class = "q1">
+    <div class="price-block reveal rd1">
+      <div class="price-label">Starting Price</div>
+      <div class="price-value" id="priceDisplay"><%=spe.base_recycle_value%></div>
+    </div>
+    <form id = "form1">
+    <div class="action-row reveal rd3" style="margin-top:-6px;">
+      <button type = "button" data-slideno="1" class="next btn-buy"><i class="fas fa-bolt"></i> Recycle Now</button>
+    </div>
+
+    <div class="divider"></div>
+
+    <div class="specs-section reveal">
+      <div class="specs-header" id="specsHeader">
+        <div class="specs-title">Full Specifications</div>
+        <div class="specs-toggle"><i class="fas fa-minus" id="specsToggleIcon"></i></div>
+      </div>
+      <div id="specsBody">
+        <%for(let [key,value] of Object.entries(spe.specifications)){%>
+        <div class="spec-row"><div class="spec-key"><%=key%></div><div class="spec-val"><%=value%>t</div></div>
+        <%}%>
+      </div>
+    </div>
+    </div>
+
+      <%- include("ques.ejs") %>
+
+  </div>
+
+</main>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+
+<script src = "/js/specification.js"></script>
 
 <script>
   document.getElementById("getvalue").addEventListener("click",function(){

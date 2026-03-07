@@ -17,21 +17,8 @@ const {isLoggedIn}=require('../middleware.js');
 router.post("/",upload.array('image'),models.createModel)
 
 //add isLoggedIn (removed for developing)
-router.get('/:intent/:device', async (req,res)=>{
-        var device = req.params.device;
-        var intent = req.params.intent;
-        var brand = req.query.brand;
-        var device = req.params.device;
-        var pr=0;
-       var psort=0;
-       var nsort = 0;
-       var br = [];
-        var filter = {};
-        if(brand) filter.brand = brand
-        if(device && device != "all") filter.type = device;
-        const allmod = await Model.find(filter);
-        console.log(filter);
-        res.render("sell/sell",{allmod,intent,device,pr,psort,nsort,br});
+router.get("/filters/:intent/:device",(req,res)=>{
+    res.redirect("/allmodels/"+req.params.intent+"/"+req.params.device);
 })
 
 router.get("/details/:id/:ctr/:intent/:color_key",async (req,res)=>{
@@ -45,9 +32,11 @@ router.get("/details/:id/:ctr/:intent/:color_key",async (req,res)=>{
     res.render("sell/product_spec",{spe,questions,intnt,i,color_key});
 })
 
-router.post("/filters/:device/:intent",async(req,res)=>{
+router.post("/filters/:intent/:device",async(req,res)=>{
     //brand, price,psort,nsort;
-    const br = Array.isArray(req.body.brand) ? req.body.brand : [req.body.brand];
+    let br = [];
+    if(req.body.brand)
+    br = Array.isArray(req.body.brand) ? req.body.brand : [req.body.brand];
     const pr = Number(req.body.price) || 0;
     const psort = Number(req.body.psort) || 0;
     const nsort = Number(req.body.nsort) || 0;
@@ -59,7 +48,7 @@ router.post("/filters/:device/:intent",async(req,res)=>{
 
     if(device && device != "all") match["type"] = device;
     if(pr) match["variants.0.price"] = {$lte : pr}
-    if(br && !br.includes("all")) match["brand"] = {$in : br};
+    if(br.length>0 && !br.includes("all")) match["brand"] = {$in : br};
     if(psort && (psort===1 || psort === -1)) sort["variants.0.price"] = psort;
     if(nsort) sort["name"] = nsort;
     console.log(pr);
@@ -73,6 +62,24 @@ router.post("/filters/:device/:intent",async(req,res)=>{
     }
 
     const allmod = await Model.aggregate(pipeline).collation({locale :"en",strength : 2});
-    res.render("sell/sell",{allmod,device,pr,psort,nsort,br,intent});
+    res.render("sell/sell",{allmod,device,pr,psort,nsort,br,intent,currentUrl:req.originalUrl});
+})
+router.get('/:intent/:device', async (req,res)=>{
+        var search = req.query.search;
+        var device = req.params.device;
+        var intent = req.params.intent;
+        var brand = req.query.brand;
+        var device = req.params.device;
+        var pr=0;
+       var psort=0;
+       var nsort = 0;
+       var br = [];
+        var filter = {};
+       if(search) filter.name = {$regex:"^"+search, $options:"i"};
+        if(brand) filter.brand = brand
+        if(device && device != "all") filter.type = device;
+        const allmod = await Model.find(filter);
+        console.log(filter);
+        res.render("sell/sell",{allmod,intent,device,pr,psort,nsort,br,currentUrl:req.originalUrl,search});
 })
 module.exports=router;

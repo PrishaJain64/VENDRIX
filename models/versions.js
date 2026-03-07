@@ -5,6 +5,7 @@ const variantSchema = new Schema({
     price : Number
 },{strict:false});
 const colorSchema = new Schema({
+    hexcode : String,
     color :String,
     images:[{
         url:String,
@@ -36,7 +37,7 @@ const modelSchema = new Schema({
         type:String,
         lowercase:true,
         trim:true,
-        enum:['laptop','phone','smartwatch','camera','headphone','earbuds','tablet'],
+        enum:['laptop','phone','smartwatch','camera','headphone','earbud','tablet'],
         required:true
     },
     variants : [variantSchema],

@@ -8,7 +8,7 @@
   <% for(let option of q.options){ %>
     <input type = "radio" name = 'issues[<%= q.question%>]' value = '<%= option.text %>'/><%= option.text %><br>
     <% } %>
-
+  <button type = "button" class = "prev" data-slideno = '<%= k%>' >previous</button>
   <button type = "button" class = "next" data-slideno = '<%= k%>' >next</button>
   </div>
       <% k++;j++} %>
@@ -19,6 +19,7 @@
   <% for(let option of questions[loc].options){ %>
     <input type = "checkbox" name = 'issues[<%= questions[loc].question%>]' value = '<%= option.text %>' /><%= option.text %><br>
     <% } %>
+  <button type = "button" class = "prev" data-slideno = '<%= k%>' >previous</button>
     <button type = "button" id="getvalue" class = "next" data-slideno = '<%= k %>' >Get value</button>
 </div>
 <div class = "questions q<%= k+1 %>">

@@ -7,7 +7,9 @@
     <input type = "radio" name = 'issues[<%= q.question%>]' value = '<%= option.text %>'/><%= option.text %><br>
     <% } %>
 
+  <button type = "button" class = "prev" data-slideno = '<%= k%>' >previous</button>
   <button type = "button" class = "next" data-slideno = '<%= k%>' >next</button>
+
   </div>
       <% k++;} %>
 <div class = "questions q<%= k%>">

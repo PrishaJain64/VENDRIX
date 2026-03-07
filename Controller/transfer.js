@@ -17,10 +17,8 @@ module.exports.Deployment = async()=>{
     const products = fixedproducts.map(item=>new Product({
         variant : {
             label : item.product_id.variants[item.product_variant].label,
-            storage : item.product_id.variants[item.product_variant].storage,
-            ram : item.product_id.variants[item.product_variant].ram,
             price :{
-                amount : item.product_id.variants[item.product_variant].price
+            amount : Math.round(item.product_id.variants[item.product_variant].price*0.9)
             }
         },
         brand : item.product_id.brand,
@@ -28,12 +26,10 @@ module.exports.Deployment = async()=>{
         name : item.product_id.name,
         release_date : item.product_id.release_date,
         color:{
+            hexcode : item.color.hexcode,
             color : item.color.color,
             images : item.product_id.colors.find(c => c.color === item.color.color)?.images || [],
             thumbnail : item.product_id.colors.find(c => c.color === item.color.color)?.thumbnail
-        },
-        price : {
-            amount : Math.round(item.product_id.variants[item.product_variant].price*0.9)
         },
         intent : item.intent,
         specifications: Object.fromEntries(Object.entries(item.product_id.specifications).map(([k, v]) => [k,v]))

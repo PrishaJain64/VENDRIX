@@ -14,7 +14,8 @@ const colorSchema = new Schema({
             filename:String
         },
         required:[true,"Thumbnail is required"]
-    }
+    },
+    hexcode:String
 });
 const repairSchema = new Schema({
     product_id : {

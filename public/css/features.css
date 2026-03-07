@@ -630,7 +630,6 @@ input[type="range"].price-slider::-webkit-slider-thumb:hover { transform: scale(
   animation: cardIn .4s ease both;
 }
 @keyframes cardIn { from { opacity:0; transform:translateY(16px); } to { opacity:1; transform:translateY(0); } }
-
 .buy-card:hover {
   transform: translateY(-5px); z-index: 3;
   border-color: rgba(255,98,0,0.28);

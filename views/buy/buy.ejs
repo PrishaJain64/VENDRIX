@@ -33,7 +33,7 @@ const products = [
 
 <!-- NAVBAR -->
 <header class="navbar" id="navbar">
-  <a href="vendrix.html" class="logo">Vend<span class="accent">r</span>ix</a>
+  <a href="#" class="logo">Vend<span class="accent">r</span>ix</a>
 
   <%- include('../partials/navbar.ejs') %>
   <div class="nav-right">
@@ -115,7 +115,7 @@ const products = [
       <div class="filter-opts visible" id="price-opts">
         <div class="price-display">
           <span>₹0</span>
-          <span id="priceVal">₹<%if(pr){%><%=pr%><%}else{%><%=250000%><%}%></span>
+          <span id="priceVal">₹<%if(pr){%><%=pr%><%}else{%><%=125000%><%}%></span>
         </div>
         <input name = "price" value = "<%if(pr){%><%=pr%><%}%>" type="range" class="price-slider" id="priceSlider" min="0" max="250000" step="1000">
       </div>
