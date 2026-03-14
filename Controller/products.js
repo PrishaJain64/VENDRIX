@@ -4,10 +4,12 @@ const {Broken} = require('../models/broken');
 const {Question} = require('../models/questions');
 const {Product} = require("../models/products");
 
-async function DateEvaluator (device){
-  const date = new Date();
-  date.setDate(date.getDate()+3 );
-  date.setHours(0,0,0,0);
+async function DateEvaluator (device, dt){
+  const sd = new Date();
+  sd.setDate(sd.getDate()+3 );
+  sd.setHours(0,0,0,0);
+
+  const date = dt || sd;
 
   const beginningCount = await Broken.countDocuments({device,scheduled_time: date});
 
@@ -149,7 +151,77 @@ module.exports.findTotalrecycle = async(req,res)=>{
   const fp = actual_price+total;
   res.json({deductions:fp});
 }
+module.exports.Rental_Repair = async()=>{
+  try{
+      var now = new Date();
+      now.setHours(0,0,0,0);
+  
+      var yest = new Date();
+      yest.setHours(0,0,0,0);
+      yest.setDate(yest.getDate()-3);
 
+      await Product.updateMany(
+      { "duration.endDate": yest },
+      [{$set: {unavailable: {$subtract: [
+                "$unavailable",
+                {$size: {$filter: {input: "$duration",as: "d",cond: { $eq: ["$$d.endDate", yest] }}}}]}}}],{
+                  updatePipeline:true
+
+                });
+
+      const repairproducts = await Product.aggregate([
+        {$match : {"duration.endDate" : yest}},
+        {$unwind:"$duration"},
+        {$match : {"duration.endDate" : yest}}
+      ]) || [];
+
+      await Product.updateMany(
+      { "duration.endDate": yest },
+      {
+        $pull: {
+          duration: { endDate: yest }
+        }
+      }
+    );
+    
+    const unique_names = [...new Set(repairproducts.map(i=>i.name))];
+    const models = await Model.find({name : {$in:unique_names}}).lean();
+
+    const modelMap = {};
+    models.forEach(m => {
+      modelMap[m.name] = m;
+    });
+    repairproducts.forEach(async item => {
+
+    const model = modelMap[item.name];
+
+    const variantIndex = model.variants.findIndex(
+      v => v.label === item.variant.label
+    );
+
+    const fin = new Broken({
+      product_id : model._id,
+      product_variant : variantIndex,
+      device : item.device,
+      color: {
+        color: item.color.color,
+        images: model.colors.find(c => c.color === item.color.color)?.images || [],
+        thumbnail: model.colors.find(c => c.color === item.color.color)?.thumbnail,
+        hexcode: item.color.hexcode
+      },
+      issues : [],
+      amount : 0,
+      intent: "rent",
+      scheduled_time : await DateEvaluator(item.device,yest)
+    });
+
+    console.log(fin);
+    await fin.save();
+
+});}catch(err){
+  console.log(err);
+}
+}
 module.exports.saveBroken = async(req,res)=>{
   const images=(req.files||[]).map(f=>({url:f.path,filename:f.filename}));
   const thumbnail=images[0] || null;
@@ -199,7 +271,18 @@ module.exports.rental_duration = async(req,res)=>{
 
   const prod = await Product.findOneAndUpdate(
     { name: product_name, "color.color" : clr, "variant.label" : lbl },  
-    { $set: { available: false, "duration.startDate" : startdate, "duration.endDate":enddate } }, 
+    {
+    $inc: {
+      available: -1,
+      unavailable: 1
+    },
+    $push: {
+      duration: {
+        startDate: startdate,
+        endDate: enddate
+      }
+    }
+  },
     { new: true } 
   );
   res.json({redirect : "/rent/phone"});

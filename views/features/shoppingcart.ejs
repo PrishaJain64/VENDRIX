@@ -1,0 +1,136 @@
+<%layout("layouts/shoppingcart-boilerplate")%>
+<header>
+        <div class="header-content">
+            <div class="logo">VEND<span class="logo-r">R</span>IX</div>
+            <div class="header-title">SHOPPING CART</div>
+        </div>
+    </header>
+
+    <main class = "cart-container">
+    <div class="cart-items" id="cartItems">
+        <% var amount = [];if(models.length == 0 && products.length==0){ amount.push([0,0]) %>
+            <div class="empty-cart"></div>
+            <div class="empty-cart-icon" style="animation: pop 0.6s ease-out;">🛒</div>
+            <div class="empty-cart-text">Your cart is empty</div>
+            <div class="empty-cart-subtext">Start adding some refurbished tech to get started</div>
+            <button class="checkout-btn" style="margin: 0 auto;">CONTINUE SHOPPING</button>
+        <% } else {%>
+            <% for(let data of models){
+                amount.push([data.quantity, data.details.variants[data.variant_no].price])
+                 %>
+                
+                <!-- Wrap each cart item in a container -->
+                <div class="cart-item">
+                    <!-- Item Image -->
+                    <a href="/buydetails/<%=data.details._id%>/<%=data.variant_no%>/<%=data.color_no%>"><div class="item-image">
+                        <img src="<%= data.details.colors[data.color_no].thumbnail.url %>" alt="<%= data.details.name %>">
+                    </div></a>
+
+                    <!-- Item Details -->
+                    <div class="item-details">
+                        <div class="item-name"><%= data.details.name %></div>
+                        <div class = "item-meta">
+                            <span><%=data.details.variants[data.variant_no].label%></span>
+                        </div>
+                        <div class="item-meta">
+                            <span><%= data.details.brand %></span>
+                            <span><%= data.details.type %></span>
+                        </div>
+                        <div class = "item-meta">
+                            <span><%=data.intent%></span>
+                        </div>
+                        <div class="item-controls">
+                            <form method = "post">
+                            <input type="hidden" name="quantity" class="hidden-qty" value="<%=data.quantity&&data.quantity>1?data.quantity-1:1%>">
+                            <input type="hidden" name="returnTo" value="<%=currentUrl%>">
+                            <button formaction="/vendrix/cart/<%=data.intent%>/<%=data.details._id%>/<%=data.variant_no%>/<%=data.color_no%>" class="qty-btn minus" <%=Number(data.quantity)<=1?"disabled":""%>><i class="fas fa-minus"></i></button>
+                            </form>
+                            <div class="qty-display qty-val" id="qtyVal"><%= data.quantity %></div>
+
+                            <form method = "post">
+                            <input type="hidden" name="quantity" class="hidden-qty" value="<%=data.quantity?data.quantity+1:1%>">
+                            <input type="hidden" name="returnTo" value="<%=currentUrl%>">
+                            <button formaction="/vendrix/cart/<%=data.intent%>/<%=data.details._id%>/<%=data.variant_no%>/<%=data.color_no%>" class="qty-btn plus" ><i class="fa fa-plus"></i></button>
+                            </form>
+
+                        </div>
+                    </div>
+
+                    <!-- Price & Remove Button -->
+                    <div class="item-price-section">
+                        <div class="item-price">₹<%= data.details.variants[data.variant_no].price %></div>
+                        <a href="/vendrix/delete/<%=data.intent%>/<%=data.details._id%>/<%=data.variant_no%>/<%=data.color_no%>" class="remove-btn">REMOVE</a>
+                    </div>
+                </div>
+            <% }for(let data of products){ 
+                amount.push([data.quantity, data.details.variant.price.amount])
+                %>
+                <!-- Wrap each cart item in a container -->
+                <div class="cart-item">
+                    <!-- Item Image -->
+                    <a href="/<%=data.intent%>/details/<%=data.details.name%>/<%=data.details.variant.label%>/<%=data.details.color.color%>"><div class="item-image">
+                        <img src="<%= data.details.color.thumbnail.url %>" alt="<%= data.details.name %>">
+                    </div></a>
+
+                    <!-- Item Details -->
+                    <div class="item-details">
+                        <div class="item-name"><%= data.details.name %></div>
+                        <div class = "item-meta">
+                            <span><%=data.details.variant.label%></span>
+                        </div>
+                        <div class="item-meta">
+                            <span><%= data.details.brand %></span>
+                            <span><%= data.details.type %></span>
+                        </div>
+                        <div class = "item-meta">
+                            <span><%=data.intent%></span>
+                        </div>
+                        <div class="item-controls">
+                            <form method = "post">
+                            <input type="hidden" name="quantity" class="hidden-qty" value="<%=data.quantity&&data.quantity>1?data.quantity-1:1%>">
+                            <input type="hidden" name="returnTo" value="<%=currentUrl%>">
+                            <button formaction="/vendrix/cart/<%=data.intent%>/<%=data.details._id%>/0/0" class="qty-btn minus" <%=Number(data.quantity)<=1?"disabled":""%>><i class="fas fa-minus" style="font-size:11px"></i></button>
+                            </form>
+                            <div class="qty-display qty-val" id="qtyVal"><%= data.quantity?data.quantity:1 %></div>
+
+                            <form method = "post">
+                            <input type="hidden" name="quantity" class="hidden-qty" value="<%=data.quantity?data.quantity+1:1%>">
+                            <input type="hidden" name="returnTo" value="<%=currentUrl%>">
+                            <%if(data.intent == "refurbish"){%>
+                            <button formaction="/vendrix/cart/<%=data.intent%>/<%=data.details._id%>/0/0" class="qty-btn plus" <%=Number(data.quantity)>=Number(data.details.stock)?"disabled":""%>><i class="fas fa-plus" style="font-size:11px"></i></button>
+                            <%}else {%>
+                            <button formaction="/vendrix/cart/<%=data.intent%>/<%=data.details._id%>/0/0" class="qty-btn plus" <%=Number(data.quantity)>=Number(data.details.available)?"disabled":""%>><i class="fas fa-plus" style="font-size:11px"></i></button>
+                            <%}%>
+                            </form>
+                        </div>
+                    </div>
+
+                    <!-- Price & Remove Button -->
+                    <div class="item-price-section">
+                        <div class="item-price">₹<%= data.details.variant.price.amount %></div>
+                        <a href="/vendrix/delete/<%=data.intent%>/<%=data.details._id%>/0/0" class="remove-btn">REMOVE</a>
+                        
+                    </div>
+                </div>
+            <% } %>
+        <% } %>
+    </div>
+    <aside class="order-summary">
+        <div class="summary-card">
+            <div class="summary-title">Order Summary</div>
+            <%var total =0; for(let [qty,price] of amount){ total+= qty*price%>
+            <div class="summary-row">
+                <span>₹<%=qty*price%></span>
+                <!--<span class="summary-value">₹0</span>-->
+            </div>
+            <%}%>
+            <div class="summary-row total">
+                <span>Total</span>
+                <span class="summary-value">₹<%=total%></span>
+            </div>
+            <button class="checkout-btn">Checkout</button>
+        </div>
+    </aside>
+    </main>
+
+<script src="/js/shoppingcart.js"></script>

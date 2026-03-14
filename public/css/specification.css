@@ -241,3 +241,9 @@ body.hovering #cur-ring{width:54px;height:54px;border-color:rgba(255,98,0,0.2)}
   body{cursor:auto}
   #cur-dot,#cur-ring{display:none}
 }
+.qty-btn:disabled {
+  background: #444040;
+  color: #000000;
+  cursor: not-allowed;
+  opacity: 50%;
+}

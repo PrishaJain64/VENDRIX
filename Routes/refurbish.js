@@ -13,28 +13,60 @@ router.get("/details/:name/:label/:color",async (req,res)=>{
     const color = req.params.color;
 
     const [result] = await Product.aggregate([
-  {$match: { name: prod_name,intent:"refurbish"}},
-  {$group: {
-      _id: "$name",
-      variants: { $addToSet: "$variant" },
-      colors: { $addToSet: "$color.color" },
-      hexcodes : {$addToSet : "$color.hexcode"},
-      selectedDoc: {$first: {
-    $cond: [{
-        $and: [
-          { $eq: ["$color.color", color] },
-          { $eq: ["$variant.label",label] }]},"$$ROOT",null]}}}},
   {
-    $project: {
-      _id: 0,
-      name: "$_id",
-      variants: 1,
-      colors: 1,
-      hexcodes:1,
-      selectedDoc: 1
+    $match: { name: prod_name,intent:"refurbish" }
+  },
+  {
+    $facet: {
+      selectedDoc: [
+        {
+          $match: {
+            "variant.label": label,
+          }
+        },
+        {
+          $addFields: {
+            priority: {
+              $cond: [
+                { $eq: ["$color.color", color] },
+                1,
+                2
+              ]
+            }
+          }
+        },
+        { $sort: { priority: 1 } },
+        { $limit: 1 }
+      ],
+      colors: [
+        {
+          $match: { "variant.label": label }
+        },
+        {
+          $group: {
+            _id: null,
+            colors: { $addToSet: {color: "$color.color",hexcode:"$color.hexcode"} },
+          }
+        }
+      ],
+      labels: [
+        {
+          $group: {
+            _id: null,
+            labels: { $addToSet: "$variant.label" }
+          }
+        }
+      ]
     }
   }
 ]);
+  if(req.session.shoppingCart){
+        var cart = req.session.shoppingCart.find(c=>c.product_id === result.selectedDoc[0]._id.toString());
+        if(cart){
+            result.quantity = cart.quantity
+        }
+    }
+    console.log(result);
     res.render("refurbish/product_spec", {result,currentUrl:req.originalUrl});
 })
 
@@ -90,6 +122,14 @@ router.get("/:device",async (req,res)=>{
             {$replaceRoot : {newRoot : "$doc"}},
             {$sort : {name : 1}}
         ]);
+         if(req.session.shoppingCart){
+        allmod.forEach(product=>{
+            var cart = req.session.shoppingCart.find(c=>c.product_id === product._id.toString());
+            if(cart){
+                product.quantity = cart.quantity;
+            }
+            console.log(product);
+        })}
         res.render("refurbish/refurbish",{allmod,device,pr,psort,nsort,br,currentUrl:req.originalUrl,search});
     })
 module.exports=router;

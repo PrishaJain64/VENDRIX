@@ -11,37 +11,29 @@ const userSchema=new Schema({
         required:[true,"Email is Required"]
     },
     shoppingCart : [{
-        intent : {
-            type:String,
-            enum :['buy','rent','refurbish']
+        intent :{
+            type :String,
+            enum : ['buy','rent','refurbish']
         },
-        product_model : {
-            type:String,
+        product_model :{
+            type :String,
             enum : ['Model','Product']
         },
         product_id : {
-            type :mongoose.Schema.Types.ObjectId,
-            refPath : 'shoppingCart.product_model'
-        },
-        variant_id : {
             type : mongoose.Schema.Types.ObjectId,
-            ref : 'Model',
-            required : function(){
-                if(this.intent === 'buy') return true; //this only works with required  
-                else return false;
-            }
+            refpath : 'shoppingCart.product_model'
         },
-        color_id : {
-            type : mongoose.Schema.Types.ObjectId,
-            ref : 'Model',
-            required : function(){
-                if(this.intent === 'buy') return true;
-                else return false;
-            }
+        quantity : {
+            type : Number,
+            default : 1
         },
-        quantity:{
+        variant_no :{
             type:Number,
-            default:1
+            required : function(){if(this.product_model == "Model")return true;else return false}
+        },
+        color_no :{
+            type:Number,
+            required : function(){if(this.product_model == "Model")return true;else return false}
         }
     }]
 });

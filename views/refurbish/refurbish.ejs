@@ -43,7 +43,7 @@ const products = [
       <i class="fas fa-shopping-bag"></i>
       <span class="nav-badge">3</span>
     </a>
-    <a href="/homepage" class="nav-cta">
+    <a href="/" class="nav-cta">
       <i class="fas fa-home"></i> Home
     </a>
   </div>
@@ -51,7 +51,7 @@ const products = [
 
 <!-- BREADCRUMB -->
 <div class="breadcrumb">
-  <a href="/homepage">Home</a>
+  <a href="/">Home</a>
   <span class="sep">›</span>
   <span class="cur">Refurbish</span>
 </div>
@@ -211,7 +211,9 @@ const products = [
           <span class="buy-price"><%=p.variant.price.amount%></span>
           <form method = "post">
         <input type="hidden" name="returnTo" value="<%=currentUrl%>">
-          <button formaction="/vendrix/cart/refurbish/<%=p._id%>/0/0" class="add-cart-btn"><i class="fas fa-plus"></i> Add</button>
+        <input type="hidden" name="quantity" value="<%=p.quantity?p.quantity+1:1%>">
+          <p class="buy-brand">Qty : <%=p.quantity?p.quantity:0%></p>
+          <button formaction="/vendrix/cart/refurbish/<%=p._id%>/0/0" class="add-cart-btn" <%=Number(p.quantity)>=Number(p.stock)?"disabled":""%>><i class="fas fa-plus"></i> Add</button>
           </form>
         </div>
         <a href="/refurbish/details/<%=p.name%>/<%=p.variant.label%>/<%=p.color.color%>" class="buy-card-cta"><i class="fas fa-eye"></i> View Details</a>

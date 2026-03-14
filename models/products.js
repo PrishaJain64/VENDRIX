@@ -60,23 +60,23 @@ const productSchema=new Schema({
         enum : ["rent","refurbish","repair"],
         required : true
     },
-    available : {
-        type : Boolean,
-        default:true,
-        required : function(){
-            return this.intent === "rent"
-        }
-    },
-    duration : {
-        type : {
-            startDate : Date,
-            endDate : Date
-        },
-        required : function (){
-            return this.intent === "rent" && this.available === false
-        }
-    },
+    duration : [{
+        startDate: Date,
+        endDate : Date
+    }],
     color: colorSchema,
+    stock : {
+        type : Number,
+        required : function(){
+            return this.intent=== "refurbish"
+        }
+    },
+    available : {
+        type : Number,
+    },
+    unavailable : {
+        type : Number,
+    },
     release_date : Date
 });
 

@@ -34,7 +34,7 @@
 
 <!-- BREADCRUMB -->
 <div class="breadcrumb-bar">
-  <a href="#">Home</a><span class="sep">›</span>
+  <a href="/">Home</a><span class="sep">›</span>
   <a href="/buy/<%=spe.type%>">Buy</a><span class="sep">›</span>
   <span class="cur"><%=spe.name%></span>
 </div>
@@ -129,7 +129,7 @@
     <div class="option-group reveal rd2" style="margin-bottom:32px;">
       <div class="option-label">Colour — <span class="chosen" id="selectedColor"><%=spe.colors[color_key].color%></span></div>
       <div class="color-swatches">
-        <%for(let [k,md] of spe.colors.entries()){ console.log(md.hexcode)%>
+        <%for(let [k,md] of spe.colors.entries()){%>
             <input type = "submit" class="color-swatch <%= k == color_key ? 'selected' : '' %>" style ="background: <%=md.hexcode%>" formaction="/buydetails/<%= spe._id %>/<%= i %>/<%=k%>" value=""/>
         <%}%>
       </div>
@@ -137,9 +137,18 @@
     </form>
 
     <form method = "post">
+        <input type="hidden" name="quantity" class="hidden-qty" value="<%=spe.quantity?spe.quantity:1%>">
         <input type="hidden" name="returnTo" value="<%=currentUrl%>">
+        <div class="qty-row reveal rd3">
+      <span class="qty-label">Qty</span>
+      <div class="qty-ctrl">
+        <button type="button" class="qty-btn minus"><i class="fas fa-minus" style="font-size:11px"></i></button>
+        <div class="qty-val" id="qtyVal"><%=spe.quantity?spe.quantity:1%></div>
+        <button type="button" class="qty-btn plus"><i class="fas fa-plus" style="font-size:11px"></i></button>
+      </div>
+    </div>
     <div class="action-row reveal rd3">
-      <button formaction="/vendrix/cart/buy/<%=spe._id%>/<%=spe.variants[0]._id%>/<%=spe.colors[0]._id%>" class="btn-primary">
+      <button formaction="/vendrix/cart/buy/<%=spe._id%>/<%=i%>/<%=color_key%>" class="btn-primary">
         <i class="fas fa-shopping-bag"></i><span id="cartBtnText">Add to Cart</span>
       </button>
     </div>
@@ -172,5 +181,6 @@
 
 </main>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
-
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
 <script src = "/js/specification.js"></script>
+<script src = "/js/counter.js"></script>
