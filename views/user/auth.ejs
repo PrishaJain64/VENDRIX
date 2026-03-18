@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Vendrix — Access</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Syne:wght@400;500;600;700;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<link rel="stylesheet" href="/css/auth.css">
+</head>
+<body>
+
+<div id="cd"></div><div id="cr"></div>
+
+<!-- TOAST -->
+<div class="toast" id="toast">
+  <i class="tic fas fa-circle-info"></i>
+  <span class="tmsg" id="tmsg"></span>
+</div>
+
+<!-- SUCCESS -->
+<div class="sov" id="sov">
+  <div class="sbox">
+    <div class="sico"><i class="fas fa-check"></i></div>
+    <div class="stitle" id="stitle">Done!</div>
+    <p class="ssub" id="ssub"></p>
+    <button class="sbtn" onclick="redirection()">Continue</button>
+  </div>
+</div>
+
+<!-- FORGOT PASSWORD MODAL -->
+<div class="fp-ov" id="fp-ov" onclick="fpBgClose(event)">
+  <div class="fp-box">
+    <button class="fp-close" onclick="closeFp()"><i class="fas fa-xmark"></i></button>
+
+    <!-- Step indicator -->
+    <div class="fp-steps">
+      <div class="fp-step-dot act" id="fsd1"></div>
+      <div class="fp-step-line" id="fsl1"></div>
+      <div class="fp-step-dot" id="fsd2"></div>
+      <div class="fp-step-line" id="fsl2"></div>
+      <div class="fp-step-dot" id="fsd3"></div>
+    </div>
+
+    <!-- STEP 1: Send OTP -->
+    <div class="fp-step act" id="fps1">
+      <div class="fp-ico"><i class="fas fa-key"></i></div>
+      <div class="fp-title">Reset Password</div>
+      <p class="fp-sub">We'll send a 6-digit OTP to your registered email address.</p>
+      <div class="fp-fld">
+        <label class="fp-lbl">Sending OTP to</label>
+        <div class="fp-em-badge"><i class="fas fa-envelope"></i><span id="fp-em-show"></span></div>
+      </div>
+      <button class="fp-btn" id="fp-send-btn" onclick="fpSendOtp()">
+        <span class="bl"><i class="fas fa-paper-plane"></i> &nbsp;Send OTP</span>
+      </button>
+    </div>
+
+    <!-- STEP 2: Enter OTP -->
+    <div class="fp-step" id="fps2">
+      <button class="fp-back" onclick="fpGoStep(1)"><i class="fas fa-arrow-left"></i> Back</button>
+      <div class="fp-ico"><i class="fas fa-shield-halved"></i></div>
+      <div class="fp-title">Enter OTP</div>
+      <p class="fp-sub">Enter the 6-digit code sent to <strong id="fp-em-show2" style="color:var(--og)"></strong></p>
+      <label class="fp-lbl">6-digit OTP</label>
+      <input class="otp-single" type="number" id="otp-single" placeholder="······" maxlength="6" oninput="otpSingleInput(this)" autocomplete="one-time-code">
+      <div class="otp-hint" id="otp-hint"></div>
+      <div class="resend-row">Didn't receive it? <a href="#" onclick="fpResend();return false">Resend OTP</a></div>
+      <button class="fp-btn" onclick="fpVerifyOtp()">
+        <span class="bl">Verify OTP <i class="fas fa-arrow-right"></i></span>
+      </button>
+    </div>
+
+    <!-- STEP 3: New Password -->
+    <div class="fp-step" id="fps3">
+      <button class="fp-back" onclick="fpGoStep(2)"><i class="fas fa-arrow-left"></i> Back</button>
+      <div class="fp-ico"><i class="fas fa-lock"></i></div>
+      <div class="fp-title">New Password</div>
+      <p class="fp-sub">Choose a strong new password for your account.</p>
+      <div class="fp-fld">
+        <label class="fp-lbl">New Password <span style="color:var(--og)">*</span></label>
+        <div class="fp-iw"><i class="ic fas fa-lock"></i><input type="password" id="fp-np" class="fp-inp" placeholder="Min. 8 characters"><button type="button" class="fp-eye" onclick="tpwFp('fp-np',this)"><i class="fas fa-eye"></i></button></div>
+        <div class="fp-str-bars"><div class="sb" id="fpb1"></div><div class="sb" id="fpb2"></div><div class="sb" id="fpb3"></div><div class="sb" id="fpb4"></div></div>
+        <div class="fp-hint" id="fp-np-hint"></div>
+      </div>
+      <div class="fp-fld">
+        <label class="fp-lbl">Confirm Password <span style="color:var(--og)">*</span></label>
+        <div class="fp-iw"><i class="ic fas fa-lock"></i><input type="password" id="fp-cp" class="fp-inp" placeholder="Re-enter password"><button type="button" class="fp-eye" onclick="tpwFp('fp-cp',this)"><i class="fas fa-eye"></i></button></div>
+        <div class="fp-hint" id="fp-cp-hint"></div>
+      </div>
+      <button class="fp-btn" id="fp-reset-btn" onclick="fpResetPw()">
+        <span class="bl">Reset Password <i class="fas fa-arrow-right"></i></span>
+      </button>
+    </div>
+
+  </div>
+</div>
+
+<!-- SCENE -->
+<div class="scene signup" id="scene">
+
+  <!-- ══ ORANGE SLAB ══ -->
+  <div class="og-slab">
+    <div class="og-grid"></div>
+    <div class="og-inner" id="og-inner">
+
+      <!-- SIGNUP MODE: signup form on orange (left) -->
+      <div class="panel-content" id="og-signup">
+        <div class="og-tag">Create Account</div>
+        <div class="og-ey">New here</div>
+        <div class="og-t">Sign Up</div>
+        <p class="og-s">Join thousands buying and selling certified refurbished tech.</p>
+        <form id="fsup" onsubmit="doSignup(event)" novalidate>
+          <div class="of-r2">
+            <div class="of-fld">
+              <label class="of-lbl" for="sfn">First <span class="req">*</span></label>
+              <div class="of-iw"><i class="ic fas fa-user"></i><input name = "firstname" type="text" id="sfn" class="of-inp" placeholder="Priya" autocomplete="given-name"></div>
+            </div>
+            <div class="of-fld">
+              <label class="of-lbl" for="sln">Last <span class="req">*</span></label>
+              <div class="of-iw"><i class="ic fas fa-user"></i><input name="lastname" type="text" id="sln" class="of-inp" placeholder="Sharma" autocomplete="family-name"></div>
+            </div>
+          </div>
+          <div class="of-fld">
+            <label class="of-lbl" for="sem">Email <span class="req">*</span></label>
+            <div class="of-iw"><i class="ic fas fa-envelope"></i><input name="email" type="email" id="sem" class="of-inp" placeholder="arjun@example.com" autocomplete="email"></div>
+            <div class="of-hint" id="hse"></div>
+          </div>
+          <div class="of-fld">
+            <label class="of-lbl" for="spw">Password <span class="req">*</span></label>
+            <div class="of-iw"><i class="ic fas fa-lock"></i><input name="password" type="password" id="spw" class="of-inp" placeholder="Min. 8 characters" autocomplete="new-password"><button type="button" class="of-eye" onclick="tpw('spw',this)"><i class="fas fa-eye"></i></button></div>
+            <div class="str-bars"><div class="sb" id="b1"></div><div class="sb" id="b2"></div><div class="sb" id="b3"></div><div class="sb" id="b4"></div></div>
+            <div class="str-lbl" id="slbl">Enter a password</div>
+          </div>
+          <div class="of-ck">
+            <input type="checkbox" id="stc">
+            <label class="of-ck-l" for="stc">I agree to the <a href="#">Terms & Conditions</a> and <a href="#">Privacy Policy</a></label>
+          </div>
+          <button type="submit" class="og-btn" id="bsub">
+            <span class="bl">Create Account</span>
+            <i class="fas fa-arrow-right ar bl"></i>
+          </button>
+        </form>
+        <p class="og-sw">Already have an account? <a href="#" onclick="setMode('login');return false">Log In →</a></p>
+      </div>
+
+      <!-- LOGIN MODE: login form on orange (right) -->
+      <div id="og-login" style="display:none">
+        <div class="panel-content">
+          <div class="og-tag">Welcome Back</div>
+          <div class="og-ey">Sign In</div>
+          <div class="og-t">Log In</div>
+          <p class="og-s">Access your orders, wishlist and account settings.</p>
+          <form id="flg" onsubmit="doLogin(event)" novalidate>
+            <div class="of-fld">
+              <label class="of-lbl" for="lem">Email <span class="req">*</span></label>
+              <div class="of-iw"><i class="ic fas fa-envelope"></i><input name="email" type="email" id="lem" class="of-inp" placeholder="priya@example.com"  autocomplete="email"></div>
+              <div class="of-hint" id="hle"></div>
+            </div>
+            <div class="of-fld">
+              <label class="of-lbl" for="lpw">Password <span class="req">*</span></label>
+              <div class="of-iw"><i class="ic fas fa-lock"></i><input name="password" type="password" id="lpw" class="of-inp" placeholder="Your password" autocomplete="current-password"><button type="button" class="of-eye" onclick="tpw('lpw',this)"><i class="fas fa-eye"></i></button></div>
+            </div>
+            <div class="rfrow-og">
+              <!-- <div style="display:flex;align-items:center;gap:9px">
+                <input type="checkbox" id="lrm" style="width:15px;height:15px;accent-color:rgba(0,0,0,.8);cursor:none">
+                <label class="ck-l-og" for="lrm">Remember me</label>
+              </div> -->
+              <a class="forgot-og" href="#" onclick="doForgot();return false">Forgot password?</a>
+            </div>
+            <button type="submit" class="og-btn" id="blg">
+              <span class="bl">Log In</span>
+              <i class="fas fa-arrow-right ar bl"></i>
+            </button>
+          </form>
+          <p class="og-sw">New to Vendrix? <a href="#" onclick="setMode('signup');return false">Create an account →</a></p>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ══ DARK SLAB ══ -->
+  <div class="dk-slab">
+    <div class="dk-inner" id="dk-inner">
+
+      <!-- SIGNUP MODE: branding on dark (right) — big logo, no pill -->
+      <div id="dk-signup">
+        <div class="panel-content">
+          <span class="logo-big">VEND<span class="r">R</span>IX</span>
+          <span class="logo-sub">Refurbished Tech Marketplace</span>
+          <div class="dk-info-h">ALREADY<br>A MEMBER?</div>
+          <p class="dk-info-p">Sign in to access your orders, wishlist and account — it takes less than 10 seconds.</p>
+          <button class="dk-pill" id="login" onclick="setMode('login')">
+            <i class="fas fa-arrow-right-to-bracket"></i> Log In Instead <i class="fas fa-arrow-right ar"></i>
+          </button>
+        </div>
+      </div>
+
+      <!-- LOGIN MODE: branding on dark (left) — big logo, no pill -->
+      <div id="dk-login" style="display:none">
+        <div class="panel-content">
+          <span class="logo-big">VEND<span class="r">R</span>IX</span>
+          <span class="logo-sub">Refurbished Tech Marketplace</span>
+          <div class="dk-info-h">NEW<br>AROUND<br>HERE?</div>
+          <p class="dk-info-p">Join 2 lakh+ users buying certified refurbished devices and selling old gadgets at the best price.</p>
+          <button class="dk-pill" onclick="setMode('signup')">
+            <i class="fas fa-user-plus"></i> Create Account <i class="fas fa-arrow-right ar"></i>
+          </button>
+          <div class="dk-trust">
+            <div class="dk-trust-item"><i class="fas fa-shield-alt"></i><div><div class="dk-trust-title">1-Year Warranty</div><div class="dk-trust-sub">On all certified devices</div></div></div>
+            <div class="dk-trust-item"><i class="fas fa-award"></i><div><div class="dk-trust-title">Certified Refurbished</div><div class="dk-trust-sub">Thoroughly tested & graded</div></div></div>
+            <div class="dk-trust-item"><i class="fas fa-undo"></i><div><div class="dk-trust-title">10-Day Returns</div><div class="dk-trust-sub">No questions asked</div></div></div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+</div>
+<script src="/js/auth.js"></script>
+<script>
+  const type = "<%=type%>";
+  console.log(type);
+  setMode(type);
+</script>
+</body>
+</html> 

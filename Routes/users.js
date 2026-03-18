@@ -10,6 +10,9 @@ const { Model } = require('../models/versions');
 const { Product } = require('../models/products');
 const {Types} = require('mongoose');
 
+const multer = require('multer');
+const upload = multer();
+
 async function preventDuplicatesCart(req,cart){
     let existingItem;
     if(cart.product_model == "Model")
@@ -25,7 +28,7 @@ async function preventDuplicatesCart(req,cart){
     }
 }
 
-function createCart(id,intent,variant_no,color_no,qty){
+function createCart(id,intent,variant_no,color_no,qty,startdate,enddate){
     const cart = {};
     cart["product_id"] = id;
     cart["intent"] = intent;
@@ -36,6 +39,11 @@ function createCart(id,intent,variant_no,color_no,qty){
         cart["color_no"] = Number(color_no);
     }else{
         cart["product_model"] = "Product";
+        if(intent == "rent"){
+            cart.duration = {};
+            cart["duration"]["startDate"] = startdate;
+            cart["duration"]["endDate"] = enddate;
+        }
     }
     return cart;
 };
@@ -49,8 +57,23 @@ function storeReturnTo(req,res,next){
 function userForShoppingCart(req,res,next){
     console.log(req.body);
     if(!req.isAuthenticated()){
+        let startdate = new Date(req.body.startdate);
+        if (isNaN(startdate)) {
+            startdate = new Date();
+            startdate.setDate(startdate.getDate() + 3);
+        }
+        startdate.setHours(0,0,0,0);
+
+        let enddate = new Date(req.body.enddate);
+        if (isNaN(enddate)) {
+            enddate = new Date();
+            enddate.setDate(enddate.getDate() + 10);
+        }
+        enddate.setHours(0,0,0,0);
+
         if(!req.session.shoppingCart) req.session.shoppingCart = [];
-        var cart = createCart(req.params.id,req.params.intent,req.params.variant_no,req.params.color_no,Number(req.body.quantity));
+        console.log(startdate,enddate);
+        var cart = createCart(req.params.id,req.params.intent,req.params.variant_no,req.params.color_no,Number(req.body.quantity),startdate,enddate);
 
         if(req.params.intent == "buy")
         var existingItem = req.session.shoppingCart.find(item => item.product_id===cart.product_id && item.variant_no==cart.variant_no&& item.color_no==cart.color_no);
@@ -67,17 +90,25 @@ function userForShoppingCart(req,res,next){
     }
     else{
         req.session.backUrl = req.body.returnTo;
-        res.redirect('/vendrix/cart/'+req.params.intent+'/'+req.params.id+'/'+req.params.variant_no+'/'+req.params.color_no+"?quantity="+req.body.quantity);
+        res.redirect('/vendrix/cart/'+req.params.intent+'/'+req.params.id+'/'+req.params.variant_no+'/'+req.params.color_no+"?quantity="+req.body.quantity+"&startdate="+req.body.startdate+"&enddate="+req.body.enddate);
     }
 }
 
 router.get('/register',(req,res)=>{
-    res.render('user/register')
+    res.render('user/auth',{type:"signup"})
 })
 
-router.post('/register',storeReturnTo,async (req,res)=>{
-    const {username,password,email}=req.body;
-    const user= new User({email,username});
+router.post('/register',storeReturnTo,upload.none(),async (req,res)=>{
+    const {firstname,lastname,password,email}=req.body;
+    const username = email;
+    console.log(req.body);
+    
+    const exisitinguser = await User.findOne({"username":username});
+    if(exisitinguser){
+        res.status(401).json({valid:false, redirect:"/vendrix/login",email});
+        return;
+    }
+    const user= new User({email,username,firstname,lastname});
     const registeredUser=await User.register(user,password);
     console.log(registeredUser);
     req.login(registeredUser,async err=>{
@@ -90,34 +121,68 @@ router.post('/register',storeReturnTo,async (req,res)=>{
             delete req.session.shoppingCart;
         }
         const redirectUrl = res.locals.returnTo || '/';
-        res.redirect(redirectUrl);
+        res.json({valid:true,redirect:redirectUrl});
     })
 });
 
 router.get('/login',(req,res)=>{
-    res.render('user/login');
+    res.render('user/auth',{type:"login"});
 })
 
-router.post('/login',storeReturnTo,
-    passport.authenticate('local',{failureFlash:"Invalid Username or Password!",failureRedirect:'/vendrix/login'}),
-    async(req,res)=>{
-    if(res.locals.shoppingCart){
-        if(req.user.shoppingCart){
-            //prevent duplicates
-            for(let cart of res.locals.shoppingCart){
-                preventDuplicatesCart(req,cart);
-            }
-            await req.user.save();
-        }else{
-        req.user.shoppingCart = structuredClone(res.locals.shoppingCart);
-        await req.user.save();
+router.post("/login",storeReturnTo,upload.none(),(req,res,next)=>{passport.authenticate('local',async (err,user,info)=>{
+        if(err){
+            console.log(err);
+            return next(err);
         }
-        delete req.session.shoppingCart
-    }
-    const redirectUrl=res.locals.returnTo || '/';
-    req.flash('success','Welcome Back')
-    res.redirect(redirectUrl);
+        if(!user){
+            return res.json({
+                valid:false
+            });
+        }
+        req.logIn(user,async(err)=>{
+            if(err) return next(err)
+            if (res.locals.shoppingCart) {
+                if (req.user.shoppingCart) {
+                for (let cart of res.locals.shoppingCart) {
+                    preventDuplicatesCart(req, cart);
+                }
+                await req.user.save();
+                } else {
+                req.user.shoppingCart = structuredClone(res.locals.shoppingCart);
+                await req.user.save();
+                }
+                delete req.session.shoppingCart;
+            }
+
+            const redirectUrl = res.locals.returnTo || '/';
+            return res.json({
+                valid:true,
+                redirect : redirectUrl
+            });
+        })
+    })
+    (req,res,next);
 })
+//passport authentication must return positive or negative resjson
+// router.post('/login',storeReturnTo,upload.none(),
+//     passport.authenticate('local',{failureFlash:"Invalid Username or Password!",failureRedirect:'/vendrix/login'}),
+//     async(req,res)=>{
+//     if(res.locals.shoppingCart){
+//         if(req.user.shoppingCart){
+//             for(let cart of res.locals.shoppingCart){
+//                 preventDuplicatesCart(req,cart);
+//             }
+//             await req.user.save();
+//         }else{
+//         req.user.shoppingCart = structuredClone(res.locals.shoppingCart);
+//         await req.user.save();
+//         }
+//         delete req.session.shoppingCart
+//     }
+//     const redirectUrl=res.locals.returnTo || '/';
+//     req.flash('success','Welcome Back')
+//     res.redirect(redirectUrl);
+// })
 
 router.get('/logout',(req,res)=>{
     req.logout(function(err){
@@ -129,7 +194,21 @@ router.get('/logout',(req,res)=>{
 });
 
 router.get('/cart/:intent/:id/:variant_no/:color_no',async (req,res)=>{
-    const cart = createCart(req.params.id,req.params.intent,req.params.variant_no,req.params.color_no,Number(req.query.quantity));
+    let startdate = new Date(req.body.startdate);
+    if (isNaN(startdate)) {
+        startdate = new Date();
+        startdate.setDate(startdate.getDate() + 3);
+    }
+    startdate.setHours(0,0,0,0);
+
+    let enddate = new Date(req.body.enddate);
+    if (isNaN(enddate)) {
+        enddate = new Date();
+        enddate.setDate(enddate.getDate() + 10);
+    }
+    enddate.setHours(0,0,0,0);
+
+    const cart = createCart(req.params.id,req.params.intent,req.params.variant_no,req.params.color_no,Number(req.query.quantity),startdate,enddate);
     preventDuplicatesCart(req,cart);
     await req.user.save();
     res.redirect(req.session.backUrl);

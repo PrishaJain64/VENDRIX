@@ -136,7 +136,7 @@
     </div>
     </form>
 
-    <form method = "post">
+    <form method = "post" id = "form1">
         <input type="hidden" name="quantity" class="hidden-qty" value="<%=result.quantity&&result.quantity>1?result.quantity-1:1%>">
         <input type="hidden" name="returnTo" value="<%=currentUrl%>">
         <div class="qty-row reveal rd3">
@@ -152,8 +152,6 @@
         <i class="fas fa-shopping-bag"></i><span id="cartBtnText">Add to Cart</span>
       </button>
     </div>
-    </form>
-    <form id = "form1" method = "post">
     <div class="action-row reveal rd3" style="margin-top:-6px;">
       <p>Start Date : <input name = "startdate" type = "date" id = "startdate"></p>
       <p>End Date : <input name = "enddate" id = "enddate" type = "date"></p>

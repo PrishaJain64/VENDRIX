@@ -1,14 +1,18 @@
-const mongoose=require('mongoose');
+    const mongoose=require('mongoose');
 const {Schema}=mongoose;
 const passportLocalMongoose=require('passport-local-mongoose');
 const {Model} = require("./versions");
 const {Product} = require("./products");
 
 const userSchema=new Schema({
+    firstname :String,
+    lastname : String,
+    address : String,
     email:{
         type:String,
         unique:true,
-        required:[true,"Email is Required"]
+        required:[true,"Email is Required"],
+        lowercase:true
     },
     shoppingCart : [{
         intent :{
@@ -21,7 +25,7 @@ const userSchema=new Schema({
         },
         product_id : {
             type : mongoose.Schema.Types.ObjectId,
-            refpath : 'shoppingCart.product_model'
+            refPath : 'product_model'
         },
         quantity : {
             type : Number,
@@ -29,13 +33,23 @@ const userSchema=new Schema({
         },
         variant_no :{
             type:Number,
-            required : function(){if(this.product_model == "Model")return true;else return false}
+            required : function(){return this.product_model == "Model"}
         },
         color_no :{
             type:Number,
-            required : function(){if(this.product_model == "Model")return true;else return false}
+            required : function(){return this.product_model == "Model"}
+        },
+        duration : {
+        startDate: {
+            type :Date,
+            required : function(){return this.intent == "rent"}
+        },
+        endDate :{
+            type:Date,
+            required : function(){return this.intent == "rent"}
+        }
         }
     }]
-});
+},{timestamps:true});
 userSchema.plugin(passportLocalMongoose.default);
 module.exports=mongoose.model('User',userSchema);
