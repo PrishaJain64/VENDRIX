@@ -94,6 +94,7 @@ function userForShoppingCart(req,res,next){
     }
 }
 
+//register
 router.get('/register',(req,res)=>{
     res.render('user/auth',{type:"signup"})
 })
@@ -125,6 +126,7 @@ router.post('/register',storeReturnTo,upload.none(),async (req,res)=>{
     })
 });
 
+//login
 router.get('/login',(req,res)=>{
     res.render('user/auth',{type:"login"});
 })
@@ -163,26 +165,6 @@ router.post("/login",storeReturnTo,upload.none(),(req,res,next)=>{passport.authe
     })
     (req,res,next);
 })
-//passport authentication must return positive or negative resjson
-// router.post('/login',storeReturnTo,upload.none(),
-//     passport.authenticate('local',{failureFlash:"Invalid Username or Password!",failureRedirect:'/vendrix/login'}),
-//     async(req,res)=>{
-//     if(res.locals.shoppingCart){
-//         if(req.user.shoppingCart){
-//             for(let cart of res.locals.shoppingCart){
-//                 preventDuplicatesCart(req,cart);
-//             }
-//             await req.user.save();
-//         }else{
-//         req.user.shoppingCart = structuredClone(res.locals.shoppingCart);
-//         await req.user.save();
-//         }
-//         delete req.session.shoppingCart
-//     }
-//     const redirectUrl=res.locals.returnTo || '/';
-//     req.flash('success','Welcome Back')
-//     res.redirect(redirectUrl);
-// })
 
 router.get('/logout',(req,res)=>{
     req.logout(function(err){
@@ -193,6 +175,7 @@ router.get('/logout',(req,res)=>{
     })
 });
 
+//shopping cart
 router.get('/cart/:intent/:id/:variant_no/:color_no',async (req,res)=>{
     let startdate = new Date(req.body.startdate);
     if (isNaN(startdate)) {

@@ -1,4 +1,23 @@
+let tempToken="";
+let countdown = null;
+function sixtySeconds(){
+  if(clearInterval)clearInterval(countdown)
+let timeLeft = 60;
+const timerbox = document.getElementById("timerbox");
+const forgetpass = document.getElementById("forgetpass");
+timerbox.textContent=timeLeft+"s";
 
+countdown = setInterval(()=>{
+    timeLeft--;
+    timerbox.textContent=timeLeft+"s";
+    if(timeLeft <=0){
+        clearInterval(countdown);
+        timerbox.style.display = "none";
+        forgetpass.style.display = "inline";
+    }
+    
+},1000)
+}
 /* ── CURSOR ── */
 const cd=document.getElementById('cd'),cr=document.getElementById('cr');
 let mx=0,my=0,rx=0,ry=0;
@@ -58,6 +77,24 @@ document.getElementById('spw').addEventListener('input',function(){
   const s=strScore(this.value),cl=['','c1','c2','c3','c4'],lb=['','Weak','Fair','Good','Strong'];
   [1,2,3,4].forEach(i=>{const b=document.getElementById('b'+i);b.className='sb';if(i<=s)b.classList.add(cl[s])});
   document.getElementById('slbl').textContent=this.value?(lb[s]||'Weak')+' password':'Enter a password';
+});
+function passScore(pw){
+  let s=0;
+  if(pw.length>=8)s++;
+  if(/[A-Z]/.test(pw))s++;
+  if(/[0-9]/.test(pw))s++;
+  if(/[^a-zA-Z0-9]/.test(pw))s++;
+  return s
+}
+
+document.getElementById('fp-np').addEventListener('input',function(){
+  const s=strScore(this.value),cl=['','c1','c2','c3','c4'],lb=['','Weak','Fair','Good','Strong'];
+  [1,2,3,4].forEach(i=>{
+    const b=document.getElementById('fpb'+i);
+    if(b)b.className='sb';
+    if(i<=s && b)b.classList.add(cl[s])
+  });
+  document.getElementById('fp-np-hint').textContent=this.value?(lb[s]||'Weak')+' password':'Enter password';
 });
 
 /* ── EMAIL LIVE VALIDATION ── */
@@ -151,18 +188,9 @@ function doLogin(e){
     }
   }
   )
-
-  // document.getElementById('blg').classList.add('ld');
-  // setTimeout(()=>{
-  //   document.getElementById('blg').classList.remove('ld');
-  //   // if(rm)localStorage.setItem('vx_em',em);
-  //   document.getElementById('flg').reset();
-  //   showSov('Welcome Back!','You\'ve successfully signed in to your Vendrix account.');
-  // },1600);
 }
 
 /* ── FORGOT PASSWORD FLOW ── */
-const DEMO_OTP = '123456'; // demo correct OTP
 
 function doForgot(){
   const em = document.getElementById('lem').value.trim();
@@ -174,12 +202,14 @@ function doForgot(){
   // Populate email badge in modal
   document.getElementById('fp-em-show').textContent = em;
   document.getElementById('fp-em-show2').textContent = em;
+  window.email = em;
   // Reset to step 1
   fpGoStep(1, true);
   document.getElementById('fp-ov').classList.add('show');
 }
 
 function closeFp(){
+  if(countdown)clearInterval(countdown);
   document.getElementById('fp-ov').classList.remove('show');
   // clear OTP input
   const otpEl = document.getElementById('otp-single');
@@ -215,23 +245,41 @@ function fpGoStep(n, init=false){
 }
 
 function fpSendOtp(){
-  const btn = document.getElementById('fp-send-btn');
-  btn.classList.add('ld');
-  setTimeout(()=>{
-    btn.classList.remove('ld');
-    toast('OTP sent! Check your inbox','g');
-    fpGoStep(2);
-    setTimeout(()=>{ document.getElementById('otp-single').focus(); }, 100);
-  }, 1400);
+  const email = document.getElementById("fp-em-show").innerText;
+   console.log(email);
+   const formdata = new FormData();
+   formdata.append("email",email);
+   fetch("/forget/generateOtp",{
+    method : "post",
+    body:formdata,
+   }).then(res=>res.json())
+   .then(data=>{
+    if(data.valid){
+      tempToken = data.tempToken;
+      toast('OTP sent! Check your inbox','g');
+      sixtySeconds();
+      fpGoStep(2);
+    }else{
+      toast('Email Id not found','e');
+      closeFp();
+    }
+   });
 }
 
-function fpResend(){
-  toast('OTP resent to your email','g');
+function resendOtp(){
+  const timerbox = document.getElementById("timerbox");
+  const forgetpass = document.getElementById("forgetpass");
+  timerbox.style.display = "inline";
+  forgetpass.style.display = "none";
+  sixtySeconds();
+
   const el = document.getElementById('otp-single');
   el.value = '';
   el.className = 'otp-single';
   document.getElementById('otp-hint').textContent='';
   el.focus();
+
+  fpSendOtp();
 }
 
 /* Single OTP input — cap at 6 digits, clear error state */
@@ -244,6 +292,7 @@ function otpSingleInput(el){
 }
 
 function fpVerifyOtp(){
+  //invalid, expired, valid
   const el = document.getElementById('otp-single');
   const entered = el.value.trim();
   const hint = document.getElementById('otp-hint');
@@ -257,17 +306,34 @@ function fpVerifyOtp(){
     shake('otp-single');
     return;
   }
-  if(entered !== DEMO_OTP){
-    hint.className='otp-hint e';
-    hint.innerHTML='<i class="fas fa-circle-exclamation"></i> Incorrect OTP. Try again';
-    el.classList.add('bad');
-    shake('otp-single');
-    return;
-  }
-  el.classList.add('ok');
-  hint.className='otp-hint g';
-  hint.innerHTML='<i class="fas fa-circle-check"></i> Verified!';
-  setTimeout(()=>fpGoStep(3), 600);
+  const form = document.getElementById("userotp");
+  const formdata = new FormData(form);
+  formdata.append("tempToken",tempToken);
+
+  fetch("/forget/verifyOtp",{
+    method:"post",
+    body:formdata
+  }).then(res=>res.json()).then(data=>{
+    if(data.valid =="expired"){
+      hint.className='otp-hint e';
+      hint.innerHTML='<i class="fas fa-circle-exclamation"></i> OTP Expired. Try again';
+      el.classList.add('bad');
+      shake('otp-single');
+      return;
+    }else if(data.valid == "invalid"){
+      hint.className='otp-hint e';
+      hint.innerHTML='<i class="fas fa-circle-exclamation"></i> Incorrect OTP. Try again';
+      el.classList.add('bad');
+      shake('otp-single');
+      return;
+    }else{
+      el.classList.add('ok');
+      hint.className='otp-hint g';
+      hint.innerHTML='<i class="fas fa-circle-check"></i> Verified!';
+      setTimeout(()=>fpGoStep(3), 600);
+    }
+  })
+  
 }
 
 /* Password toggle in modal */
@@ -301,7 +367,7 @@ function fpResetPw(){
     document.getElementById('fp-np').classList.add('bad');
     shake('fp-np'); return;
   }
-  if(strScore(np) < 2){
+  if(passScore(np) < 2){
     nh.className='fp-hint e';
     nh.innerHTML='<i class="fas fa-circle-exclamation"></i> Choose a stronger password';
     document.getElementById('fp-np').classList.add('bad');
@@ -319,18 +385,29 @@ function fpResetPw(){
     document.getElementById('fp-cp').classList.add('bad');
     shake('fp-cp'); return;
   }
-
-  const btn=document.getElementById('fp-reset-btn');
-  btn.classList.add('ld');
-  setTimeout(()=>{
-    btn.classList.remove('ld');
-    closeFp();
-    showSov('Password Reset!', 'Your password has been updated. You can now log in with your new password.');
-  }, 1500);
+  const form = document.getElementById("updatePassword");
+  const formdata = new FormData(form);
+  const email = document.getElementById("fp-em-show").innerText;
+  formdata.append("username",email);
+  fetch("/forget/updatePassword",{
+    method:"post",
+    body:formdata
+  }).then(res=>res.json).then(data=>{
+    if(data.error){
+      ch.className='fp-hint e';
+      ch.innerHTML='<i class="fas fa-circle-exclamation"></i> User not found';
+      document.getElementById('fp-cp').classList.add('bad');
+      shake('fp-cp'); 
+      closeFp();
+      return;
+    }else{
+      const btn=document.getElementById('fp-reset-btn');
+      btn.classList.add('ld');
+      setTimeout(()=>{
+        btn.classList.remove('ld');
+        closeFp();
+        showSov('Password Reset!', 'Your password has been updated. You can now log in with your new password.',"/vendrix/login");
+      }, 1500);
+    }
+  })
 }
-
-// /* ── LOAD SAVED EMAIL ── */
-// window.addEventListener('load',()=>{
-//   const v=localStorage.getItem('vx_em');
-//   if(v){document.getElementById('lem').value=v;document.getElementById('lrm').checked=true}
-// });

@@ -57,40 +57,45 @@
     </div>
 
     <!-- STEP 2: Enter OTP -->
+     <form id = "userotp">
     <div class="fp-step" id="fps2">
-      <button class="fp-back" onclick="fpGoStep(1)"><i class="fas fa-arrow-left"></i> Back</button>
       <div class="fp-ico"><i class="fas fa-shield-halved"></i></div>
       <div class="fp-title">Enter OTP</div>
       <p class="fp-sub">Enter the 6-digit code sent to <strong id="fp-em-show2" style="color:var(--og)"></strong></p>
       <label class="fp-lbl">6-digit OTP</label>
-      <input class="otp-single" type="number" id="otp-single" placeholder="······" maxlength="6" oninput="otpSingleInput(this)" autocomplete="one-time-code">
+      <input class="otp-single" type="number" name="userotp" id="otp-single" placeholder="······" maxlength="6" oninput="otpSingleInput(this)" autocomplete="one-time-code">
       <div class="otp-hint" id="otp-hint"></div>
-      <div class="resend-row">Didn't receive it? <a href="#" onclick="fpResend();return false">Resend OTP</a></div>
-      <button class="fp-btn" onclick="fpVerifyOtp()">
+      <div class="resend-row">Didn't receive it? 
+        <div id = "timerbox"></div>
+        <a style="display:none" id = "forgetpass" href="#" onclick="resendOtp();return false">Resend OTP</a>
+      </div>
+      <button type = "button" class="fp-btn" onclick="fpVerifyOtp()">
         <span class="bl">Verify OTP <i class="fas fa-arrow-right"></i></span>
       </button>
     </div>
+    </form>
 
     <!-- STEP 3: New Password -->
     <div class="fp-step" id="fps3">
-      <button class="fp-back" onclick="fpGoStep(2)"><i class="fas fa-arrow-left"></i> Back</button>
       <div class="fp-ico"><i class="fas fa-lock"></i></div>
       <div class="fp-title">New Password</div>
       <p class="fp-sub">Choose a strong new password for your account.</p>
+      <form id="updatePassword">
       <div class="fp-fld">
         <label class="fp-lbl">New Password <span style="color:var(--og)">*</span></label>
         <div class="fp-iw"><i class="ic fas fa-lock"></i><input type="password" id="fp-np" class="fp-inp" placeholder="Min. 8 characters"><button type="button" class="fp-eye" onclick="tpwFp('fp-np',this)"><i class="fas fa-eye"></i></button></div>
         <div class="fp-str-bars"><div class="sb" id="fpb1"></div><div class="sb" id="fpb2"></div><div class="sb" id="fpb3"></div><div class="sb" id="fpb4"></div></div>
-        <div class="fp-hint" id="fp-np-hint"></div>
+        <div class="fp-hint" id="fp-np-hint">Enter password</div>
       </div>
       <div class="fp-fld">
         <label class="fp-lbl">Confirm Password <span style="color:var(--og)">*</span></label>
-        <div class="fp-iw"><i class="ic fas fa-lock"></i><input type="password" id="fp-cp" class="fp-inp" placeholder="Re-enter password"><button type="button" class="fp-eye" onclick="tpwFp('fp-cp',this)"><i class="fas fa-eye"></i></button></div>
+        <div class="fp-iw"><i class="ic fas fa-lock"></i><input type="password"name = "password" id="fp-cp" class="fp-inp" placeholder="Re-enter password"><button type="button" class="fp-eye" onclick="tpwFp('fp-cp',this)"><i class="fas fa-eye"></i></button></div>
         <div class="fp-hint" id="fp-cp-hint"></div>
       </div>
-      <button class="fp-btn" id="fp-reset-btn" onclick="fpResetPw()">
+      <button  type = "button" class="fp-btn" id="fp-reset-btn" onclick="fpResetPw()">
         <span class="bl">Reset Password <i class="fas fa-arrow-right"></i></span>
       </button>
+      </form>
     </div>
 
   </div>
@@ -162,10 +167,6 @@
               <div class="of-iw"><i class="ic fas fa-lock"></i><input name="password" type="password" id="lpw" class="of-inp" placeholder="Your password" autocomplete="current-password"><button type="button" class="of-eye" onclick="tpw('lpw',this)"><i class="fas fa-eye"></i></button></div>
             </div>
             <div class="rfrow-og">
-              <!-- <div style="display:flex;align-items:center;gap:9px">
-                <input type="checkbox" id="lrm" style="width:15px;height:15px;accent-color:rgba(0,0,0,.8);cursor:none">
-                <label class="ck-l-og" for="lrm">Remember me</label>
-              </div> -->
               <a class="forgot-og" href="#" onclick="doForgot();return false">Forgot password?</a>
             </div>
             <button type="submit" class="og-btn" id="blg">
@@ -225,5 +226,6 @@
   console.log(type);
   setMode(type);
 </script>
+
 </body>
 </html> 
