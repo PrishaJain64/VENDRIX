@@ -1,0 +1,167 @@
+<div class="reviews-section reveal rd5">
+
+      <div class="reviews-header">
+        <div class="reviews-title">Customer Reviews</div>
+        <div class="reviews-count-badge" id="reviewCountBadge">0 Reviews</div>
+      </div>
+
+      <div class="reviews-summary">
+        <div class="summary-score">
+          <div class="summary-big" id = "summary-big">0</div>
+          <div class="summary-stars" id="summary-stars"></div>
+          <div class="summary-total" id="summaryTotal">0 ratings</div>
+        </div>
+        <div class="summary-bars">
+          <div class="bar-row"><span class="bar-label">5<i class="fas fa-star"></i></span><div class="bar-track"><div class="bar-fill" id="bar5" style="width:0%"></div></div><span class="bar-count" id="cnt5">0</span></div>
+          <div class="bar-row"><span class="bar-label">4<i class="fas fa-star"></i></span><div class="bar-track"><div class="bar-fill" id="bar4" style="width:0%"></div></div><span class="bar-count" id="cnt4">0</span></div>
+          <div class="bar-row"><span class="bar-label">3<i class="fas fa-star"></i></span><div class="bar-track"><div class="bar-fill" id="bar3" style="width:0%"></div></div><span class="bar-count" id="cnt3">0</span></div>
+          <div class="bar-row"><span class="bar-label">2<i class="fas fa-star"></i></span><div class="bar-track"><div class="bar-fill" id="bar2" style="width:0%"></div></div><span class="bar-count" id="cnt2">0</span></div>
+          <div class="bar-row"><span class="bar-label">1<i class="fas fa-star"></i></span><div class="bar-track"><div class="bar-fill" id="bar1" style="width:0%"></div></div><span class="bar-count" id="cnt1">0</span></div>
+        </div>
+      </div>
+
+      <%#!-- QUICK RATE ROW --%>
+      <div class="quick-rate-row">
+        <span class="quick-rate-label">Rate This Product</span>
+        <div class="quick-rate-stars">
+          <span class="qr-star" data-val="1">★</span>
+          <span class="qr-star" data-val="2">★</span>
+          <span class="qr-star" data-val="3">★</span>
+          <span class="qr-star" data-val="4">★</span>
+          <span class="qr-star" data-val="5">★</span>
+        </div>
+        <div class="quick-rate-hint" id="quickRateHint">Tap to Write a Review</div>
+        <div class="quick-rate-sub">Your review helps others make better decisions</div>
+      </div>
+
+      <%#!-- FILTER BAR --%>
+      <div class="reviews-filter-bar">
+        <div class="filter-left">
+          <span class="filter-label">Sort</span>
+          <div class="sort-wrapper">
+            <select data-product="<%=result.selectedDoc[0].name%>" class="sort-select" id="sortSelect">
+              <option value="relevant">Most Relevant</option>
+              <option value="highest">Highest Rating</option>
+              <option value="lowest">Lowest Rating</option>
+              <option value="newest">Newest First</option>
+              <option value="helpful">Most Helpful</option>
+            </select> 
+            <i class="fas fa-chevron-down sort-chevron"></i>
+          </div>
+          <span class="filter-label" style="margin-left:8px;">Filter</span>
+          <div class="star-filter-chips" id="starFilterChips">
+            <button class="star-chip" data-star="5" onclick="toggleStarFilter(5)">5 <i class="fas fa-star"></i></button>
+            <button class="star-chip" data-star="4" onclick="toggleStarFilter(4)">4 <i class="fas fa-star"></i></button>
+            <button class="star-chip" data-star="3" onclick="toggleStarFilter(3)">3 <i class="fas fa-star"></i></button>
+            <button class="star-chip" data-star="2" onclick="toggleStarFilter(2)">2 <i class="fas fa-star"></i></button>
+            <button class="star-chip" data-star="1" onclick="toggleStarFilter(1)">1 <i class="fas fa-star"></i></button>
+          </div>
+        </div>
+        <div class="filter-right">
+          <span class="filter-results-text" id="filterResultsText"></span>
+          <button class="filter-clear-btn" id="filterClearBtn" onclick="clearFilters()">
+            <i class="fas fa-times"></i> Clear
+          </button>
+        </div>
+      </div>
+      <div class="active-filter-indicator" id="activeFilterIndicator">
+        <i class="fas fa-filter"></i>
+        <span id="activeFilterText">Showing filtered results</span>
+      </div>
+
+      <div class="reviews-list" id="reviewsList">
+        <%for(var k=0;k<reviews.length;++k){%>
+        <div class="review-card" style="display:none;" data-photos="[]">
+          <div class="review-top">
+            <div class="reviewer-info">
+              <div class="reviewer-avatar"><%=reviews[k].user.firstname.slice(0,1)%></div>
+              <div>
+                <div class="reviewer-name"><%=reviews[k].user.firstname+" "+reviews[k].user.lastname%></div>
+                <div class="reviewer-date"><%=reviews[k].createdAt.toLocaleString("en-IN", { timeZone: "Asia/Kolkata" });%></div></div></div>
+                <div class="review-stars"><%="★".repeat(reviews[k].stars)%></div></div>
+                <div class="review-title"><%=reviews[k].title%></div>
+                <div class="review-body"><%=reviews[k].about%></div>
+                <div class="review-photos-row">
+                  <%for(var l=0;l<reviews[k].images.length;++l){%>
+                  <div class="review-photo-thumb" onclick="openLightbox('<%=reviews[k].images[l].url%>')" title="Click to enlarge">
+                    <img src="<%=reviews[k].images[l].url%>">
+                    <span class="review-photo-badge">
+                      <i class="fas fa-camera"></i> Device Photo</span></div><%}%>
+                  </div>
+                <div class="review-tags">
+                  <%for(var l=0;l<reviews[k].tags.length;++l){%>
+                    <span class="review-tag"><%=reviews[k].tags[l]%></span><%}%></div>
+
+                <div class="review-helpful">
+                  <span class="helpful-label">Helpful?</span>
+        <button class="helpful-btn" id="hb_3" onclick="markHelpful(this,'<%=reviews[k]._id%>')"><%=reviews[k].likes%> ↑ Yes</button></div></div>
+        <%}%>
+      </div>
+
+      <div class="reviews-empty" id="reviewsEmpty">
+        <i class="fas fa-star-half-alt"></i>
+        <div class="reviews-empty-title">No reviews found</div>
+        <div class="reviews-empty-sub">Try a different filter or rating</div>
+      </div>
+
+      <div class="load-more-wrap" id="loadMoreWrap">
+        <button class="load-more-btn" id="loadMoreBtn" onclick="loadMore()">Load More Reviews</button>
+      </div>
+
+      <%#!-- WRITE REVIEW FORM --%>
+      <form id = 'submitReview' enctype="multipart/form-data">
+      <div class="write-review-wrap">
+        <div class="write-review-title">Write a Review</div>
+
+        <div class="star-picker">
+          <span class="star-picker-label">Your Rating</span>
+          <div class="star-picker-stars" id="starPicker">
+            <span class="star-pick" data-val="1">★</span>
+            <span class="star-pick" data-val="2">★</span>
+            <span class="star-pick" data-val="3">★</span>
+            <span class="star-pick" data-val="4">★</span>
+            <span class="star-pick" data-val="5">★</span>
+          </div>
+          <span class="star-rating-text" id="starRatingText">Tap to rate</span>
+        </div> 
+
+        <div class="form-row">
+          <div class="form-field" style="margin-bottom:0">
+            <label>Review Title</label>
+            <input name="reviewTitle" class="form-input" id="reviewTitle" type="text" placeholder="e.g. Absolutely love it!">
+          </div>
+        </div>
+
+        <div class="form-field" style="margin-top:14px;">
+          <label>Your Review</label>
+          <textarea name ="reviewBody" class="form-input" id="reviewBody" placeholder="Share your experience with the <%=result.selectedDoc[0].name%> ..."></textarea>
+        </div>
+
+        <div class="photo-upload-field">
+          <label>
+            Add Photos
+            <span class="optional-tag">Up to 3 · Optional</span>
+          </label>
+
+          <div class="photo-drop-zone" id="photoDropZone">
+            <input type="file" id="photoInput" accept="image/jpeg,image/png,image/webp,image/heic" multiple onchange="handlePhotoSelect(this)">
+            <div class="drop-zone-counter" id="dropZoneCounter">0 / 3</div>
+            <div class="drop-zone-empty" id="dropZoneEmpty">
+              <div class="drop-zone-icon"><i class="fas fa-images"></i></div>
+              <div class="drop-zone-title">Upload device photos</div>
+              <div class="drop-zone-sub">Drag & drop or <span>click to browse</span></div>
+              <div class="drop-zone-formats">
+                <span class="drop-zone-format">JPG</span>
+                <span class="drop-zone-format">PNG</span>
+              </div>
+            </div>
+          </div>
+          <div class="photos-preview-grid" id="photosPreviewGrid"></div>
+        </div>
+
+        <button type="button" class="form-submit" onclick="submitReview(event,'<%=result.selectedDoc[0].name%>','<%=result.selectedDoc[0].intent%>')">
+          <i class="fas fa-paper-plane"></i> Submit Review
+        </button>
+      </div>
+      </form>
+    </div>

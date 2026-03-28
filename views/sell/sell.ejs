@@ -128,7 +128,7 @@ const products = [
       </div>
       <div class="filter-opts visible" id="brand-opts">
       <label class="filter-label">
-        <input name="brand" type="checkbox" class="brand-filter" value="all"
+        <input id="all" name="brand" type="checkbox" class="brand-filter" value="all"
           <% if (br && br.includes("all")) { %> checked <% } %>>
         All
       </label>
@@ -139,7 +139,7 @@ const products = [
           for (let brand of cat.brands) { %>
 
         <label class="filter-label">
-          <input name="brand" type="checkbox" class="brand-filter"
+          <input id="<%= brand %>" name="brand" type="checkbox" class="brand-filter"
             value="<%= brand %>"
             <% if (br && br.includes(brand)) { %> checked <% } %>>
           <%= brand %>
@@ -265,3 +265,10 @@ const products = [
   </div>
 </footer>
 <script src="/js/features.js"></script>
+<script>
+ const brand = <%- JSON.stringify(typeof brand !== "undefined" ? brand : null) %>;
+  if(brand){
+    const checkbox = document.querySelector('#'+brand);
+    checkbox.checked = true;
+  }
+  </script>

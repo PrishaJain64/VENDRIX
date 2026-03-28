@@ -2,6 +2,20 @@
 <div id="cur-dot"></div>
 <div id="cur-ring"></div>
 
+<!-- LIGHTBOX -->
+<div class="lightbox-overlay" id="lightbox" onclick="closeLightbox(event)">
+  <div class="lightbox-inner">
+    <button class="lightbox-close" onclick="closeLightbox()"><i class="fas fa-times"></i></button>
+    <img class="lightbox-img" id="lightboxImg" src="" alt="">
+  </div>
+</div>
+
+<!-- TOAST -->
+<div class="toast" id="toast">
+  <i class="fas fa-exclamation-circle"></i>
+  <span class="toast-text"></span>
+</div>
+
 <!-- TOP BAR -->
 <div class="topbar">
   <div class="topbar-track">
@@ -106,9 +120,9 @@
     <h1 class="product-title reveal"><%=result.selectedDoc[0].name%></h1>
 
     <div class="rating-row reveal rd1">
-      <span class="stars-og">★★★★★</span>
-      <span class="rating-num">4.8</span>
-      <span class="rating-count">· 2,340 reviews</span>
+      <span id ="stars-og" class="stars-og">★★★★★</span>
+      <span id="rating-num" class="rating-num">4.8</span>
+      <span class="rating-count">· <%=reviews.length%> reviews</span>
       <div class="stock-pill"><span class="stock-dot"></span><span class="stock-text">In Stock</span></div>
     </div>
 
@@ -178,6 +192,7 @@
         <%}%>
       </div>
     </div>
+  <%- include('../partials/prod_review.ejs') %>
 
   </div>
 
@@ -187,6 +202,8 @@
 <script src = "/js/specification.js"></script>
 <script src="/js/counter.js"></script>
 <script src="/js/startdate.js"></script>
+<script src = "/js/reload.js"></script>
+<script src = "/js/reviews.js"></script>
 <script>
   const start = new Date();
   start.setDate(start.getDate()+3);
@@ -259,4 +276,60 @@
 
     price.innerText = `₹${rent} for ${diffDays} days`;
   }
+  const star = '<%=star%>'||null;
+  const select = '<%=option%>' ||'relevant';
+  const num = Number('<%=reviews.length%>');
+  activeStarFilter = star;
+  const isFiltering = activeStarFilter !== null || select !== 'relevant';
+
+  const clearBtn = document.getElementById('filterClearBtn');
+  const indicator = document.getElementById('activeFilterIndicator');
+  const list = document.getElementById('reviewsList');
+  const emptyState = document.getElementById('reviewsEmpty');
+
+  clearBtn.classList.toggle('visible', isFiltering);
+
+  if(activeStarFilter && activeStarFilter !=='null'){
+  const btn = document.querySelector(`button[data-star="${activeStarFilter}"]`);
+  
+  document.querySelectorAll('.star-chip').forEach(c => c.classList.remove('active')); 
+  btn.classList.add('active');
+  indicator.classList.add('visible');
+    document.getElementById('activeFilterText').textContent =
+    'Showing ' + num + ' review' + (num >= 1 ? 's' : '') + ' with ' + activeStarFilter + '-star rating';
+  }
+  else { indicator.classList.remove('visible'); }
+
+
+  document.getElementById('sortSelect').value = select;
+
+
+  if (num === 0) {
+    list.innerHTML = ''; emptyState.classList.add('visible'); loadMoreWrap.style.display = 'none';
+  } else {
+    emptyState.classList.remove('visible'); loadMoreWrap.style.display = '';
+  }
+
+  function updateSummaryBars() {
+  const total = Number('<%=reviews.length%>');
+  const counts = <%-JSON.stringify(count)%>;
+  var sumofall=0,counter=0;
+  for (let i = 1; i <= 5; i++) {
+    document.getElementById('bar' + i).style.width = total ? (counts[i] / total * 100) + '%' : '0%';
+    document.getElementById('cnt' + i).textContent = counts[i];
+    sumofall+= counts[i]*i;
+    counter+=counts[i];
+  }
+  var avg = counter?(sumofall/counter).toFixed(1):0;
+  document.getElementById('reviewCountBadge').textContent = total.toLocaleString('en-IN') + ' Reviews';
+  document.getElementById('summaryTotal').textContent = total.toLocaleString('en-IN') + ' ratings';
+  document.getElementById('summary-big').textContent=avg;
+  document.getElementById('rating-num').textContent=avg;
+  document.getElementById('summary-stars').textContent="★".repeat(parseInt(avg));
+  document.getElementById('stars-og').textContent="★".repeat(parseInt(avg));
+
+
+}
+setTimeout(updateSummaryBars, 300);
+showReviews();
 </script>

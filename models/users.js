@@ -1,4 +1,4 @@
-    const mongoose=require('mongoose');
+const mongoose=require('mongoose');
 const {Schema}=mongoose;
 const passportLocalMongoose=require('passport-local-mongoose');
 const {Model} = require("./versions");
@@ -49,6 +49,10 @@ const userSchema=new Schema({
             required : function(){return this.intent == "rent"}
         }
         }
+    }],
+    reviews:[{
+        type:mongoose.Schema.Types.ObjectId,
+        ref:'Review'
     }]
 },{timestamps:true});
 userSchema.plugin(passportLocalMongoose.default);

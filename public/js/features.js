@@ -104,26 +104,6 @@ document.getElementById('applyFilters').addEventListener('click', ()=>{
   }
 });
 
-/* ─── SORT SELECT (topbar) ─── */
-document.getElementById('sortSelect').addEventListener('change', e=>{
-  activeSort=e.target.value;
-  document.querySelector(`input[name="sort"][value="${activeSort}"]`).checked=true;
-  renderCards();
-});
-
-/* ─── CLEAR ALL ─── */
-function clearAll(){
-  activeCategory='all'; activeSort='default'; priceMax=250000; activeBrands=new Set(); minRating=0;
-  document.querySelectorAll('.cat-pill').forEach(p=>p.classList.remove('active'));
-  document.querySelector('.cat-pill[data-filter="all"]').classList.add('active');
-  document.querySelectorAll('.brand-filter').forEach(cb=>cb.checked=false);
-  document.querySelector('input[name="sort"][value="default"]').checked=true;
-  document.querySelector('input[name="rating"][value="0"]').checked=true;
-  document.getElementById('priceSlider').value=250000;
-  document.getElementById('priceVal').textContent='₹2,50,000';
-  document.getElementById('sortSelect').value='default';
-  renderCards();
-}
 document.getElementById('clearAll').addEventListener('click', clearAll);
 document.getElementById('resetBtn')?.addEventListener('click', clearAll);
 

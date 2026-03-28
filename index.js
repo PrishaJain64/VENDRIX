@@ -38,6 +38,7 @@ const recycleRoutes = require('./Routes/recycle');
 const rentRoutes = require('./Routes/rent');
 const userRoutes=require('./Routes/users.js');
 const otpRoutes=require('./Routes/forgetpassword.js');
+const reviewRoutes=require('./Routes/review.js');
 
 app=express();
 
@@ -86,13 +87,11 @@ app.use("/recycle",recycleRoutes);
 app.use("/rent",rentRoutes);
 app.use("/vendrix",userRoutes);
 app.use("/forget",otpRoutes);
+app.use("/review",reviewRoutes);
 
 
 app.get("/newmod",(req,res)=>{
     res.render("./features/mod.ejs");
-})
-app.get("/",(req,res)=>{
-    res.render("features/homepage");
 })
 
 app.listen(3000,()=>{

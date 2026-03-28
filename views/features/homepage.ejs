@@ -37,11 +37,17 @@ const products = [
   <a href="#" class="logo">Vend<span class="accent">r</span>ix</a>
   <%- include('../partials/navbar.ejs') %>
   <div class="nav-right">
-    <a href="/vendrix/register" class="nav-icon"><i class="fas fa-user"></i></a>
+    <%if(currentUser){%>
+      <a href="/vendrix/register"><span class="reviewer-avatar"><%=currentUser.firstname.slice(0,1)%></span></a>
+    <%}else{%>
+      <a href="/vendrix/register" class="nav-icon"><i class="fas fa-user"></i></a>
+  <%}%>
     <a href="#" class="nav-about">About Us</a>
     <a href="/vendrix/shoppingcart" class="nav-cta">
       <i class="fas fa-shopping-bag"></i> Cart
-      <span class="nav-badge" style="position:relative;top:auto;right:auto;">3</span>
+      <%if(cart_quantity> 0){%>
+      <span class="nav-badge" style="position:relative;top:auto;right:auto;"><%=cart_quantity%></span>
+      <%}%>
     </a>
   </div>
 </header>
@@ -199,93 +205,31 @@ const products = [
       </div>
       <div class="sec-heading reveal reveal-d1">Featured <span class="og">Products</span></div>
     </div>
-    <a href="#" class="view-link reveal">View All <i class="fas fa-arrow-right"></i></a>
+    <a href="/buy/all" class="view-link reveal">View All <i class="fas fa-arrow-right"></i></a>
   </div>
 
   <div class="prod-grid">
-    <!-- Card 1 -->
+    <%buy_products.forEach(product => { %>
     <div class="prod-card reveal">
       <div class="prod-img">
-        <div class="prod-actions">
-          <div class="act-btn"><i class="fas fa-heart"></i></div>
-          <div class="act-btn"><i class="fas fa-eye"></i></div>
-        </div>
-        <img src="https://cdn.cosmos.so/0892d087-b199-4e7c-a066-bdc38da3911d?format=jpeg" alt="Phone" style="border-radius:8px;">
+        <img src="<%=product.colors[0].thumbnail.url%>" alt="Phone" style="border-radius:8px;">
       </div>
       <div class="prod-body">
-        <div class="prod-brand">Apple</div>
-        <div class="prod-name">iPhone 16 Pro Max — 256GB</div>
+        <div class="prod-brand"><%=product.brand%></div>
+        <div class="prod-name"><%=product.name%></div>
         <div class="prod-foot">
           <div>
-          <div class="prod-price">₹1,19,999</div>
+          <div class="prod-price"><%=product.variants[0].price%></div>
           </div>
         </div>
-        <button class="prod-cta"><i class="fas fa-shopping-bag"></i> Add to Cart</button>
+        <form method = "post">
+        <input type="hidden" name="returnTo" value="<%=currentUrl%>">
+        <input type="hidden" name="quantity" value="<%=product.quantity?product.quantity+1:1%>">
+        <button formaction="/vendrix/cart/buy/<%=product._id%>/0/0" class="prod-cta"><i class="fas fa-shopping-bag"></i> Add to Cart</button>
+        </form>
       </div>
     </div>
-
-    <!-- Card 2 -->
-    <div class="prod-card reveal reveal-d1">
-      <div class="prod-img">
-        <div class="prod-actions">
-          <div class="act-btn"><i class="fas fa-heart"></i></div>
-          <div class="act-btn"><i class="fas fa-eye"></i></div>
-        </div>
-        <img src="https://cdn.cosmos.so/7d633d1d-8698-497b-b984-8c0765c74057?format=jpeg" alt="Laptop" style="border-radius:8px;">
-      </div>
-      <div class="prod-body">
-        <div class="prod-brand">Apple</div>
-        <div class="prod-name">MacBook Pro 14" M3 — 16GB</div>
-        <div class="prod-foot">
-          <div>
-            <div class="prod-price">₹1,99,999</div>
-          </div>
-        </div>
-        <button class="prod-cta"><i class="fas fa-shopping-bag"></i> Add to Cart</button>
-      </div>
-    </div>
-
-    <!-- Card 3 -->
-    <div class="prod-card reveal reveal-d2">
-      <div class="prod-img">
-        <div class="prod-actions">
-          <div class="act-btn"><i class="fas fa-heart"></i></div>
-          <div class="act-btn"><i class="fas fa-eye"></i></div>
-        </div>
-        <img src="https://cdn.cosmos.so/7c9e3010-118f-4efe-a69b-bb2cdde90e98?format=jpeg" alt="Earphones" style="border-radius:8px;">
-      </div>
-      <div class="prod-body">
-        <div class="prod-brand">Sony</div>
-        <div class="prod-name">WH-1000XM5 Noise Cancelling</div>
-        <div class="prod-foot">
-          <div>
-          <div class="prod-price">₹27,999</div>
-          </div>
-        </div>
-        <button class="prod-cta"><i class="fas fa-shopping-bag"></i> Add to Cart</button>
-      </div>
-    </div>
-
-    <!-- Card 4 -->
-    <div class="prod-card reveal reveal-d3">
-      <div class="prod-img">
-        <div class="prod-actions">
-          <div class="act-btn"><i class="fas fa-heart"></i></div>
-          <div class="act-btn"><i class="fas fa-eye"></i></div>
-        </div>
-        <img src="https://cdn.cosmos.so/dc4bad09-ecf9-4782-91f8-6741c809d8dd?format=jpeg" alt="Camera" style="border-radius:8px;">
-      </div>
-      <div class="prod-body">
-        <div class="prod-brand">Sony</div>
-        <div class="prod-name">Alpha A7 IV Full-Frame Camera</div>
-        <div class="prod-foot">
-          <div>
-            <div class="prod-price">₹2,59,990</div>
-          </div>
-        </div>
-        <button class="prod-cta"><i class="fas fa-shopping-bag"></i> Add to Cart</button>
-      </div>
-    </div>
+    <%})%>
   </div>
 </section>
 
@@ -393,36 +337,18 @@ const products = [
     </div>
   </div>
   <div class="testi-grid">
+    <%reviews.forEach(r=>{%>
     <div class="testi-card reveal">
-      <div class="testi-stars">★★★★★</div>
-      <div class="testi-quote">Ordered a refurbished iPhone 15, arrived in perfect condition. Looked brand new. The 1-year warranty gave me total peace of mind.</div>
+      <div class="testi-stars"><%="★".repeat(r.stars)%></div>
+      <div class="testi-quote"><%=r.about%></div>
       <div class="testi-user">
-        <div class="testi-avatar">RK</div>
+        <div class="testi-avatar"><%=r.user.firstname.slice(0,1)%></div>
         <div>
-          <div class="testi-name">Rajan Kumar</div>
+          <div class="testi-name"><%=r.user.firstname%></div>
         </div>
       </div>
     </div>
-    <div class="testi-card reveal reveal-d1">
-      <div class="testi-stars">★★★★★</div>
-      <div class="testi-quote">Sold my old MacBook through Vendrix. Got a great price and payment was instant. The entire process took under 15 minutes.</div>
-      <div class="testi-user">
-        <div class="testi-avatar">PS</div>
-        <div>
-          <div class="testi-name">Priya Sharma</div>
-        </div>
-      </div>
-    </div>
-    <div class="testi-card reveal reveal-d2">
-      <div class="testi-stars">★★★★★</div>
-      <div class="testi-quote">Rented a Sony camera for my wedding shoot. Flawless quality, delivered on time. Will definitely rent again — best service I've used.</div>
-      <div class="testi-user">
-        <div class="testi-avatar">AM</div>
-        <div>
-          <div class="testi-name">Arjun Mehta</div>
-        </div>
-      </div>
-    </div>
+    <%})%>
   </div>
 </section>
 

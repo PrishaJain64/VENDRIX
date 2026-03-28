@@ -65,6 +65,6 @@ router.get("/:device",async (req,res)=>{
            if(brand) filter.brand = brand
            if(device) filter.type = device;
             const allmod = await Model.find(filter);
-        res.render("recycle/recycle",{allmod,pr,psort,nsort,br,device,currentUrl:req.originalUrl,search});
+        res.render("recycle/recycle",{allmod,pr,psort,nsort,br,device,currentUrl:req.originalUrl,search,brand:brand||"all"});
 });
 module.exports=router;

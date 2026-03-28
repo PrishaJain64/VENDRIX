@@ -66,7 +66,6 @@ module.exports.Deployment = async()=>{
             }
         }})
         );
-        console.log(result);
     }
     const today = new Daily();
     today.date = now;

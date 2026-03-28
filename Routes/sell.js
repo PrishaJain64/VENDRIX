@@ -80,6 +80,6 @@ router.get('/:intent/:device', async (req,res)=>{
         if(device && device != "all") filter.type = device;
         const allmod = await Model.find(filter);
         console.log(filter);
-        res.render("sell/sell",{allmod,intent,device,pr,psort,nsort,br,currentUrl:req.originalUrl,search});
+        res.render("sell/sell",{allmod,intent,device,pr,psort,nsort,br,currentUrl:req.originalUrl,search,brand:brand||"all"});
 })
 module.exports=router;

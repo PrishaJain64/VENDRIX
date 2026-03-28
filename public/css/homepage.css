@@ -89,6 +89,8 @@ body.hovering #cur-ring { width: 52px; height: 52px; border-color: rgba(255,98,0
   display: inline-flex; align-items: center; gap: 14px;
   flex-shrink: 0;
 }
+.reviewer-avatar { width: 36px; height: 36px; border-radius: 50%; background: var(--black5); border: 1px solid var(--border-w); display: flex; align-items: center; justify-content: center; font-family: 'Bebas Neue', sans-serif; font-size: 15px; color: var(--orange); flex-shrink: 0; }
+
 .topbar-item::after { content: '◆'; font-size: 5px; opacity: 0.5; }
 @keyframes scrollLeft { from { transform: translateX(0); } to { transform: translateX(-50%); } }
 
