@@ -30,17 +30,24 @@
   <div class="dq-nav" style="margin-top:16px;">
     <button type="button" id="getvalue" class="proceed" data-slideno="<%= k %>">Proceed</button>
   </div>
+  <div class="dq-nav" style="margin-top:16px;">
+    <button onclick = "pdfDownload()" class="proceed">Download Eco Report</a>
+  </div>
 </div>
 
 </form>
 <script src="/js/questionare.js"></script>
 <script>
+  var results = {};
   document.getElementById("getvalue").addEventListener("click",function(){
     const form = document.getElementById("form1");
     const formdata = new FormData(form);
-
+    
       const device = "<%= spe.type %>";
       const actual_price = Number("<%= spe.base_recycle_value %>");
+      results.device = device;
+      results.baseprice = actual_price;
+      results.name = '<%=spe.name%>';
 
       formdata.append("device",device);
       formdata.append("actual_price",actual_price);
@@ -51,7 +58,15 @@
     })
     .then(res=>res.json())
     .then(data =>{
-      console.log(data);
+      results.condition = data.condition;
+      results.issues = data.issues;
+      results.ecoimpact = data.eco_impact;
+      results.csaved = data.csaved;
+      results.ewsaved = data.ewsaved;
+      results.ensaved = data.ensaved;
+      results.finalprice = data.deductions;
+      results.deductions = data.reduction;
+
       const deductions = data.deductions;
       document.getElementById('deductions').innerHTML = `
       <div class="price-card total-card">
@@ -62,6 +77,13 @@
       </div>
     `;
     });
+  });
+
+  document.getElementById("pdfDownload").addEventListener("click",function(){
+    fetch("/recycle/downloadpdf",{
+      method:"post",
+      body : JSON.stringify(results)
+    })
   });
 
 </script>

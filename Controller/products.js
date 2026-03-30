@@ -4,6 +4,23 @@ const {Broken} = require('../models/broken');
 const {Question} = require('../models/questions');
 const {Product} = require("../models/products");
 
+function getConditionLabel(score) {
+  switch (true) {
+    case (score >= 90):
+      return "Excellent";
+    case (score >= 75):
+      return "Very Good";
+    case (score >= 60):
+      return "Good";
+    case (score >= 45):
+      return "Fair";
+    case (score >= 25):
+      return "Poor";
+    default:
+      return "Critical";
+  }
+}
+
 async function DateEvaluator (device, dt){
   const sd = new Date();
   sd.setDate(sd.getDate()+3 );
@@ -117,7 +134,10 @@ async function Totalrepair(issues,device){
   return total
 }
 async function Totalrecycle(issues,device){
-  var total = 0;
+  var total = {
+    userTotal :0,
+    completeTotal:0
+  };
   if (!(issues && Object.keys(issues).length > 0)) return total;
 
   var allquestions = await Question.find({type:device,intent :"recycle"},{question :1, options:1});
@@ -125,8 +145,9 @@ async function Totalrecycle(issues,device){
   for(let aq of allquestions){
     if(issues[aq.question]){
       var option = aq.options.find(o => o.text === issues[aq.question]);
-      total += option.value;
+      total.userTotal += option.value;
     }
+    total.completeTotal+=aq.options[0].value;
   }
   return total
 }
@@ -148,8 +169,18 @@ module.exports.findTotalrecycle = async(req,res)=>{
 
   const total = await Totalrecycle(issues,device);
 
-  const fp = actual_price+total;
-  res.json({deductions:fp});
+  const fp = actual_price+total.userTotal;
+  const eco_impact = Number((total.userTotal*100)/total.completeTotal);
+  const condition = getConditionLabel(eco_impact);
+  const cmax = 70;
+  const wmax =  0.2;
+  const pmax = 275;
+
+  const csaved = (eco_impact*cmax/100).toFixed(2);
+  const ewsaved = (eco_impact*wmax/100).toFixed(2);
+  const ensaved = (eco_impact*pmax/100).toFixed(2);
+
+  res.json({deductions:fp,condition,eco_impact,reduction:userTotal,csaved,ewsaved,ensaved,issues});
 }
 module.exports.Rental_Repair = async()=>{
   try{
