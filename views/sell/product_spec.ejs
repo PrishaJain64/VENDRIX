@@ -2,6 +2,21 @@
 <div id="cur-dot"></div>
 <div id="cur-ring"></div>
 
+<!-- loading -->
+<div class="lov" id="lov">
+  <div class="lbox">
+    <div class="lico">
+      <svg class="lring" viewBox="0 0 50 50">
+        <circle class="lring-bg" cx="25" cy="25" r="20"/>
+        <circle class="lring-fill" cx="25" cy="25" r="20"/>
+      </svg>
+      <span class="lcount" id="lcount">10</span>
+    </div>
+    <div class="ltitle">Processing...</div>
+    <p class="lsub" id="lsub">Please wait while we finalize your request.</p>
+  </div>
+</div>
+
 <!-- TOP BAR -->
 <div class="topbar">
   <div class="topbar-track">
@@ -139,8 +154,8 @@
     </form>
 
     <form id = "form1" enctype="multipart/form-data">
-    <div class="action-row reveal rd3" style="margin-top:-6px;">
-      <button class = "next btn-buy" data-slideno="1" type = "button"><i class="fas fa-bolt"></i> Sell Now</button>
+    <div class="dq-slide active action-row reveal rd3" id="slide-1" style="margin-top:-6px;">
+      <a href="#dp-wrap" class = "btn-next btn-buy" data-slideno="1"><i class="fas fa-bolt"></i> Sell Now</a>
     </div>
 
     <div class="trust-strip reveal rd4">
@@ -171,29 +186,14 @@
 
 <script src = "/js/specification.js"></script>
 <script>
-  
-  document.getElementById("getvalue").addEventListener("click",function(){
-    const form = document.getElementById("form1");
-    const formdata = new FormData(form);
-      
-      const device = "<%= spe.type %>";
-      const actual_price = Number("<%= spe.variants[i].price %>");
-
-      formdata.append("device",device);
-      formdata.append("actual_price",actual_price);
-
-    fetch("/answers/valuation",{
-      method : "POST",
-      body : formdata
-    })
-    .then(res=>res.json())
-    .then(data =>{
-      document.getElementById("deductions").innerText = data.deductions;
-      document.getElementById("total").innerText = data.finalprice;
-    });
-  });
 
   document.getElementById("passdata").addEventListener("click", function(){
+    const img = document.getElementById("thumbnail");
+    if(img.files.length==0){
+      img.style.border = "2px solid red";
+      alert("Uploading a front view photo is mandatory");
+      return;
+    }
     const deductions = Number(document.getElementById("deductions").textContent);
 
     const form = document.getElementById("form1");
@@ -214,13 +214,14 @@
       formdata.append("hexcode",hexcode);
       formdata.append("color",color);
 
-
+      showLoading("Please wait while we finalize your request.");
       fetch("/answers", {
       method: "POST",
       body: formdata
    }).then(res=>res.json())
    .then(data =>{
     window.location.href = data.redirect;
+    onFetchComplete(data.redirect);
    });
    
   });

@@ -1,21 +1,67 @@
-  <% let k = 2;
-    for(let q of questions){%>
-  <div class = "questions q<%= k%>">
-  <h1><%= q.question %></h1>
-
-  <% for(let option of q.options){ %>
-    <input type = "radio" name = 'issues[<%= q.question%>]' value = '<%= option.text %>'/><%= option.text %><br>
+<% let k = 2;
+   for(let q of questions){ %>
+<div class="dq-slide" id="slide-<%= k %>">
+  <div class="dq-question"><%= q.question %></div>
+  <div class="dq-hint">Select one option below.</div>
+  <div class="dq-options" data-name="<%= q.question %>" data-type="radio">
+    <% for(let option of q.options){ %>
+    <label class="dq-option">
+      <input type="radio" name="issues[<%= q.question %>]" value="<%= option.text %>">
+      <div class="dq-radio"><div class="dq-dot"></div></div>
+      <span class="dq-opt-label"><%= option.text %></span>
+    </label>
     <% } %>
-
-  <button type = "button" class = "prev" data-slideno = '<%= k%>' >previous</button>
-  <button type = "button" class = "next" data-slideno = '<%= k%>' >next</button>
-
   </div>
-      <% k++;} %>
-<div class = "questions q<%= k%>">
-  <div id = "deductions"></div>
-    <button type = "button" id = "getvalue">Proceed</button> 
+  <div class="dq-nav">
+    <% if(k > 2){ %><button type="button" class="btn-prev" data-slideno="<%= k %>">Back</button><% } %>
+    <button type="button" class="btn-next" data-slideno="<%= k %>">Continue</button>
+  </div>
 </div>
+<% k++; } %>
+
+<div class="dq-slide" id="slide-<%= k %>">
+  <div class="dq-nav" style="margin-top:16px;">
+    <button type="button" class="btn-prev" data-slideno="<%= k %>">Back</button>
+    <button type="button" id="getvalue" class="btn-next" data-slideno="<%= k %>">Get Value</button>
+  </div>
+</div>
+<div class="dq-slide" id="slide-<%= k +1%>">
+  <div id="deductions"></div>
+  <div class="dq-nav" style="margin-top:16px;">
+    <button type="button" id="getvalue" class="proceed" data-slideno="<%= k %>">Proceed</button>
+  </div>
+</div>
+
 </form>
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
-<script src = "/js/questionare.js"></script>
+<script src="/js/questionare.js"></script>
+<script>
+  document.getElementById("getvalue").addEventListener("click",function(){
+    const form = document.getElementById("form1");
+    const formdata = new FormData(form);
+
+      const device = "<%= spe.type %>";
+      const actual_price = Number("<%= spe.base_recycle_value %>");
+
+      formdata.append("device",device);
+      formdata.append("actual_price",actual_price);
+
+    fetch("/answers/recycle",{
+      method : "POST",
+      body : formdata
+    })
+    .then(res=>res.json())
+    .then(data =>{
+      console.log(data);
+      const deductions = data.deductions;
+      document.getElementById('deductions').innerHTML = `
+      <div class="price-card total-card">
+        <div class="price-icon">🎉</div>
+        <div class="price-label">You'll receive</div>
+        <div class="price-amount total-amount">₹${deductions}</div>   
+        <div class="price-sub">Great price for your device!</div>
+      </div>
+    `;
+    });
+  });
+
+</script>

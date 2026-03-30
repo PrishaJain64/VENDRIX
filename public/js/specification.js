@@ -44,6 +44,7 @@ document.getElementById('specsHeader').onclick = () => {
   document.getElementById('specsToggleIcon').className = specsOpen ? 'fas fa-minus' : 'fas fa-plus';
 };
 
+//add to cart
 let timer = null;
 
 function addtoCart(intent,id,i,color){
@@ -69,4 +70,54 @@ function addtoCart(intent,id,i,color){
       }, 1200);
     }
   })
+}
+
+//loading page
+let loadingTimer = null;
+let loadingDone = false;
+let redirectUrl = null;
+
+function showLoading(sub = "Please wait while we finalize your request.") {
+  document.getElementById('lsub').textContent = sub;
+  document.getElementById('lov').classList.add('show');
+
+  const fill = document.querySelector('.lring-fill');
+  const countEl = document.getElementById('lcount');
+  const circumference = 125.6;
+
+  let seconds = 10;
+  fill.style.strokeDashoffset = 0;
+
+  loadingTimer = setInterval(() => {
+    seconds--;
+
+    // update ring — drain from full to empty over 10s
+    const progress = seconds / 10;
+    fill.style.strokeDashoffset = circumference * (1 - progress);
+
+    if (seconds <= 0) {
+      clearInterval(loadingTimer);
+      countEl.textContent = '0';
+      fill.style.strokeDashoffset = circumference;
+
+      // if fetch already finished, redirect now
+      if (loadingDone && redirectUrl) {
+        window.location.href = redirectUrl;
+      }
+    } else {
+      countEl.textContent = seconds;
+    }
+  }, 1000);
+}
+
+function onFetchComplete(url) {
+  redirectUrl = url;
+  loadingDone = true;
+
+  // if timer already hit 0, redirect immediately
+  const countEl = document.getElementById('lcount');
+  if (countEl.textContent === '0') {
+    window.location.href = redirectUrl;
+  }
+  // otherwise wait for timer to hit 0 naturally
 }

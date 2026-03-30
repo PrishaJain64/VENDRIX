@@ -836,3 +836,78 @@ textarea.form-input { height: 90px; }
   .star-filter-chips { flex-wrap: wrap; }
   .review-photo { max-width: 100%; height: 180px; }
 }
+
+.lov {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.7);
+  z-index: 9999;
+  align-items: center;
+  justify-content: center;
+}
+.lov.show {
+  display: flex;
+}
+.lbox {
+  background: #1a1108;
+  border: 1px solid #f60;
+  border-radius: 16px;
+  padding: 40px 36px;
+  text-align: center;
+  width: 320px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+}
+.lico {
+  position: relative;
+  width: 72px;
+  height: 72px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 8px;
+}
+.lring {
+  position: absolute;
+  inset: 0;
+  width: 72px;
+  height: 72px;
+  transform: rotate(-90deg);
+}
+.lring-bg {
+  fill: none;
+  stroke: rgba(255,255,255,0.08);
+  stroke-width: 4;
+}
+.lring-fill {
+  fill: none;
+  stroke: #f60;
+  stroke-width: 4;
+  stroke-linecap: round;
+  stroke-dasharray: 125.6;
+  stroke-dashoffset: 0;
+  transition: stroke-dashoffset 1s linear;
+}
+.lcount {
+  font-size: 22px;
+  font-weight: 700;
+  color: #f60;
+  position: relative;
+  z-index: 1;
+}
+.ltitle {
+  font-size: 22px;
+  font-weight: 800;
+  color: #fff;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+}
+.lsub {
+  font-size: 14px;
+  color: rgba(255,255,255,0.5);
+  line-height: 1.5;
+  margin: 0;
+}

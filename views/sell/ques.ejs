@@ -1,43 +1,124 @@
-  <% let k = 2,j=0;
-  let loc = -1;
-    for(let q of questions){
-      if(q.question == "Additional Issues"){loc = j;break;}%>
-  <div class = "questions q<%= k%>">
-  <h1><%= q.question %></h1>
+<div id="dp-wrap" class="dq-wrap">
+  <div class="dq-main">
+    <div class="dq-header">
+      <div class="dq-step-label" id="stepLabel">Step 1 of <%= questions.length + 1 %></div>
+      <div class="dq-progress"><div class="dq-progress-bar" id="progressBar" style="width:<%= (1/(questions.length+1)*100) %>%"></div></div>
+    </div>
 
-  <% for(let option of q.options){ %>
-    <input type = "radio" name = 'issues[<%= q.question%>]' value = '<%= option.text %>'/><%= option.text %><br>
-    <% } %>
-  <button type = "button" class = "prev" data-slideno = '<%= k%>' >previous</button>
-  <button type = "button" class = "next" data-slideno = '<%= k%>' >next</button>
+    <% let k = 2, j = 0, loc = -1;
+       let total = questions.length + 1;
+       for(let q of questions){
+         if(q.question == "Additional Issues"){ loc = j; j++; continue; }
+    %>
+    <div class="dq-slide" id="slide-<%= k %>">
+      <div class="dq-question"><%= q.question %></div>
+      <div class="dq-hint">Select one option below.</div>
+      <div class="dq-options" data-name="<%= q.question %>" data-type="radio">
+        <% for(let option of q.options){ %>
+        <label class="dq-option">
+          <input type="radio" name="issues[<%= q.question %>]" value="<%= option.text %>">
+          <div class="dq-radio"><div class="dq-dot"></div></div>
+          <span class="dq-opt-label"><%= option.text %></span>
+        </label>
+        <% } %>
+      </div>
+      <div class="dq-nav">
+        <% if(k > 2){ %><button type="button" class="btn-prev" data-slideno="<%= k %>">Back</button><% } %>
+        <button type="button" class="btn-next" data-slideno="<%= k %>">Continue</button>
+      </div>
+    </div>
+    <% k++; j++; } %>
+
+    <!-- Additional Issues (checkbox) -->
+    <% if(loc !== -1){ %>
+    <div class="dq-slide" id="slide-<%= k %>">
+      <div class="dq-question"><%= questions[loc].question %></div>
+      <div class="dq-hint">Select all that apply.</div>
+      <div class="dq-options" data-name="<%= questions[loc].question %>" data-type="checkbox">
+        <% for(let option of questions[loc].options){ %>
+        <label class="dq-option">
+          <input type="checkbox" name="issues[<%= questions[loc].question %>]" value="<%= option.text %>">
+          <div class="dq-check"><span class="dq-check-mark">✓</span></div>
+          <span class="dq-opt-label"><%= option.text %></span>
+        </label>
+        <% } %>
+      </div>
+      <div class="dq-nav">
+        <button type="button" class="btn-prev" data-slideno="<%= k %>">Back</button>
+        <button type="button" id="getvalue" class="btn-next" data-slideno="<%= k %>">Continue</button>
+      </div>
+    </div>
+    <% k++; } %>
+
+    <!-- Upload + Proceed -->
+    <div class="dq-slide" id="slide-<%= k %>">
+      <div class="dq-question">Upload device photos</div>
+      <div class="dq-hint">Help us assess condition accurately with clear photos.</div>
+      <div class="dq-upload-area">
+        <div class="dq-upload-box">
+          <div class="dq-upload-label">Front View photo</div>
+          <input type="file" accept="image/*" name="image" id="thumbnail">
+        </div>
+        <div class="dq-upload-box">
+          <div class="dq-upload-label">Additional images</div>
+          <input type="file" multiple accept="image/*" name="image" id="image">
+        </div>
+      </div>
+      <div id="deductions"></div>
+    <% if(intnt === "sell"){ %><div id="total"></div><% } %>
+      <div class="dq-nav">
+        <button type="button" class="btn-prev" data-slideno="<%= k %>">Back</button>
+        <button type="button" id="passdata" class = 'proceed'>Proceed</button>
+      </div>
+    </div>
+
   </div>
-      <% k++;j++} %>
 
-<div class = "questions q<%= k%>">
-  <h1><%= questions[loc].question %></h1>
-
-  <% for(let option of questions[loc].options){ %>
-    <input type = "checkbox" name = 'issues[<%= questions[loc].question%>]' value = '<%= option.text %>' /><%= option.text %><br>
-    <% } %>
-  <button type = "button" class = "prev" data-slideno = '<%= k%>' >previous</button>
-    <button type = "button" id="getvalue" class = "next" data-slideno = '<%= k %>' >Get value</button>
-</div>
-<div class = "questions q<%= k+1 %>">
-  <div id = "deductions"></div>
-  
-  <% if(intnt === "sell") {%>
-  <div id = "total"></div>
-  <% } %>
-
-  <p>
-    <label for="thumbnail">Thumbnail:</label>
-    <input type="file" accept="image/*" name="image" id="thumbnail">
-          
-    <label for="image">Images:</label>
-    <input type="file" multiple accept="image/*" name="image" id="image">
-  </p>
-    <button type = "button" id = "passdata">Proceed</button> 
+  <!-- Sidebar -->
+  <div class="dq-sidebar">
+    <div class="dq-sidebar-title">Device evaluation</div>
+    <div id="summaryContent"><p class="dq-empty">Your answers will appear here.</p></div>
+  </div>
 </div>
 </form>
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+<script>
+  document.getElementById("getvalue").addEventListener("click",function(){
+    const form = document.getElementById("form1");
+    const formdata = new FormData(form);
+      
+      const device = "<%= spe.type %>";
+      const actual_price = Number("<%= spe.variants[i].price %>");
+
+      formdata.append("device",device);
+      formdata.append("actual_price",actual_price);
+
+    fetch("/answers/valuation",{
+      method : "POST",
+      body : formdata
+    })
+    .then(res=>res.json())
+    .then(data =>{
+      const deductions = data.deductions;
+      const total = data.finalprice;
+
+      document.getElementById('deductions').innerHTML = `
+      <div class="price-card deductions-card">
+        <div class="price-icon">✦</div>
+        <div class="price-label">Total Deductions</div>
+        <div class="price-amount deduction-amount">− ₹${deductions}</div>
+      </div>
+    `;
+
+    document.getElementById('total').innerHTML = `
+      <div class="price-card total-card">
+        <div class="price-icon">🎉</div>
+        <div class="price-label">You'll receive</div>
+        <div class="price-amount total-amount">₹${total}</div>   
+        <div class="price-sub">Great price for your device!</div>
+      </div>
+    `;
+
+    });
+  });
+  </script>
 <script src = "/js/questionare.js"></script>
