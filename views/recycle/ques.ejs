@@ -28,9 +28,6 @@
 <div class="dq-slide" id="slide-<%= k +1%>">
   <div id="deductions"></div>
   <div class="dq-nav" style="margin-top:16px;">
-    <button type="button" id="payment" class="proceed" data-slideno="<%= k %>">Proceed</button>
-  </div>
-  <div class="dq-nav" style="margin-top:16px;">
     <button type="button" id="pdfDownload" class=" pdf proceed btn-primary">
       Download Eco Report
     </button>
@@ -77,6 +74,9 @@
         <div class="price-label">You'll receive</div>
         <div class="price-amount total-amount">₹${deductions}</div>   
         <div class="price-sub">Great price for your device!</div>
+        <div class="dq-nav" style="margin-top:16px;">
+          <button type="button" id="payment" class="proceed">Proceed</button>
+        </div>
       </div>
     `;
     });
