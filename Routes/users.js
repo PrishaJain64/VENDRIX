@@ -38,7 +38,7 @@ router.get('/logout',(req,res)=>{
 //shopping cart
 router.get('/cart/:intent/:id/:variant_no/:color_no',Cart);
 
-router.post('/cart/:intent/:id/:variant_no/:color_no',userForShoppingCart);
+router.post('/cart/:intent/:id/:variant_no/:color_no',upload.none(),userForShoppingCart);
 
 router.get("/shoppingcart",ShoppingCart);
 

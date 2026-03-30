@@ -95,7 +95,7 @@ module.exports.Details =async (req,res)=>{
                 count[r.stars]++
             });
 
-    res.render(`${intent}/product_spec`, {result,currentUrl:req.originalUrl,reviews,count,option,star});
+    res.render(`${intent}/product_spec`, {result,reviews,count,option,star});
 }
 
 module.exports.Filter = async(req,res)=>{
@@ -161,7 +161,7 @@ module.exports.Filter = async(req,res)=>{
         });
     }
     }
-    res.render(`${intent}/${intent}`,{allmod,device,pr,psort,nsort,br,currentUrl:req.originalUrl});
+    res.render(`${intent}/${intent}`,{allmod,device,pr,psort,nsort,br});
 }
 
 module.exports.All = async (req,res)=>{
@@ -214,5 +214,5 @@ module.exports.All = async (req,res)=>{
         });
     }
     }
-        res.render(`${intent}/${intent}`,{allmod,device,pr,psort,nsort,br,currentUrl:req.originalUrl,search,brand:brand||"all"});
+        res.render(`${intent}/${intent}`,{allmod,device,pr,psort,nsort,br,search,brand:brand||"all"});
     }

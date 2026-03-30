@@ -67,7 +67,7 @@ document.querySelectorAll('.cat-pill').forEach(pill=>{
     document.querySelectorAll('.cat-pill').forEach(p=>p.classList.remove('active'));
     pill.classList.add('active');
     activeCategory=pill.dataset.filter;
-    renderCards();
+    //renderCards();
   });
 });
 
@@ -117,5 +117,20 @@ document.getElementById('sidebarOverlay').addEventListener('click', ()=>{
   document.getElementById('sidebarOverlay').classList.remove('open');
 });
 
-/* ─── INIT ─── */
-renderCards();
+
+function addtoCart(id,intent){
+  const qty= document.getElementById("product-qty").textContent;
+  const formdata = new FormData();
+  formdata.append("quantity",Number(qty)+1);
+
+  fetch(`/vendrix/cart/${intent}/${id}/0/0`,{
+    method:"post",
+    body:formdata
+  }).then(res=>res.json())
+  .then(data=>{
+    if(data.valid){
+      const quantity = document.getElementById("product-qty");
+      quantity.textContent = data.quantity;
+    }else{console.log("fetching error")};
+  })
+}

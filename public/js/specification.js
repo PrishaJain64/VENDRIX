@@ -43,3 +43,30 @@ document.getElementById('specsHeader').onclick = () => {
   document.getElementById('specsBody').style.display = specsOpen ? 'block' : 'none';
   document.getElementById('specsToggleIcon').className = specsOpen ? 'fas fa-minus' : 'fas fa-plus';
 };
+
+let timer = null;
+
+function addtoCart(intent,id,i,color){
+  const form = document.getElementById("form1");
+  const qty = document.getElementById("qtyVal").textContent;
+  const formdata = new FormData(form);
+  formdata.append("quantity",qty);
+
+  fetch(`/vendrix/cart/${intent}/${id}/${i}/${color}`,{
+    method:"post",
+    body:formdata
+  }).then(res=>res.json()).then(data=>{
+    if(data.valid){
+      qty.textContent=data.quantity;
+      const btn = document.getElementById('cartBtn');
+      if (btn.classList.contains('added')) return; // prevent double-click
+
+      btn.classList.add('added');
+
+      clearTimeout(timer);
+      timer = setTimeout(() => {
+        btn.classList.remove('added');
+      }, 1200);
+    }
+  })
+}

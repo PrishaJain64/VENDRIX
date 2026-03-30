@@ -708,8 +708,9 @@ input[type="range"].price-slider::-webkit-slider-thumb:hover { transform: scale(
 .add-cart-btn {
   display: flex; align-items: center; gap: 8px;
   padding: 8px 16px;
-  background: var(--white06); border: 1px solid var(--border-w);
-  border-radius: 6px; color: var(--white30);
+  border: 1px solid var(--border-w);
+  border-radius: 6px;
+  background: var(--orange); color: var(--black);
   font-family: 'Syne', sans-serif; font-size: 10px;
   font-weight: 700; letter-spacing: 1.5px; text-transform: uppercase;
   transition: all .3s;
@@ -728,8 +729,7 @@ input[type="range"].price-slider::-webkit-slider-thumb:hover { transform: scale(
 
 .buy-card-cta {
   width: 100%; margin-top: 12px;
-  background: var(--white06); border: 1px solid var(--border-w);
-  color: var(--white30);
+  background: var(--orange); color: var(--black);
   font-family: 'Syne', sans-serif; font-size: 10px;
   font-weight: 700; letter-spacing: 2px; text-transform: uppercase;
   padding: 10px; border-radius: 6px;
@@ -737,7 +737,6 @@ input[type="range"].price-slider::-webkit-slider-thumb:hover { transform: scale(
   transition: all .3s;
 }
 .buy-card:hover .buy-card-cta {
-  background: var(--orange); color: var(--black);
   border-color: var(--orange);
 }
 

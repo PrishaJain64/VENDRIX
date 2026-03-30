@@ -11,7 +11,10 @@ router.get("/:id/:ctr/:color_key",Details);
 
 router.post("/filters/:device",Filter);
 
+
+
 router.get("/:device",All);
+
 
 module.exports=router;
 

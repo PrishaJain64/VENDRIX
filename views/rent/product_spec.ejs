@@ -150,9 +150,6 @@
     </div>
     </form>
 
-    <form method = "post" id = "form1">
-        <input type="hidden" name="quantity" class="hidden-qty" value="<%=result.quantity&&result.quantity>1?result.quantity-1:1%>">
-        <input type="hidden" name="returnTo" value="<%=currentUrl%>">
         <div class="qty-row reveal rd3">
       <span class="qty-label">Qty</span>
       <div class="qty-ctrl">
@@ -161,9 +158,19 @@
         <button type="button" data-id="<%= result.selectedDoc[0].available %>" class="qty-btn plus"><i class="fas fa-plus" style="font-size:11px"></i></button>
       </div>
     </div>
+    <form id="form1">
     <div class="action-row reveal rd3">
-      <button formaction="/vendrix/cart/rent/<%=result.selectedDoc[0]._id%>/0/0" class="btn-primary">
+      <button type="button" id="cartBtn" onclick = "addtoCart('rent','<%=result.selectedDoc[0]._id%>','<%=result.selectedDoc[0].variant.label%>','<%=result.selectedDoc[0].color.color%>')"  class="btn-cart btn-primary">
+         <span class="label-default">
         <i class="fas fa-shopping-bag"></i><span id="cartBtnText">Add to Cart</span>
+        </span>
+        <span class="label-success">
+        <svg class="tick-circle" width="26" height="26" viewBox="0 0 26 26">
+          <circle cx="13" cy="13" r="11"/>
+          <polyline points="7,13 11,17 19,9"/>
+        </svg>
+        ADDED!
+      </span>
       </button>
     </div>
     <div class="action-row reveal rd3" style="margin-top:-6px;">

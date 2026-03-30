@@ -192,6 +192,45 @@ body.hovering #cur-ring{width:54px;height:54px;border-color:rgba(255,98,0,0.2)}
 .btn-secondary:hover{border-color:var(--border);color:var(--orange);background:var(--og-dim)}
 .btn-buy{flex:1;padding:16px 24px;background:var(--black4);color:var(--white55);border:1px solid var(--border-w);border-radius:8px;font-family:'Syne',sans-serif;font-size:12px;font-weight:700;letter-spacing:2px;text-transform:uppercase;display:flex;align-items:center;justify-content:center;gap:10px;transition:all .3s}
 .btn-buy:hover{border-color:var(--border);color:var(--orange);background:var(--og-dim)}
+.btn-cart .label-success {
+  position: absolute;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  opacity: 0;
+  transform: scale(0.7);
+  transition: opacity 0.25s, transform 0.25s;
+  pointer-events: none;
+}
+
+/* When .added is applied */
+.btn-cart.added .label-default { opacity: 0; transform: scale(0.7); }
+.btn-cart.added .label-success { opacity: 1; transform: scale(1); }
+.btn-cart.added { background: #2e7d32; }
+
+/* SVG tick draw-in animation */
+.tick-circle circle {
+  fill: none;
+  stroke: #fff;
+  stroke-width: 2.5;
+  stroke-dasharray: 70;
+  stroke-dashoffset: 70;
+  transition: stroke-dashoffset 0.4s ease 0.05s;
+}
+
+.tick-circle polyline {
+  fill: none;
+  stroke: #fff;
+  stroke-width: 2.5;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-dasharray: 30;
+  stroke-dashoffset: 30;
+  transition: stroke-dashoffset 0.35s ease 0.3s;
+}
+
+.btn-cart.added .tick-circle circle { stroke-dashoffset: 0; }
+.btn-cart.added .tick-circle polyline { stroke-dashoffset: 0; }
 .trust-strip{display:grid;grid-template-columns:repeat(3,1fr);border:1px solid var(--border-w);border-radius:10px;overflow:hidden;margin-bottom:28px;background:var(--black4)}
 .trust-it{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;padding:18px 12px;border-right:1px solid var(--border-w);text-align:center;transition:background .3s}
 .trust-it:last-child{border-right:none}

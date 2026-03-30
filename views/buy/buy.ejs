@@ -208,13 +208,9 @@ const products = [
         <p class="buy-brand"><%=p.brand%></p>
         <h3 class="buy-name"><%=p.name%></h3>
         <div class="buy-price-row">
-          <span class="buy-price"><%=p.variants[0].price%></span>
-          <form method = "post">
-        <input type="hidden" name="returnTo" value="<%=currentUrl%>">
-        <input type="hidden" name="quantity" value="<%=p.quantity?p.quantity+1:1%>">
-          <p class="buy-brand">Qty : <%=p.quantity?p.quantity:0%></p>
-          <button formaction="/vendrix/cart/buy/<%=p._id%>/0/0" class="add-cart-btn"><i class="fas fa-plus"></i> Add</button>
-          </form>
+          <span class="buy-price">INR <%=p.variants[0].price%></span>
+          <p class="buy-brand">Qty : <span id="product-qty"><%=p.quantity?p.quantity:0%></span></p>
+          <button type="button" onclick="addtoCart('<%=p._id%>','buy')" class="add-cart-btn"><i class="fas fa-plus"></i> Add</button>
         </div>
         <a href="/buydetails/<%=p._id%>/0/0" class="buy-card-cta"><i class="fas fa-eye"></i> View Details</a>
       </div>

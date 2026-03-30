@@ -43,19 +43,22 @@ function createCart(id,intent,variant_no,color_no,qty,startdate,enddate){
 
 module.exports.userForShoppingCart = (req,res,next)=>{
     if(!req.isAuthenticated()){
-        let startdate = new Date(req.body.startdate);
+        let startdate=-1,enddate=-1;
+        if(req.params.intent=="rent"){
+        startdate = new Date(req.body.startdate);
         if (isNaN(startdate)) {
             startdate = new Date();
             startdate.setDate(startdate.getDate() + 3);
         }
         startdate.setHours(0,0,0,0);
 
-        let enddate = new Date(req.body.enddate);
+        enddate = new Date(req.body.enddate);
         if (isNaN(enddate)) {
             enddate = new Date();
             enddate.setDate(enddate.getDate() + 10);
         }
         enddate.setHours(0,0,0,0);
+    }
 
         if(!req.session.shoppingCart) req.session.shoppingCart = [];
         console.log(startdate,enddate);
@@ -65,14 +68,12 @@ module.exports.userForShoppingCart = (req,res,next)=>{
         var existingItem = req.session.shoppingCart.find(item => item.product_id===cart.product_id && item.variant_no==cart.variant_no&& item.color_no==cart.color_no);
         else
         var existingItem = req.session.shoppingCart.find(item => item.product_id===cart.product_id);
-            
         if(!existingItem){
             req.session.shoppingCart.push(cart);
         }else{
             existingItem.quantity=cart.quantity;
         }
-        console.log(req.session.shoppingCart);
-        res.redirect(req.body.returnTo);
+        res.json({valid:true,quantity:cart.quantity})
     }
     else{
         req.session.backUrl = req.body.returnTo;
@@ -242,7 +243,8 @@ module.exports.Cart = async (req,res)=>{
     const cart = createCart(req.params.id,req.params.intent,req.params.variant_no,req.params.color_no,Number(req.query.quantity),startdate,enddate);
     preventDuplicatesCart(req,cart);
     await req.user.save();
-    res.redirect(req.session.backUrl);
+    //res.redirect(req.session.backUrl);
+    res.json({valid:true,quantity:cart.quantity});
 }
 
 module.exports.Vendrix = async (req,res)=>{
