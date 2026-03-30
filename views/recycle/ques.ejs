@@ -28,10 +28,12 @@
 <div class="dq-slide" id="slide-<%= k +1%>">
   <div id="deductions"></div>
   <div class="dq-nav" style="margin-top:16px;">
-    <button type="button" id="getvalue" class="proceed" data-slideno="<%= k %>">Proceed</button>
+    <button type="button" id="payment" class="proceed" data-slideno="<%= k %>">Proceed</button>
   </div>
   <div class="dq-nav" style="margin-top:16px;">
-    <button onclick = "pdfDownload()" class="proceed">Download Eco Report</a>
+    <button type="button" id="pdfDownload" class=" pdf proceed btn-primary">
+      Download Eco Report
+    </button>
   </div>
 </div>
 
@@ -48,6 +50,7 @@
       results.device = device;
       results.baseprice = actual_price;
       results.name = '<%=spe.name%>';
+      results.type=device;
 
       formdata.append("device",device);
       formdata.append("actual_price",actual_price);
@@ -82,6 +85,9 @@
   document.getElementById("pdfDownload").addEventListener("click",function(){
     fetch("/recycle/downloadpdf",{
       method:"post",
+      headers: {
+        "Content-Type": "application/json"
+      },
       body : JSON.stringify(results)
     })
   });

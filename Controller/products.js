@@ -170,7 +170,7 @@ module.exports.findTotalrecycle = async(req,res)=>{
   const total = await Totalrecycle(issues,device);
 
   const fp = actual_price+total.userTotal;
-  const eco_impact = Number((total.userTotal*100)/total.completeTotal);
+  const eco_impact = parseInt((total.userTotal*100)/total.completeTotal);
   const condition = getConditionLabel(eco_impact);
   const cmax = 70;
   const wmax =  0.2;
@@ -180,7 +180,7 @@ module.exports.findTotalrecycle = async(req,res)=>{
   const ewsaved = (eco_impact*wmax/100).toFixed(2);
   const ensaved = (eco_impact*pmax/100).toFixed(2);
 
-  res.json({deductions:fp,condition,eco_impact,reduction:userTotal,csaved,ewsaved,ensaved,issues});
+  res.json({deductions:fp,condition,eco_impact,reduction:total.userTotal,csaved,ewsaved,ensaved,issues});
 }
 module.exports.Rental_Repair = async()=>{
   try{

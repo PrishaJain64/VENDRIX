@@ -3,7 +3,9 @@
 <head>
 <meta charset="UTF-8">
 <title>Vendrix Eco Report</title>
-<link rel="stylesheet" href="/css/eco_report.css">
+<style>
+  <%=css%>
+</style>
 </head>
 
 <body>
@@ -13,11 +15,11 @@
   <!-- HEADER -->
   <div class="header">
     <div>
-      <div class="brand"><span>VEND</span><span class="orange">R</span><span>IX</span></div>
+      <div class="brand"><span class="green">VEND</span><span class="orange">R</span><span class="green">IX</span></div>
       <div class="title">Device Eco Report</div>
     </div>
     <div class="meta">
-      Date: <%=new Date().toISOString().split("T")[0];%>
+      Date: <%= new Date().toISOString().split("T")[0] %>
     </div>
   </div>
 
@@ -26,22 +28,24 @@
     <div class="section-title">Device Details</div>
     <div class="card">
       <table>
-        <tr><td class="label">Device</td><td class="value"><%results.name%></td></tr>
-        <tr><td class="label">Condition</td><td class="value"><%results.condition%></td></tr>
+        <tr><td class="label">Name</td><td class="value"><%= results.name %></td></tr>
+        <tr><td class="label">Device</td><td class="value"><%= results.type %></td></tr>
+        <tr><td class="label">Condition</td><td class="value"><%= results.condition %></td></tr>
+
       </table>
     </div>
   </div>
 
-  <!-- DEVICE CONDITION (NEW SECTION 🔥) -->
+  <!-- DEVICE CONDITION -->
   <div class="section">
     <div class="section-title">Device Condition</div>
     <div class="card">
-        <%results.issues.forEach(e => {%>
+        <% Object.entries(results.issues).forEach(([key, value]) => { %>
             <div class="condition-item">
                 <div class="bullet"></div>
-                <div class="condition-text"><%=e%></div>
+                <div class="condition-text"><%= value %></div>
             </div>
-        <%});%>
+        <% }); %>
     </div>
   </div>
 
@@ -49,7 +53,7 @@
   <div class="section">
     <div class="section-title">Eco Impact</div>
     <div class="card">
-      <div class="score"><%=results.ecoimpact%> / 100</div>
+      <div class="score"><%= results.ecoimpact %> / 100</div>
       <div class="badge">Eco Friendly</div>
     </div>
   </div>
@@ -59,9 +63,9 @@
     <div class="section-title">Environmental Savings</div>
     <div class="card">
       <table>
-        <tr><td class="label">CO₂ Saved</td><td class="value"><%results.csaved%> kg</td></tr>
-        <tr><td class="label">E-Waste Reduced</td><td class="value"><%results.ewsaved%> g</td></tr>
-        <tr><td class="label">Energy Saved</td><td class="value"><%results.ensaved%> kWh</td></tr>
+        <tr><td class="label">CO₂ Saved</td><td class="value"><%= results.csaved %> kg</td></tr>
+        <tr><td class="label">E-Waste Reduced</td><td class="value"><%= results.ewsaved %> g</td></tr>
+        <tr><td class="label">Energy Saved</td><td class="value"><%= results.ensaved %> kWh</td></tr>
       </table>
     </div>
   </div>
@@ -71,9 +75,9 @@
     <div class="section-title">Valuation</div>
     <div class="card">
       <table>
-        <tr><td class="label">Base Price</td><td class="value">₹<%results.baseprice%></td></tr>
-        <tr><td class="label">Deductions</td><td class="value">− ₹<%results.deductions%></td></tr>
-        <tr><td class="label"><b>Final Price</b></td><td class="value"><b>₹<%results.finalprice%></b></td></tr>
+        <tr><td class="label">Base Price</td><td class="value">₹<%= results.baseprice %></td></tr>
+        <tr><td class="label">Additions</td><td class="value">+ ₹<%= results.deductions %></td></tr>
+        <tr><td class="label"><b>Final Price</b></td><td class="value"><b>₹<%= results.finalprice %></b></td></tr>
       </table>
     </div>
   </div>
