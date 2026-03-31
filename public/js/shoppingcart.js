@@ -79,7 +79,7 @@ function updateQuantity(intent,id,variant,color, change, btn,startdate=-1,enddat
   }).then(res=>res.json())
   .then(data=>{
     if(data.valid){
-      qty.textContent = data.quantity;
+      //qty.textContent = data.quantity;
       total.textContent = `Total: ${formatPrice(Number(data.quantity) * price)}`;
 
       const item = cartData.find(i => String(i.id) === String(id));
@@ -132,15 +132,16 @@ function toggleCouponsPanel() {
 function useCoupon(c) {
   const input = document.getElementById('promoInput');
   input.value = c.code;
-  applyCoupon(c);
+  applyCoupon();
   toggleCouponsPanel();
 }
 
-function applyCoupon(c) {
+function applyCoupon() {
   const input = document.getElementById('promoInput');
   const code = input.value.toUpperCase().trim();
   if (!code) return;
-  if (COUPONS.some(coupon => coupon.code === c.code)) {
+  const c= COUPONS.find(coupon => coupon.code === code);
+  if (c) {
     discountCode = c.code;
     discountAmount = c.discount.value;
     discountType = c.discount.type;

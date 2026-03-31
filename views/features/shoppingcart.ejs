@@ -57,7 +57,7 @@
         </div>
         <div class="summary-divider"></div>
         <div class="total-row">
-          <div><div class="total-label">Total Payable</div></div>
+          <div><div class="total-label">Cart Total</div></div>
           <div style="text-align:right;"><div class="total-amount" id="total">₹0</div></div>
         </div>
         <div class="coupon-section">
@@ -172,6 +172,8 @@
 
     const tc = TYPE_CONFIG[item.type] || TYPE_CONFIG.buy;
     const typeBadge = `<span class="type-badge" style="background:${tc.bg};border:1px solid ${tc.border};color:${tc.color};">${tc.icon} ${tc.label}</span>`;
+    const duration = `<span class="type-badge" style="background:${tc.bg};border:1px solid ${tc.border};color:${tc.color};">${item.startdate?new Date(item.startdate).toLocaleDateString("en-IN", { day: "numeric", month: "long", year: "numeric" }):" "}-${item.enddate? new Date(item.enddate).toLocaleDateString("en-IN", { day: "numeric", month: "long", year: "numeric" }):' '}</span>`;
+
 
     const specsHtml = item.specs && item.specs.length
       ? `<div class="item-specs">${item.specs.map(s => `<span class="spec-chip">${s}</span>`).join('')}</div>`
@@ -186,6 +188,7 @@
       <div class="item-details">
         <div class="item-name">${item.name}</div>
         <div class="item-type-row">${typeBadge}</div>
+        <div class="item-type-row">${item.startdate && item.enddate ? duration : ''}</div>
         ${specsHtml}
         <div class="item-controls qty-ctrl" data-intent="${item.type}"  data-id="${item.id}"  data-variant="${item.variant}"  data-color="${item.color}"  data-startdate="${item.startdate ?? -1}"  data-enddate="${item.enddate ?? -1}" data-stock="${item.stock ?? -1}" data-price="${item.price}">
           <button class="minus qty-btn minus-btn"  ${item.quantity <= 1 ? 'disabled' : ''}>−</button>
