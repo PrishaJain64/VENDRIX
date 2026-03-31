@@ -53,7 +53,11 @@ const userSchema=new Schema({
     reviews:[{
         type:mongoose.Schema.Types.ObjectId,
         ref:'Review'
-    }]
+    }],
+    order_count:{
+        type:Number,
+        default:0
+    }
 },{timestamps:true});
 userSchema.plugin(passportLocalMongoose.default);
 module.exports=mongoose.model('User',userSchema);

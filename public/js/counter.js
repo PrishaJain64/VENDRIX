@@ -1,9 +1,10 @@
 $(document).ready(function(){
     $(".plus").click(function(){
         const parent = $(this).closest(".qty-ctrl"); // go to same div
-        var value = Number(parent.find(".qty-val").text());
+        const child = parent.find(".qty-val");
+        var value = Number(child.text());
         ++value;
-        $(".qty-val").text(value);
+        child.text(value);
         $(".minus").prop("disabled", false);
         let stock = Number($(this).data("id"));
         if(value >= stock){
@@ -16,10 +17,11 @@ $(document).ready(function(){
     });
     $(".minus").click(function(){
         const parent = $(this).closest(".qty-ctrl"); // go to same div
-        var value = Number(parent.find(".qty-val").text());
+        const child = parent.find(".qty-val");
+        var value = Number(child.text());
 
         --value;
-        $(".qty-val").text(value);
+        child.text(value);
         
         $(".plus").prop("disabled", false);
         if(value <= 1){

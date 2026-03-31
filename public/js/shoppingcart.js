@@ -1,15 +1,19 @@
-const COUPONS = {
-  SAVE10:    { percent: 10, description: 'Flat 10% off on all products', minOrder: 0 },
-  SAVE15:    { percent: 15, description: 'Flat 15% off on your order', minOrder: 5000 },
-  TECH20:    { percent: 20, description: '20% off on all tech purchases', minOrder: 10000 },
-  REFURB5:   { percent: 5,  description: 'Extra 5% off on refurbished items', minOrder: 0 },
-  WELCOME25: { percent: 25, description: '25% off for new customers', minOrder: 20000 },
-};
-
 let discountCode = null;
-let discountPercent = 0;
+let discountAmount = 0;
+let discountType = null;
+let discountApplicable = "all";
 let couponsVisible = false;
+
+//yes
 let cartData = [];
+let allCOUPONS = [];
+let COUPONS = [];
+let amount = {
+  all:0,
+  buy:0,
+  rent:0,
+  refurbish:0
+};
 
 //yes
 const TYPE_CONFIG = {
@@ -55,8 +59,7 @@ function animateValue(el, val) {
 }
 
 //yes
-function updateQuantity(intent,id,variant,color, change, btn,startdate=-1,enddate=-1,stock=-1,price,idx,otherbtn) {
-  console.log("hi");
+function updateQuantity(intent,id,variant,color, change, btn,startdate=-1,enddate=-1,stock=-1,price) {
   const parent = btn.closest(".item-controls"); // go up to parent div
   const qty = parent.querySelector(".qty-display");  // find qty inside it
   
@@ -77,8 +80,11 @@ function updateQuantity(intent,id,variant,color, change, btn,startdate=-1,enddat
   .then(data=>{
     if(data.valid){
       qty.textContent = data.quantity;
-      total.textContent = formatPrice(Number(data.quantity)*price);
-      cartData[idx].quantity = Number(data.quantity);
+      total.textContent = `Total: ${formatPrice(Number(data.quantity) * price)}`;
+
+      const item = cartData.find(i => String(i.id) === String(id));
+      if (item) item.quantity = Number(data.quantity);
+
       const r = btn.getBoundingClientRect();
       createParticles(r.left + r.width / 2, r.top + r.height / 2);
       updateSummary();
@@ -99,14 +105,15 @@ function removeItem(intent,id,variant,color,idx) {
       const r = el.getBoundingClientRect();
       createParticles(r.left + r.width / 2, r.top + r.height / 2);
       setTimeout(() => {
-        cartData.splice(idx, 1);
+        const idx = cartData.findIndex(i => String(i.id) === String(id));
+        if (idx > -1) cartData.splice(idx, 1);
         renderCart();
       }, 380);
     }
   })
 
 }
-
+//yes
 function toggleCouponsPanel() {
   couponsVisible = !couponsVisible;
   const panel = document.getElementById('couponsPanel');
@@ -121,40 +128,23 @@ function toggleCouponsPanel() {
   }
 }
 
-function renderCouponCards() {
-  const list = document.getElementById('couponCardList');
-  list.innerHTML = '';
-  Object.entries(COUPONS).forEach(([code, info]) => {
-    const card = document.createElement('div');
-    card.className = 'coupon-card';
-    card.innerHTML = `
-      <div class="coupon-card-left">
-        <div class="coupon-code-badge">${code}</div>
-        <div class="coupon-desc">${info.description}</div>
-        ${info.minOrder > 0 ? `<div class="coupon-min">Min. order: ${formatPrice(info.minOrder)}</div>` : ''}
-      </div>
-      <div class="coupon-card-right">
-        <div class="coupon-off">${info.percent}%<br/><span>OFF</span></div>
-        <button class="coupon-use-btn" onclick="useCoupon('${code}')">Use</button>
-      </div>`;
-    list.appendChild(card);
-  });
-}
 
-function useCoupon(code) {
+function useCoupon(c) {
   const input = document.getElementById('promoInput');
-  input.value = code;
-  applyCoupon();
+  input.value = c.code;
+  applyCoupon(c);
   toggleCouponsPanel();
 }
 
-function applyCoupon() {
+function applyCoupon(c) {
   const input = document.getElementById('promoInput');
   const code = input.value.toUpperCase().trim();
   if (!code) return;
-  if (COUPONS[code]) {
-    discountCode = code;
-    discountPercent = COUPONS[code].percent;
+  if (COUPONS.some(coupon => coupon.code === c.code)) {
+    discountCode = c.code;
+    discountAmount = c.discount.value;
+    discountType = c.discount.type;
+    discountApplicable = c.validity_check.applicable_category;
     input.style.borderColor = 'var(--primary-orange)';
     input.style.background = 'rgba(255,107,53,.15)';
     input.placeholder = 'Coupon applied! ✓';
@@ -162,6 +152,7 @@ function applyCoupon() {
     const r = input.getBoundingClientRect();
     createParticles(r.right - 20, r.top + r.height / 2);
     pulseElement(document.querySelector('.summary-card'));
+    console.log(discountCode+" "+discountAmount)
     updateSummary();
   } else {
     input.style.borderColor = '#ff4444';
@@ -173,7 +164,10 @@ function applyCoupon() {
 
 function removeCoupon() {
   discountCode = null;
-  discountPercent = 0;
+  discountAmount = 0;
+  discountAmount = null;
+  discountApplicable = "all";
+
   const input = document.getElementById('promoInput');
   input.style.borderColor = 'rgba(255,107,53,.3)';
   input.style.background = 'rgba(0,0,0,.45)';

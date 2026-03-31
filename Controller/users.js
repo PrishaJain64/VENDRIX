@@ -4,7 +4,25 @@ const User=require('../models/users');
 const { Model } = require('../models/versions');
 const { Product } = require('../models/products');
 const {Review} = require("../models/reviews");
+const {Coupon} = require("../models/coupons");
 const {Types} = require('mongoose');
+
+function getMembershipYears(createdAt) {
+  const d1 = new Date(createdAt);
+  const d2 = new Date();
+
+  let years = d2.getFullYear() - d1.getFullYear();
+
+  if (
+    d2.getMonth() < d1.getMonth() ||
+    (d2.getMonth() === d1.getMonth() && d2.getDate() < d1.getDate())
+  ) {
+    years--;
+  }
+
+  return years;
+}
+
 
 async function preventDuplicatesCart(req,cart){
     let existingItem;
@@ -148,8 +166,17 @@ module.exports.ShoppingCart = async(req,res)=>{
 
     if(req.isAuthenticated()) {
     var shoppingCart = req.user.shoppingCart || [];
+    const membershipYears = getMembershipYears(req.user.createdAt);
+    var coupons = await Coupon.find({
+        "validity_check.user_membership": { $lte: membershipYears },
+        "validity_check.user_order_count": { $lte: req.user.order_count }
+        });
     }else{
     var shoppingCart = req.session.shoppingCart || [];
+    var coupons = await Coupon.find({
+        "validity_check.user_membership": 0,
+        "validity_check.user_order_count": 0
+        });
     }
     console.log(shoppingCart);
     const cart=[];
@@ -214,7 +241,7 @@ module.exports.ShoppingCart = async(req,res)=>{
         }
     });
 
-    res.render("features/shoppingcart",{cart});
+    res.render("features/shoppingcart",{cart,coupons});
 }
 
 module.exports.deleteCart = async (req,res)=>{
