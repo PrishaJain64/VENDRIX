@@ -321,35 +321,7 @@ module.exports.rental_duration = async(req,res)=>{
 module.exports.createModel = async(req,res)=>{
     const images=req.files.map(f=>({url:f.path,filename:f.filename}));
 
-    const version = new Model({
-  name: "Sony WH-CH720N",
-  brand: "Sony",
-  type: "headphone",
-
-  variants: [
-    {
-      label: "Bluetooth 5.2 | ANC | 35hr Battery",
-      connectivity: "Bluetooth 5.2",
-      battery_life: "Up to 35 Hours",
-      price: 9990
-    }
-  ],
-
-  specifications: {
-    audio: "Sony Integrated Processor V1",
-    noise_cancellation: "Active Noise Cancelling",
-    battery: "Up to 35 hours",
-    charging: "USB-C Fast Charging"
-  },
-
-  colors: [
-    { color: "Black", thumbnail: images[0], images: images.slice(1,2) },
-    { color: "Pink", thumbnail: images[2], images: images.slice(3,4) }
-  ],
-
-  release_date: new Date("2023-01-01"),
-  base_recycle_value: 1500
-});
+    const version = new Model();
 
   await version.save();
   

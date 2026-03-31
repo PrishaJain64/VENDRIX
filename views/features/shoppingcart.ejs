@@ -1,136 +1,208 @@
-<%layout("layouts/shoppingcart-boilerplate")%>
-<header>
-        <div class="header-content">
-            <div class="logo">VEND<span class="logo-r">R</span>IX</div>
-            <div class="header-title">SHOPPING CART</div>
-        </div>
-    </header>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Shopping Cart — Vendrix</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Syne:wght@600;700;800;900&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+  <link rel = "stylesheet" href="/css/footer.css">
+<link rel="stylesheet" href="/css/shoppingcart.css" />
 
-    <main class = "cart-container">
-    <div class="cart-items" id="cartItems">
-        <% var amount = [];if(models.length == 0 && products.length==0){ amount.push([0,0]) %>
-            <div class="empty-cart"></div>
-            <div class="empty-cart-icon" style="animation: pop 0.6s ease-out;">🛒</div>
-            <div class="empty-cart-text">Your cart is empty</div>
-            <div class="empty-cart-subtext">Start adding some refurbished tech to get started</div>
-            <button class="checkout-btn" style="margin: 0 auto;">CONTINUE SHOPPING</button>
-        <% } else {%>
-            <% for(let data of models){
-                amount.push([data.quantity, data.details.variants[data.variant_no].price])
-                 %>
-                
-                <!-- Wrap each cart item in a container -->
-                <div class="cart-item">
-                    <!-- Item Image -->
-                    <a href="/buydetails/<%=data.details._id%>/<%=data.variant_no%>/<%=data.color_no%>"><div class="item-image">
-                        <img src="<%= data.details.colors[data.color_no].thumbnail.url %>" alt="<%= data.details.name %>">
-                    </div></a>
 
-                    <!-- Item Details -->
-                    <div class="item-details">
-                        <div class="item-name"><%= data.details.name %></div>
-                        <div class = "item-meta">
-                            <span><%=data.details.variants[data.variant_no].label%></span>
-                        </div>
-                        <div class="item-meta">
-                            <span><%= data.details.brand %></span>
-                            <span><%= data.details.type %></span>
-                        </div>
-                        <div class = "item-meta">
-                            <span><%=data.intent%></span>
-                        </div>
-                        <div class="item-controls">
-                            <form method = "post">
-                            <input type="hidden" name="quantity" class="hidden-qty" value="<%=data.quantity&&data.quantity>1?data.quantity-1:1%>">
-                            <input type="hidden" name="returnTo" value="<%=currentUrl%>">
-                            <button formaction="/vendrix/cart/<%=data.intent%>/<%=data.details._id%>/<%=data.variant_no%>/<%=data.color_no%>" class="qty-btn minus" <%=Number(data.quantity)<=1?"disabled":""%>><i class="fas fa-minus"></i></button>
-                            </form>
-                            <div class="qty-display qty-val" id="qtyVal"><%= data.quantity %></div>
 
-                            <form method = "post">
-                            <input type="hidden" name="quantity" class="hidden-qty" value="<%=data.quantity?data.quantity+1:1%>">
-                            <input type="hidden" name="returnTo" value="<%=currentUrl%>">
-                            <button formaction="/vendrix/cart/<%=data.intent%>/<%=data.details._id%>/<%=data.variant_no%>/<%=data.color_no%>" class="qty-btn plus" ><i class="fa fa-plus"></i></button>
-                            </form>
+</head>
+<body>
 
-                        </div>
-                    </div>
-
-                    <!-- Price & Remove Button -->
-                    <div class="item-price-section">
-                        <div class="item-price">₹<%= data.details.variants[data.variant_no].price %></div>
-                        <a href="/vendrix/delete/<%=data.intent%>/<%=data.details._id%>/<%=data.variant_no%>/<%=data.color_no%>" class="remove-btn">REMOVE</a>
-                    </div>
-                </div>
-            <% }for(let data of products){ 
-                amount.push([data.quantity, data.details.variant.price.amount])
-                %>
-                <!-- Wrap each cart item in a container -->
-                <div class="cart-item">
-                    <!-- Item Image -->
-                    <a href="/<%=data.intent%>/details/<%=data.details.name%>/<%=data.details.variant.label%>/<%=data.details.color.color%>"><div class="item-image">
-                        <img src="<%= data.details.color.thumbnail.url %>" alt="<%= data.details.name %>">
-                    </div></a>
-
-                    <!-- Item Details -->
-                    <div class="item-details">
-                        <div class="item-name"><%= data.details.name %></div>
-                        <div class = "item-meta">
-                            <span><%=data.details.variant.label%></span>
-                        </div>
-                        <div class="item-meta">
-                            <span><%= data.details.brand %></span>
-                            <span><%= data.details.type %></span>
-                        </div>
-                        <div class = "item-meta">
-                            <span><%=data.intent%></span>
-                        </div>
-                        <div class="item-controls">
-                            <form method = "post">
-                            <input type="hidden" name="quantity" class="hidden-qty" value="<%=data.quantity&&data.quantity>1?data.quantity-1:1%>">
-                            <input type="hidden" name="returnTo" value="<%=currentUrl%>">
-                            <button formaction="/vendrix/cart/<%=data.intent%>/<%=data.details._id%>/0/0" class="qty-btn minus" <%=Number(data.quantity)<=1?"disabled":""%>><i class="fas fa-minus" style="font-size:11px"></i></button>
-                            </form>
-                            <div class="qty-display qty-val" id="qtyVal"><%= data.quantity?data.quantity:1 %></div>
-
-                            <form method = "post">
-                            <input type="hidden" name="quantity" class="hidden-qty" value="<%=data.quantity?data.quantity+1:1%>">
-                            <input type="hidden" name="returnTo" value="<%=currentUrl%>">
-                            <%if(data.intent == "refurbish"){%>
-                            <button formaction="/vendrix/cart/<%=data.intent%>/<%=data.details._id%>/0/0" class="qty-btn plus" <%=Number(data.quantity)>=Number(data.details.stock)?"disabled":""%>><i class="fas fa-plus" style="font-size:11px"></i></button>
-                            <%}else {%>
-                            <button formaction="/vendrix/cart/<%=data.intent%>/<%=data.details._id%>/0/0" class="qty-btn plus" <%=Number(data.quantity)>=Number(data.details.available)?"disabled":""%>><i class="fas fa-plus" style="font-size:11px"></i></button>
-                            <%}%>
-                            </form>
-                        </div>
-                    </div>
-
-                    <!-- Price & Remove Button -->
-                    <div class="item-price-section">
-                        <div class="item-price">₹<%= data.details.variant.price.amount %></div>
-                        <a href="/vendrix/delete/<%=data.intent%>/<%=data.details._id%>/0/0" class="remove-btn">REMOVE</a>
-                        
-                    </div>
-                </div>
-            <% } %>
-        <% } %>
+<nav class="navbar">
+  <div class="navbar-inner">
+    <div class="navbar-left">
+      <a href="/vendrix" class="back-btn"  title="Go Back">
+        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path d="M19 12H5"/><path d="M12 5l-7 7 7 7"/></svg>
+        Back
+      </a>
+      <a class="logo" href="#">VEND<span class="logo-r">R</span>IX</a>
     </div>
+
+    <ul class="nav-links">
+    </ul>
+
+    <div class="nav-actions">
+      <!-- Profile -->
+      <button class="nav-icon-btn" title="Profile">
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+      </button>
+      <a class="nav-cta" href="/vendrix/register">Sign Up/In</a>
+    </div>
+  </div>
+</nav>
+
+<div class="cart-header-bar">
+  <div class="cart-page-title">SHOPPING CART</div>
+  <div class="cart-page-subtitle"><span id="itemCountText">3 items</span> in your cart</div>
+</div>
+
+<main>
+  <div class="cart-container">
+
+    <div class="cart-items" id="cartItems"></div>
+
     <aside class="order-summary">
-        <div class="summary-card">
-            <div class="summary-title">Order Summary</div>
-            <%var total =0; for(let [qty,price] of amount){ total+= qty*price%>
-            <div class="summary-row">
-                <span>₹<%=qty*price%></span>
-                <!--<span class="summary-value">₹0</span>-->
-            </div>
-            <%}%>
-            <div class="summary-row total">
-                <span>Total</span>
-                <span class="summary-value">₹<%=total%></span>
-            </div>
-            <button class="checkout-btn">Checkout</button>
+      <div class="summary-card">
+        <div class="summary-title">Order Summary</div>
+        <div class="summary-rows" id="summaryRows">
+          <!-- dynamically populated -->
         </div>
+        <div class="summary-divider"></div>
+        <div class="total-row">
+          <div><div class="total-label">Total Payable</div></div>
+          <div style="text-align:right;"><div class="total-amount" id="total">₹0</div></div>
+        </div>
+        <div class="coupon-section">
+          <div class="coupon-label">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="m9 14 4-4m0 0L9 6m4 4H3m9 8h9a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2h-9"/></svg>
+            Coupon Code
+            <button class="view-coupons-btn" onclick="toggleCouponsPanel()">View Available</button>
+          </div>
+
+          <!-- Coupons Panel -->
+          <div class="coupons-panel" id="couponsPanel">
+            <div class="coupons-panel-title">Available Coupons</div>
+            <div class="coupon-card-list" id="couponCardList"></div>
+          </div>
+
+          <div class="coupon-input-row">
+            <input class="promo-input" id="promoInput" type="text" placeholder="Enter coupon code..." />
+            <button class="apply-btn" onclick="applyCoupon()">Apply</button>
+          </div>
+        </div>
+        <div id="savingsContainer"></div>
+        <button class="checkout-btn" id="checkoutBtn">PROCEED TO CHECKOUT →</button>
+        <button class="continue-shopping">← CONTINUE SHOPPING</button>
+      </div>
     </aside>
-    </main>
+  </div>
+</main>
+  <%- include('../partials/footer.ejs') %>
+
 
 <script src="/js/shoppingcart.js"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>  
+<script src="/js/counter.js"></script>
+
+<script>
+  cartData = <%-JSON.stringify(cart)%>||[];
+
+  function updateSummary() {
+    const totalQty = cartData.reduce((s, i) => s + i.quantity, 0);
+    document.getElementById('itemCountText').textContent = totalQty + ' item' + (totalQty > 1 ? 's' : '');
+
+    const rowsEl = document.getElementById('summaryRows');
+    rowsEl.innerHTML = '';
+    cartData.forEach(item => {
+      const row = document.createElement('div');
+      row.className = 'summary-row';
+      row.innerHTML = `
+        <span class="summary-row-label">${item.name}${item.quantity > 1 ? ` <span class="summary-qty">×${item.quantity}</span>` : ''}</span>
+        <span class="summary-row-value">${formatPrice(item.price * item.quantity)}</span>`;
+      rowsEl.appendChild(row);
+    });
+
+    const subtotal = cartData.reduce((s, i) => s + i.price * i.quantity, 0);
+    const discount = subtotal * (discountPercent / 100);
+    const total = subtotal - discount;
+    animateValue(document.getElementById('total'), total);
+
+    const savingsContainer = document.getElementById('savingsContainer');
+    if (discountCode) {
+      savingsContainer.innerHTML = `
+        <div class="savings-alert">
+          <div class="savings-row">
+            <span class="savings-text">🎉 ${discountCode} Applied! (${discountPercent}% off)</span>
+            <button class="savings-remove-btn" onclick="removeCoupon()">✕</button>
+          </div>
+          <div class="savings-text" style="font-size:.82rem;">You save: ${formatPrice(discount)}</div>
+        </div>`;
+    } else {
+      savingsContainer.innerHTML = '';
+    }
+}
+
+  function renderCart(){
+  const container = document.getElementById('cartItems');
+  container.innerHTML = '';
+
+  if (cartData.length === 0) {
+    container.innerHTML = `<div class="empty-cart"><div class="empty-cart-icon">🛒</div><div class="empty-cart-text">Your cart is empty</div><div class="empty-cart-subtext">Start adding some refurbished tech to get started</div></div>`;
+    updateSummary();
+    return;
+  }
+
+  cartData.forEach((item, idx) => {
+
+    const itemTotal = item.price * item.quantity;
+    const el = document.createElement('div');
+    el.className = 'cart-item';
+    el.setAttribute('data-item-id', item.id);
+    el.style.animation = `slideInRight 0.5s ease-out ${idx * 0.08}s both`;
+
+    const tc = TYPE_CONFIG[item.type] || TYPE_CONFIG.buy;
+    const typeBadge = `<span class="type-badge" style="background:${tc.bg};border:1px solid ${tc.border};color:${tc.color};">${tc.icon} ${tc.label}</span>`;
+
+    const specsHtml = item.specs && item.specs.length
+      ? `<div class="item-specs">${item.specs.map(s => `<span class="spec-chip">${s}</span>`).join('')}</div>`
+      : '';
+
+    const imgHtml = item.img
+      ? `<img class="product-img" src="${item.img}" alt="${item.name}" />`
+      : `<div class="img-placeholder"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.2"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg></div>`;
+
+    el.innerHTML = `
+      <div class="item-image-wrap">${imgHtml}</div>
+      <div class="item-details">
+        <div class="item-name">${item.name}</div>
+        <div class="item-type-row">${typeBadge}</div>
+        ${specsHtml}
+        <div class="qty-ctrl item-controls" data-intent="${item.type}"  data-id="${item.id}"  data-variant="${item.variant}"  data-color="${item.color}"  data-startdate="${item.startdate ?? -1}"  data-enddate="${item.enddate ?? -1}" data-stock="${item.stock ?? -1}" data-price="${item.price}">
+          <button class="minus qty-btn minus-btn"  ${item.quantity <= 1 ? 'disabled' : ''}>−</button>
+          <div class="qty-val qty-display">${item.quantity}</div>
+          <button class="plus qty-btn plus-btn" data-id="${item.stock}"  ${item.schema ==='Product'&&item.quantity===item.stock ? 'disabled' : ''}>+</button>
+        </div>
+      </div>
+      <div class="item-price-section">
+        <div class="item-price">${formatPrice(item.price)}</div>
+        <div class="item-total">Total: ${formatPrice(itemTotal)}</div>
+        <button class="remove-btn">
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4h6v2"/></svg>
+          Remove
+        </button>
+      </div>`;
+    container.appendChild(el);
+
+    const controls = el.querySelector('.item-controls');
+    const { intent, id, variant, color, startdate, enddate, stock,price } = controls.dataset;
+
+    el.querySelector('.minus-btn').addEventListener('click', function() {
+      updateQuantity(intent,id, variant, color, -1, this,
+        Number(startdate), Number(enddate), Number(stock),Number(price),idx,);
+    });
+
+    el.querySelector('.plus-btn').addEventListener('click', function() {
+      updateQuantity(intent, id, variant, color, 1, this,
+        Number(startdate), Number(enddate), Number(stock),Number(price),idx, document.querySelector('.plus-btn'));
+    });
+
+    el.querySelector('.remove-btn').addEventListener('click',function(){
+      removeItem(intent,id,variant,color,idx,document.querySelector('.minus-btn'));
+    })
+
+  });
+  updateSummary();
+}
+renderCart();
+
+</script>
+</body>
+</html>

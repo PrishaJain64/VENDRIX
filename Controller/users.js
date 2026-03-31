@@ -145,18 +145,36 @@ module.exports.Login = (req,res,next)=>{
 };
 
 module.exports.ShoppingCart = async(req,res)=>{
+
     if(req.isAuthenticated()) {
     var shoppingCart = req.user.shoppingCart || [];
     }else{
     var shoppingCart = req.session.shoppingCart || [];
     }
+    console.log(shoppingCart);
+    const cart=[];
+
     //models
     const unique_ids =[...new Set(shoppingCart.filter(item=>item.product_model=='Model').map(item=>item.product_id))]; //unqiue ids from the entire shopping cart
     const model_extract = await Model.find({_id:{$in:unique_ids}}).lean();
     const modelMap = Object.fromEntries(model_extract.map(m=>[m._id.toString(),m]));
     shoppingCart.forEach(item => {
-        if(item.product_model=="Model")
-        item.details = modelMap[item.product_id];
+        if(item.product_model=="Model"){
+        //item.details = modelMap[item.product_id];
+        var prod = {};
+        prod.price = modelMap[item.product_id].variants[item.variant_no].price;
+        prod.quantity = item.quantity;
+        prod.id = item.product_id;
+        prod.type = item.intent;
+        prod.specs = Object.values(modelMap[item.product_id].specifications);
+        prod.img = modelMap[item.product_id].colors[item.color_no].thumbnail.url;
+        prod.name = modelMap[item.product_id].name;
+        prod.schema = 'Model';
+        prod.variant = item.variant_no;
+        prod.color = item.color_no;
+
+        cart.push(prod);
+        }
     });
 
     //products
@@ -164,15 +182,39 @@ module.exports.ShoppingCart = async(req,res)=>{
     const product_extract = await Product.find({_id:{$in:unique_prod_ids}}).lean();
     const productMap = Object.fromEntries(product_extract.map(m=>[m._id.toString(),m]));
     shoppingCart.forEach(item => {
-        if(item.product_model=="Product")
-        item.details = productMap[item.product_id];
-    });
-    console.log(shoppingCart)
-    
-    const models = shoppingCart.filter(item=>item.product_model=="Model");
-    const products = shoppingCart.filter(item=>item.product_model=="Product");
+        if(item.product_model=="Product"){
+        //item.details = productMap[item.product_id];
+        var prod = {};
+        prod.price = productMap[item.product_id].variant.price.amount;
+        prod.quantity = item.quantity;
+        prod.id = item.product_id;
+        prod.type = item.intent;
+        prod.specs = Object.values(productMap[item.product_id].specifications);
+        prod.img = productMap[item.product_id].color.thumbnail.url;
+        prod.name = productMap[item.product_id].name;
+        prod.stock = productMap[item.product_id].stock || productMap[item.product_id].available;
+        if(item.intent =="rent"){
+            prod.startdate = item.duration.startDate;
+            prod.enddate = item.duration.endDate;
+            const start = new Date(prod.startdate);
+            const end = new Date(prod.enddate);
 
-    res.render("features/shoppingcart",{models,products,currentUrl:req.originalUrl});
+            const oneDay = 1000 * 60 * 60 * 24;
+            const diffDays = Math.ceil((end - start) / oneDay);
+
+            var value = Math.round(diffDays*0.01*Number(productMap[item.product_id].variant.price.amount));
+            prod.price=value;
+            
+        }
+        prod.schema = 'Product';
+        prod.color = productMap[item.product_id].color.color;
+        prod.variant = productMap[item.product_id].variant.label;
+
+        cart.push(prod);
+        }
+    });
+
+    res.render("features/shoppingcart",{cart});
 }
 
 module.exports.deleteCart = async (req,res)=>{
@@ -217,7 +259,7 @@ module.exports.deleteCart = async (req,res)=>{
         req.session.shoppingCart = req.session.shoppingCart.filter(item =>!(item.product_id === req.params.id && item.intent == req.params.intent));
     }
     }
-    res.redirect("/vendrix/shoppingcart");
+    res.json({valid:true});
 }
 
 module.exports.Cart = async (req,res)=>{

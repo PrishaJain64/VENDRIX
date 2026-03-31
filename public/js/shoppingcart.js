@@ -1,419 +1,208 @@
-// // Cart Data
-// const cartData = [
-//     {
-//         id: 1,
-//         name: 'iPhone 15 Pro Max',
-//         category: 'Smartphone',
-//         condition: 'Certified Refurbished',
-//         price: 79999,
-//         quantity: 1,
-//         emoji: '📱'
-//     },
-//     {
-//         id: 2,
-//         name: 'MacBook Air M3',
-//         category: 'Laptop',
-//         condition: 'Like New',
-//         price: 114999,
-//         quantity: 1,
-//         emoji: '💻'
-//     },
-//     {
-//         id: 3,
-//         name: 'AirPods Pro',
-//         category: 'Accessories',
-//         condition: 'Certified Refurbished',
-//         price: 16999,
-//         quantity: 2,
-//         emoji: '🎧'
-//     }
-// ];
+const COUPONS = {
+  SAVE10:    { percent: 10, description: 'Flat 10% off on all products', minOrder: 0 },
+  SAVE15:    { percent: 15, description: 'Flat 15% off on your order', minOrder: 5000 },
+  TECH20:    { percent: 20, description: '20% off on all tech purchases', minOrder: 10000 },
+  REFURB5:   { percent: 5,  description: 'Extra 5% off on refurbished items', minOrder: 0 },
+  WELCOME25: { percent: 25, description: '25% off for new customers', minOrder: 20000 },
+};
 
-// Format price in Indian Rupees
-function formatPrice(price) {
-    return '₹' + price.toLocaleString('en-IN', { maximumFractionDigits: 0 });
+let discountCode = null;
+let discountPercent = 0;
+let couponsVisible = false;
+let cartData = [];
+
+//yes
+const TYPE_CONFIG = {
+  buy:       { label: 'Buy',       bg: 'rgba(100,180,255,0.13)', border: 'rgba(100,180,255,0.35)', color: '#7ec8f7', icon: '🛒' },
+  refurbish: { label: 'Refurbish', bg: 'rgba(100,220,140,0.13)', border: 'rgba(100,220,140,0.35)', color: '#7de5a0', icon: '♻️' },
+  rent:      { label: 'Rent',      bg: 'rgba(255,160,180,0.13)', border: 'rgba(255,160,180,0.35)', color: '#ffaabf', icon: '🔑' },
+};
+
+//yes
+function formatPrice(p) {
+  return '₹' + p.toLocaleString('en-IN', { maximumFractionDigits: 0 });
 }
 
-// Create particle effects
+//yes
 function createParticles(x, y) {
-    for (let i = 0; i < 6; i++) {
-        const particle = document.createElement('div');
-        particle.style.position = 'fixed';
-        particle.style.left = x + 'px';
-        particle.style.top = y + 'px';
-        particle.style.width = '8px';
-        particle.style.height = '8px';
-        particle.style.background = 'var(--primary-orange)';
-        particle.style.borderRadius = '50%';
-        particle.style.pointerEvents = 'none';
-        particle.style.zIndex = '9999';
-        particle.style.boxShadow = '0 0 10px var(--primary-orange)';
-        document.body.appendChild(particle);
+  for (let i = 0; i < 6; i++) {
+    const d = document.createElement('div');
+    d.style.cssText = `position:fixed;left:${x}px;top:${y}px;width:8px;height:8px;background:var(--primary-orange);border-radius:50%;pointer-events:none;z-index:9999;box-shadow:0 0 10px var(--primary-orange);`;
+    document.body.appendChild(d);
+    const angle = (Math.PI * 2 * i) / 6;
+    let px = x, py = y, op = 1;
+    const vx = Math.cos(angle) * (3 + Math.random() * 2);
+    const vy = Math.sin(angle) * (3 + Math.random() * 2);
+    const anim = () => {
+      px += vx; py += vy; op -= 0.03;
+      d.style.left = px + 'px'; d.style.top = py + 'px'; d.style.opacity = op;
+      if (op > 0) requestAnimationFrame(anim); else d.remove();
+    };
+    anim();
+  }
+}
 
-        const angle = (Math.PI * 2 * i) / 6;
-        const velocity = {
-            x: Math.cos(angle) * (3 + Math.random() * 2),
-            y: Math.sin(angle) * (3 + Math.random() * 2)
-        };
+//yes
+function pulseElement(el) {
+  el.style.animation = 'none';
+  setTimeout(() => { el.style.animation = 'pulse 0.6s ease-out'; }, 10);
+}
 
-        let opacity = 1;
-        const animate = () => {
-            x += velocity.x;
-            y += velocity.y;
-            opacity -= 0.02;
-            particle.style.left = x + 'px';
-            particle.style.top = y + 'px';
-            particle.style.opacity = opacity;
+//yes
+function animateValue(el, val) {
+  el.textContent = formatPrice(Math.round(val));
+  pulseElement(el);
+}
 
-            if (opacity > 0) {
-                requestAnimationFrame(animate);
-            } else {
-                particle.remove();
-            }
-        };
-        animate();
+//yes
+function updateQuantity(intent,id,variant,color, change, btn,startdate=-1,enddate=-1,stock=-1,price,idx,otherbtn) {
+  console.log("hi");
+  const parent = btn.closest(".item-controls"); // go up to parent div
+  const qty = parent.querySelector(".qty-display");  // find qty inside it
+  
+  const priceparent = btn.closest(".cart-item");
+  const total = priceparent.querySelector(".item-total");
+
+  const formdata = new FormData();
+  formdata.append("quantity",Number(qty.textContent)+change);
+  if(startdate != -1 && enddate !=-1){
+  formdata.append("startdate",startdate);
+  formdata.append("enddate",enddate);
+  }
+
+  fetch(`/vendrix/cart/${intent}/${id}/${encodeURIComponent(variant)}/${encodeURIComponent(color)}`,{
+    method:"post",
+    body:formdata
+  }).then(res=>res.json())
+  .then(data=>{
+    if(data.valid){
+      qty.textContent = data.quantity;
+      total.textContent = formatPrice(Number(data.quantity)*price);
+      cartData[idx].quantity = Number(data.quantity);
+      const r = btn.getBoundingClientRect();
+      createParticles(r.left + r.width / 2, r.top + r.height / 2);
+      updateSummary();
+    }else{console.log("fetching error")};
+  })
+}
+
+//yes
+function removeItem(intent,id,variant,color,idx) {
+    fetch(`/vendrix/delete/${intent}/${id}/${encodeURIComponent(variant)}/${color}`,{
+      method:"DELETE"
+    }).then(res=>res.json()).then(data=>{
+      if(data.valid){
+      const el = document.querySelector(`[data-item-id="${id}"]`);
+      el.style.transition = 'all .35s ease';
+      el.style.opacity = '0';
+      el.style.transform = 'translateX(40px)';
+      const r = el.getBoundingClientRect();
+      createParticles(r.left + r.width / 2, r.top + r.height / 2);
+      setTimeout(() => {
+        cartData.splice(idx, 1);
+        renderCart();
+      }, 380);
     }
+  })
+
 }
 
-// Pulse element animation
-function pulseElement(element) {
-    element.style.animation = 'none';
-    setTimeout(() => {
-        element.style.animation = 'pulse 0.6s ease-out';
-    }, 10);
+function toggleCouponsPanel() {
+  couponsVisible = !couponsVisible;
+  const panel = document.getElementById('couponsPanel');
+  const btn = document.querySelector('.view-coupons-btn');
+  if (couponsVisible) {
+    renderCouponCards();
+    panel.classList.add('open');
+    btn.textContent = 'Hide';
+  } else {
+    panel.classList.remove('open');
+    btn.textContent = 'View Available';
+  }
 }
 
-// Add dynamic animations
+function renderCouponCards() {
+  const list = document.getElementById('couponCardList');
+  list.innerHTML = '';
+  Object.entries(COUPONS).forEach(([code, info]) => {
+    const card = document.createElement('div');
+    card.className = 'coupon-card';
+    card.innerHTML = `
+      <div class="coupon-card-left">
+        <div class="coupon-code-badge">${code}</div>
+        <div class="coupon-desc">${info.description}</div>
+        ${info.minOrder > 0 ? `<div class="coupon-min">Min. order: ${formatPrice(info.minOrder)}</div>` : ''}
+      </div>
+      <div class="coupon-card-right">
+        <div class="coupon-off">${info.percent}%<br/><span>OFF</span></div>
+        <button class="coupon-use-btn" onclick="useCoupon('${code}')">Use</button>
+      </div>`;
+    list.appendChild(card);
+  });
+}
+
+function useCoupon(code) {
+  const input = document.getElementById('promoInput');
+  input.value = code;
+  applyCoupon();
+  toggleCouponsPanel();
+}
+
+function applyCoupon() {
+  const input = document.getElementById('promoInput');
+  const code = input.value.toUpperCase().trim();
+  if (!code) return;
+  if (COUPONS[code]) {
+    discountCode = code;
+    discountPercent = COUPONS[code].percent;
+    input.style.borderColor = 'var(--primary-orange)';
+    input.style.background = 'rgba(255,107,53,.15)';
+    input.placeholder = 'Coupon applied! ✓';
+    input.value = '';
+    const r = input.getBoundingClientRect();
+    createParticles(r.right - 20, r.top + r.height / 2);
+    pulseElement(document.querySelector('.summary-card'));
+    updateSummary();
+  } else {
+    input.style.borderColor = '#ff4444';
+    input.style.animation = 'none';
+    setTimeout(() => { input.style.animation = 'shake 0.35s ease-out'; }, 10);
+    setTimeout(() => { input.style.borderColor = 'rgba(255,107,53,.3)'; }, 600);
+  }
+}
+
+function removeCoupon() {
+  discountCode = null;
+  discountPercent = 0;
+  const input = document.getElementById('promoInput');
+  input.style.borderColor = 'rgba(255,107,53,.3)';
+  input.style.background = 'rgba(0,0,0,.45)';
+  input.placeholder = 'Enter coupon code...';
+  updateSummary();
+}
+
+document.getElementById('promoInput').addEventListener('keypress', e => {
+  if (e.key === 'Enter') applyCoupon();
+});
+
+document.getElementById('checkoutBtn').addEventListener('click', function() {
+  const r = this.getBoundingClientRect();
+  createParticles(r.left + r.width / 2, r.top + r.height / 2);
+  pulseElement(this);
+  this.textContent = '🚀 PROCESSING...';
+  this.disabled = true;
+  setTimeout(() => {
+    this.textContent = '✓ ORDER CONFIRMED';
+    this.style.background = 'linear-gradient(135deg,#4CAF50,#66BB6A)';
+  }, 800);
+});
+
 const style = document.createElement('style');
 style.innerHTML = `
-    @keyframes pulse {
-        0% {
-            transform: scale(1);
-            box-shadow: 0 0 0 0 rgba(255, 107, 53, 0.7);
-        }
-        50% {
-            transform: scale(1.05);
-            box-shadow: 0 0 0 10px rgba(255, 107, 53, 0);
-        }
-        100% {
-            transform: scale(1);
-            box-shadow: 0 0 0 0 rgba(255, 107, 53, 0);
-        }
-    }
-
-    @keyframes slideInRight {
-        from {
-            opacity: 0;
-            transform: translateX(50px);
-        }
-        to {
-            opacity: 1;
-            transform: translateX(0);
-        }
-    }
-
-    @keyframes shake {
-        0%, 100% { transform: translateX(0); }
-        25% { transform: translateX(-5px); }
-        75% { transform: translateX(5px); }
-    }
-
-    @keyframes pop {
-        0% {
-            opacity: 0;
-            transform: scale(0.5) rotateZ(-10deg);
-        }
-        50% {
-            transform: scale(1.1) rotateZ(5deg);
-        }
-        100% {
-            opacity: 1;
-            transform: scale(1) rotateZ(0deg);
-        }
-    }
-
-    .cart-item.removing {
-        animation: slideInRight 0.4s ease-out reverse;
-    }
-
-    .discount-badge {
-        display: inline-block;
-        background: linear-gradient(135deg, var(--primary-orange), var(--accent-orange));
-        color: white;
-        padding: 0.4rem 0.8rem;
-        border-radius: 20px;
-        font-size: 0.75rem;
-        font-weight: 700;
-        letter-spacing: 0.5px;
-        animation: pop 0.5s ease-out;
-    }
-
-    .savings-alert {
-        background: rgba(255, 107, 53, 0.15);
-        border: 1px solid rgba(255, 107, 53, 0.4);
-        padding: 1rem;
-        border-radius: 8px;
-        margin-top: 1rem;
-        animation: slideInRight 0.5s ease-out;
-    }
-
-    .savings-text {
-        color: var(--primary-orange);
-        font-weight: 700;
-        font-size: 0.95rem;
-    }
+  @keyframes pulse { 0%{transform:scale(1);box-shadow:0 0 0 0 rgba(255,107,53,.7);}50%{transform:scale(1.03);box-shadow:0 0 0 10px rgba(255,107,53,0);}100%{transform:scale(1);box-shadow:0 0 0 0 rgba(255,107,53,0);} }
+  @keyframes shake { 0%,100%{transform:translateX(0);}25%{transform:translateX(-5px);}75%{transform:translateX(5px);} }
+  @keyframes slideInRight { from{opacity:0;transform:translateX(40px);}to{opacity:1;transform:translateX(0);} }
 `;
 document.head.appendChild(style);
 
-// Render cart items
-// function renderCart() {
-//     const cartItemsContainer = document.getElementById('cartItems');
-//     cartItemsContainer.innerHTML = '';
-
-//     if (cartData.length === 0) {
-//         cartItemsContainer.innerHTML = `
-//             <div class="empty-cart">
-//                 <div class="empty-cart-icon" style="animation: pop 0.6s ease-out;">🛒</div>
-//                 <div class="empty-cart-text">Your cart is empty</div>
-//                 <div class="empty-cart-subtext">Start adding some refurbished tech to get started</div>
-//                 <button class="checkout-btn" style="margin: 0 auto;">CONTINUE SHOPPING</button>
-//             </div>
-//         `;
-//         updateSummary();
-//         return;
-//     }
-
-//     cartData.forEach((item, index) => {
-//         const itemTotal = item.price * item.quantity;
-//         const cartItem = document.createElement('div');
-//         cartItem.className = 'cart-item';
-//         cartItem.setAttribute('data-item-id', item.id);
-//         cartItem.style.animation = `slideInRight 0.5s ease-out ${index * 0.1}s both`;
-        
-//         cartItem.innerHTML = `
-//             <div class="item-image" style="cursor: pointer; transition: all 0.3s ease;" 
-//                  onmouseenter="this.style.transform='scale(1.1) rotateZ(-5deg)'; this.style.filter='brightness(1.2) drop-shadow(0 0 15px var(--primary-orange))'" 
-//                  onmouseleave="this.style.transform='scale(1) rotateZ(0)'; this.style.filter='brightness(1)'">${item.emoji}</div>
-//             <div class="item-details">
-//                 <div class="item-name">${item.name}</div>
-//                 <div class="item-meta">
-//                     <span>${item.category}</span>
-//                     <span>${item.condition}</span>
-//                 </div>
-//                 <div class="item-controls">
-//                     <button class="qty-btn" data-item-id="${item.id}" onclick="updateQuantity(${item.id}, -1, this)">−</button>
-//                     <div class="qty-display">${item.quantity}</div>
-//                     <button class="qty-btn" data-item-id="${item.id}" onclick="updateQuantity(${item.id}, 1, this)">+</button>
-//                 </div>
-//             </div>
-//             <div class="item-price-section">
-//                 <div class="item-price">${formatPrice(item.price)}</div>
-//                 <div class="item-total">Total: ${formatPrice(itemTotal)}</div>
-//                 <button class="remove-btn" onclick="removeItem(${item.id})">REMOVE</button>
-//             </div>
-//         `;
-//         cartItemsContainer.appendChild(cartItem);
-//     });
-
-//     updateSummary();
-// }
-
-// Update quantity
-function updateQuantity(id, change, btn) {
-    const item = cartData.find(i => i.id === id);
-    if (item) {
-        const oldQty = item.quantity;
-        item.quantity += change;
-        if (item.quantity < 1) item.quantity = 1;
-        
-        if (item.quantity !== oldQty) {
-            // Pulse animation
-            pulseElement(btn);
-            
-            // Particles on increase
-            if (change > 0) {
-                const rect = btn.getBoundingClientRect();
-                createParticles(rect.left + rect.width / 2, rect.top + rect.height / 2);
-            }
-            
-            // Smooth update instead of full rerender
-            const cartItem = document.querySelector(`[data-item-id="${id}"]`);
-            const qtyDisplay = cartItem.querySelector('.qty-display');
-            const itemTotal = cartItem.querySelector('.item-total');
-            
-            qtyDisplay.textContent = item.quantity;
-            itemTotal.textContent = `Total: ${formatPrice(item.price * item.quantity)}`;
-            
-            pulseElement(cartItem);
-            updateSummary();
-        }
-    }
-}
-
-// Remove item
-// function removeItem(id) {
-//     const cartItem = document.querySelector(`[data-item-id="${id}"]`);
-//     cartItem.classList.add('removing');
-    
-//     // Particles effect on remove
-//     const rect = cartItem.getBoundingClientRect();
-//     createParticles(rect.left + rect.width / 2, rect.top + rect.height / 2);
-    
-//     setTimeout(() => {
-//         const index = cartData.findIndex(i => i.id === id);
-//         if (index > -1) {
-//             cartData.splice(index, 1);
-//             renderCart();
-//         }
-//     }, 400);
-// }
-
-// Update summary totals
-// function updateSummary() {
-//     const subtotal = cartData.reduce((sum, item) => sum + (item.price * item.quantity), 0);
-//     const discount = subtotal * (discountPercent / 100);
-//     const afterDiscount = subtotal - discount;
-//     const shipping = afterDiscount > 0 ? (afterDiscount > 100000 ? 0 : 99) : 0;
-//     const tax = afterDiscount * 0.18;
-//     const total = afterDiscount + shipping + tax;
-
-//     const subtotalEl = document.getElementById('subtotal');
-//     const shippingEl = document.getElementById('shipping');
-//     const taxEl = document.getElementById('tax');
-//     const totalEl = document.getElementById('total');
-
-//     // Animate number changes
-//     animateValue(subtotalEl, subtotal);
-//     animateValue(taxEl, tax);
-//     animateValue(totalEl, total);
-
-//     shippingEl.textContent = shipping === 0 ? 'FREE' : formatPrice(shipping);
-
-//     // Show/hide savings alert
-//     const savingsContainer = document.getElementById('savingsContainer');
-//     if (discountCode) {
-//         const savings = discount;
-//         let savingsHtml = `
-//             <div class="savings-alert">
-//                 <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
-//                     <span class="savings-text">🎉 ${discountCode} Applied!</span>
-//                     <button onclick="removeCoupon()" style="background: transparent; border: none; color: var(--primary-orange); cursor: pointer; font-size: 1.2rem;">×</button>
-//                 </div>
-//                 <div class="savings-text">You Save: ${formatPrice(savings)}</div>
-//             </div>
-//         `;
-        
-//         if (savingsContainer) {
-//             savingsContainer.innerHTML = savingsHtml;
-//         } else {
-//             const container = document.createElement('div');
-//             container.id = 'savingsContainer';
-//             document.querySelector('.summary-card').appendChild(container);
-//             container.innerHTML = savingsHtml;
-//         }
-//     } else if (savingsContainer) {
-//         savingsContainer.remove();
-//     }
-// }
-
-// Animate value changes
-function animateValue(element, targetValue) {
-    const formattedValue = formatPrice(Math.round(targetValue));
-    element.textContent = formattedValue;
-    pulseElement(element);
-}
-
-// Apply coupon code
-// function applyCoupon() {
-//     const input = document.getElementById('promoInput');
-//     const code = input.value.toUpperCase().trim();
-    
-//     if (!code) return;
-
-//     const coupons = {
-//         'SAVE10': 10,
-//         'SAVE15': 15,
-//         'TECH20': 20,
-//         'REFURB5': 5,
-//         'WELCOME25': 25
-//     };
-
-//     if (coupons[code]) {
-//         discountCode = code;
-//         discountPercent = coupons[code];
-//         input.style.borderColor = 'var(--primary-orange)';
-//         input.style.background = 'rgba(255, 107, 53, 0.2)';
-        
-//         // Success animation
-//         const summaryCard = document.querySelector('.summary-card');
-//         pulseElement(summaryCard);
-        
-//         // Particles
-//         const rect = input.getBoundingClientRect();
-//         createParticles(rect.right - 20, rect.top + rect.height / 2);
-        
-//         input.placeholder = 'Coupon applied!';
-//         input.value = '';
-//         updateSummary();
-
-//         // Shake effect
-//         input.style.animation = 'none';
-//         setTimeout(() => {
-//             input.style.animation = 'shake 0.3s ease-out';
-//         }, 10);
-//     } else {
-//         input.style.borderColor = '#ff4444';
-//         input.style.animation = 'none';
-//         setTimeout(() => {
-//             input.style.animation = 'shake 0.3s ease-out';
-//         }, 10);
-        
-//         setTimeout(() => {
-//             input.style.borderColor = 'rgba(255, 107, 53, 0.3)';
-//         }, 500);
-//     }
-// }
-
-// Remove coupon
-// function removeCoupon() {
-//     discountCode = null;
-//     discountPercent = 0;
-//     document.getElementById('promoInput').style.borderColor = 'rgba(255, 107, 53, 0.3)';
-//     document.getElementById('promoInput').style.background = 'rgba(0, 0, 0, 0.3)';
-//     document.getElementById('promoInput').placeholder = 'SAVE10, SAVE15, TECH20...';
-//     updateSummary();
-// }
-
-// Event Listeners
-document.getElementById('promoInput').addEventListener('keypress', (e) => {
-    if (e.key === 'Enter') {
-        applyCoupon();
-    }
-});
-
-// Checkout button animation
-document.querySelector('.checkout-btn').addEventListener('click', function(e) {
-    const rect = this.getBoundingClientRect();
-    createParticles(rect.left + rect.width / 2, rect.top + rect.height / 2);
-    
-    pulseElement(this);
-    this.textContent = '🚀 PROCESSING...';
-    this.disabled = true;
-    
-    setTimeout(() => {
-        this.textContent = '✓ ORDER CONFIRMED';
-        this.style.background = 'linear-gradient(135deg, #4CAF50, #66BB6A)';
-    }, 800);
-});
-
-// Continue shopping button hover
-document.querySelector('.continue-shopping').addEventListener('mouseenter', function() {
-    this.style.transform = 'translateX(5px)';
-});
-
-document.querySelector('.continue-shopping').addEventListener('mouseleave', function() {
-    this.style.transform = 'translateX(0)';
-});
-
-// Initialize cart
-// renderCart();
+//renderCart();

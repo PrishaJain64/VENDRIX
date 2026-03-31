@@ -42,7 +42,7 @@ router.post('/cart/:intent/:id/:variant_no/:color_no',upload.none(),userForShopp
 
 router.get("/shoppingcart",ShoppingCart);
 
-router.get("/delete/:intent/:id/:variant_no/:color_no",deleteCart)
+router.delete("/delete/:intent/:id/:variant_no/:color_no",deleteCart)
 
 router.get("/",Vendrix)
 module.exports=router;

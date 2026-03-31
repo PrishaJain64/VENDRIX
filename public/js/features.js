@@ -118,10 +118,18 @@ document.getElementById('sidebarOverlay').addEventListener('click', ()=>{
 });
 
 
-function addtoCart(id,intent){
-  const qty= document.getElementById("product-qty").textContent;
+function addtoCart(btn,id,intent,stock=-1){
+  const parent = btn.closest(".buy-price-row"); // go up to parent div
+  const qty = parent.querySelector(".product-qty");  // find qty inside it
+  // if(stock!= -1 && Number(qty.textContent) == stock){
+  //   btn.disabled=true;
+  //   return;
+  // }else{
+  //   btn.disabled=false;
+  // }
+
   const formdata = new FormData();
-  formdata.append("quantity",Number(qty)+1);
+  formdata.append("quantity",Number(qty.textContent)+1);
 
   fetch(`/vendrix/cart/${intent}/${id}/0/0`,{
     method:"post",
@@ -129,8 +137,14 @@ function addtoCart(id,intent){
   }).then(res=>res.json())
   .then(data=>{
     if(data.valid){
-      const quantity = document.getElementById("product-qty");
-      quantity.textContent = data.quantity;
+      qty.textContent = data.quantity;
+      if(stock!=-1){
+        if(data.quantity==stock){
+          btn.disabled = true;
+        }else{
+          btn.disabled=false;
+        }
+      }
     }else{console.log("fetching error")};
   })
 }
