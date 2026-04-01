@@ -6,6 +6,8 @@ module.exports.Details =async (req,res)=>{
     const label = req.params.label;
     const color = req.params.color;
     const intent = req.intent;
+    const start = req.query.startdate||null;
+    const end = req.query.enddate||null;
 
      const [result] = await Product.aggregate([
   {
@@ -95,7 +97,7 @@ module.exports.Details =async (req,res)=>{
                 count[r.stars]++
             });
 
-    res.render(`${intent}/product_spec`, {result,reviews,count,option,star});
+    res.render(`${intent}/product_spec`, {result,reviews,count,option,star,start,end});
 }
 
 module.exports.Filter = async(req,res)=>{

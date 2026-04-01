@@ -199,6 +199,7 @@ module.exports.ShoppingCart = async(req,res)=>{
         prod.schema = 'Model';
         prod.variant = item.variant_no;
         prod.color = item.color_no;
+        prod.url = "/buydetails";
 
         cart.push(prod);
         }
@@ -220,6 +221,8 @@ module.exports.ShoppingCart = async(req,res)=>{
         prod.img = productMap[item.product_id].color.thumbnail.url;
         prod.name = productMap[item.product_id].name;
         prod.stock = productMap[item.product_id].stock || productMap[item.product_id].available;
+        prod.url = "/"+item.intent+"/details";
+
         if(item.intent =="rent"){
             prod.startdate = item.duration.startDate;
             prod.enddate = item.duration.endDate;
@@ -231,7 +234,6 @@ module.exports.ShoppingCart = async(req,res)=>{
 
             var value = Math.round(diffDays*0.01*Number(productMap[item.product_id].variant.price.amount));
             prod.price=value;
-            
         }
         prod.schema = 'Product';
         prod.color = productMap[item.product_id].color.color;

@@ -212,12 +212,28 @@
 <script src = "/js/reload.js"></script>
 <script src = "/js/reviews.js"></script>
 <script>
-  const start = new Date();
+  if('<%=start%>' !=null){
+    var start = new Date('<%=start%>');
+    start = start.toISOString().split("T")[0];
+    const startdate = document.getElementById("startdate")
+    startdate.value = start;
+  }else{
+   var start = new Date();
   start.setDate(start.getDate()+3);
   start.setHours(0,0,0,0);
-  const end = new Date(start);
+  }
+  if('<%=end%>' != null){
+    var end = new Date('<%=end%>');
+    end = end.toISOString().split("T")[0];
+
+    const enddate = document.getElementById("enddate");
+    enddate.value = end;
+  }
+  else{
+  var end = new Date(start);
   end.setDate(end.getDate()+7);
   end.setHours(0,0,0,0);
+  }
 
   const oneDay = 1000 * 60 * 60 * 24;
   const diffDays = Math.ceil((end - start) / oneDay);
