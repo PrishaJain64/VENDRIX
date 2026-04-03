@@ -1,7 +1,7 @@
 const express=require('express');
 const router=express.Router();
 
-const {userForShoppingCart, Register, Login, ShoppingCart, deleteCart, Cart, Vendrix} = require('../Controller/users');
+const {userForShoppingCart, Register, Login, ShoppingCart, deleteCart, Cart, Vendrix, Transaction} = require('../Controller/users');
 
 const multer = require('multer');
 const upload = multer();
@@ -43,6 +43,7 @@ router.post('/cart/:intent/:id/:variant_no/:color_no',upload.none(),userForShopp
 router.get("/shoppingcart",ShoppingCart);
 
 router.delete("/delete/:intent/:id/:variant_no/:color_no",deleteCart)
-
+router.get("/transaction",Transaction);
 router.get("/",Vendrix)
+
 module.exports=router;

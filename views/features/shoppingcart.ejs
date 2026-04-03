@@ -79,7 +79,7 @@
           </div>
         </div>
         <div id="savingsContainer"></div>
-        <button class="checkout-btn" id="checkoutBtn">PROCEED TO CHECKOUT →</button>
+        <a href="/vendrix/transaction" class="checkout-btn" id="checkoutBtn">Proceed CHECKOUT →</a>
         <button class="continue-shopping">← CONTINUE SHOPPING</button>
       </div>
     </aside>
@@ -146,6 +146,8 @@
           </div>
           <div class="savings-text" style="font-size:.82rem;">You save: ${formatPrice(discount)}</div>
         </div>`;
+        const checkoutLink = document.getElementById("checkoutBtn");
+        checkoutLink.href = "/vendrix/transaction?code="+discountCode;
     } else {
       savingsContainer.innerHTML = '';
     }
@@ -157,6 +159,8 @@
   container.innerHTML = '';
 
   if (cartData.length === 0) {
+    const os = document.querySelector(".summary-card");
+    os.style.display="none";
     container.innerHTML = `<div class="empty-cart"><div class="empty-cart-icon">🛒</div><div class="empty-cart-text">Your cart is empty</div><div class="empty-cart-subtext">Start adding some refurbished tech to get started</div></div>`;
     updateSummary();
     return;
@@ -259,7 +263,9 @@ function renderCouponCards() {
     list.appendChild(card);
   });
 }
+
 renderCart();
+
 
 </script>
 </body>

@@ -96,7 +96,7 @@ module.exports.Details =async (req,res)=>{
             reviews.forEach(r => {
                 count[r.stars]++
             });
-
+            console.log(start);
     res.render(`${intent}/product_spec`, {result,reviews,count,option,star,start,end});
 }
 

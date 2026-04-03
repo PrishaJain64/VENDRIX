@@ -212,29 +212,35 @@
 <script src = "/js/reload.js"></script>
 <script src = "/js/reviews.js"></script>
 <script>
-  if('<%=start%>' !=null){
-    var start = new Date('<%=start%>');
-    start = start.toISOString().split("T")[0];
-    const startdate = document.getElementById("startdate")
-    startdate.value = start;
+  const startInput = document.getElementById("startdate");
+  const endInput = document.getElementById("enddate");
+  const startRaw = '<%=start%>';
+  const endRaw = '<%=end%>';
+  var start ="";
+  var end = "";
+
+  if (startRaw && startRaw !== 'null' && startRaw !== 'undefined') {
+    start = new Date(startRaw);
+    startInput.value = start.toLocaleDateString('en-CA', {timeZone: 'Asia/Kolkata'});
   }else{
-   var start = new Date();
+   start = new Date();
   start.setDate(start.getDate()+3);
   start.setHours(0,0,0,0);
+  startInput.value = start.toLocaleDateString('en-CA', {timeZone: 'Asia/Kolkata'});
   }
-  if('<%=end%>' != null){
-    var end = new Date('<%=end%>');
-    end = end.toISOString().split("T")[0];
-
-    const enddate = document.getElementById("enddate");
-    enddate.value = end;
+    if (endRaw && endRaw !== 'null' && endRaw !== 'undefined') {
+    end = new Date(endRaw);
+    endInput.value = end.toLocaleDateString('en-CA', {timeZone: 'Asia/Kolkata'});;
   }
   else{
-  var end = new Date(start);
+  end = new Date(start);
   end.setDate(end.getDate()+7);
   end.setHours(0,0,0,0);
+    endInput.value = end.toLocaleDateString('en-CA', {timeZone: 'Asia/Kolkata'});;
+
   }
 
+  console.log(startRaw);
   const oneDay = 1000 * 60 * 60 * 24;
   const diffDays = Math.ceil((end - start) / oneDay);
 
@@ -268,9 +274,6 @@
    });
   }
   });
-
-  const startInput = document.getElementById("startdate");
-  const endInput = document.getElementById("enddate");
 
   [startInput, endInput].forEach(input => {
     input.addEventListener("change", calculateRent);
@@ -355,4 +358,11 @@
 }
 setTimeout(updateSummaryBars, 300);
 showReviews();
+
+document.getElementById("startdate").addEventListener("change",function(){
+  start = this.value;
+});
+document.getElementById("enddate").addEventListener("change",function(){
+  end = this.value;
+})
 </script>

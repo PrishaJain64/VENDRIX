@@ -7,6 +7,76 @@ const {Review} = require("../models/reviews");
 const {Coupon} = require("../models/coupons");
 const {Types} = require('mongoose');
 
+async function modelCart(shoppingCart){
+    var mcart = [];
+
+    const unique_ids =[...new Set(shoppingCart.filter(item=>item.product_model=='Model').map(item=>item.product_id))]; //unqiue ids from the entire shopping cart
+    const model_extract = await Model.find({_id:{$in:unique_ids}}).lean();
+    const modelMap = Object.fromEntries(model_extract.map(m=>[m._id.toString(),m]));
+    shoppingCart.forEach(item => {
+        if(item.product_model=="Model"){
+        //item.details = modelMap[item.product_id];
+        var prod = {};
+        prod.price = modelMap[item.product_id].variants[item.variant_no].price;
+        prod.quantity = item.quantity;
+        prod.id = item.product_id;
+        prod.type = item.intent;
+        prod.specs = Object.values(modelMap[item.product_id].specifications);
+        prod.img = modelMap[item.product_id].colors[item.color_no].thumbnail.url;
+        prod.name = modelMap[item.product_id].name;
+        prod.schema = 'Model';
+        prod.variant = item.variant_no;
+        prod.color = item.color_no;
+        prod.url = "/buydetails";
+        prod.device = modelMap[item.product_id].type;
+
+        mcart.push(prod);
+        }
+    });
+    return mcart;
+}
+
+async function productCart(shoppingCart){
+    var pcart = [];
+    const unique_prod_ids =[...new Set(shoppingCart.filter(item=>item.product_model=='Product').map(item=>item.product_id))]; //unqiue ids from the entire shopping cart
+    const product_extract = await Product.find({_id:{$in:unique_prod_ids}}).lean();
+    const productMap = Object.fromEntries(product_extract.map(m=>[m._id.toString(),m]));
+    shoppingCart.forEach(item => {
+        if(item.product_model=="Product"){
+        //item.details = productMap[item.product_id];
+        var prod = {};
+        prod.price = productMap[item.product_id].variant.price.amount;
+        prod.quantity = item.quantity;
+        prod.id = item.product_id;
+        prod.type = item.intent;
+        prod.specs = Object.values(productMap[item.product_id].specifications);
+        prod.img = productMap[item.product_id].color.thumbnail.url;
+        prod.name = productMap[item.product_id].name;
+        prod.stock = productMap[item.product_id].stock || productMap[item.product_id].available;
+        prod.url = "/"+item.intent+"/details";
+        prod.device = productMap[item.product_id].type;
+
+        if(item.intent =="rent"){
+            prod.startdate = item.duration.startDate;
+            prod.enddate = item.duration.endDate;
+            const start = new Date(prod.startdate);
+            const end = new Date(prod.enddate);
+
+            const oneDay = 1000 * 60 * 60 * 24;
+            const diffDays = Math.ceil((end - start) / oneDay);
+
+            var value = Math.round(diffDays*0.01*Number(productMap[item.product_id].variant.price.amount));
+            prod.price=value;
+        }
+        prod.schema = 'Product';
+        prod.color = productMap[item.product_id].color.color;
+        prod.variant = productMap[item.product_id].variant.label;
+
+        pcart.push(prod);
+        }
+    });
+    return pcart;
+}
 function getMembershipYears(createdAt) {
   const d1 = new Date(createdAt);
   const d2 = new Date();
@@ -79,7 +149,6 @@ module.exports.userForShoppingCart = (req,res,next)=>{
     }
 
         if(!req.session.shoppingCart) req.session.shoppingCart = [];
-        console.log(startdate,enddate);
         var cart = createCart(req.params.id,req.params.intent,req.params.variant_no,req.params.color_no,Number(req.body.quantity),startdate,enddate);
 
         if(req.params.intent == "buy")
@@ -178,71 +247,15 @@ module.exports.ShoppingCart = async(req,res)=>{
         "validity_check.user_order_count": 0
         });
     }
-    console.log(shoppingCart);
-    const cart=[];
+    var cart=[];
 
     //models
-    const unique_ids =[...new Set(shoppingCart.filter(item=>item.product_model=='Model').map(item=>item.product_id))]; //unqiue ids from the entire shopping cart
-    const model_extract = await Model.find({_id:{$in:unique_ids}}).lean();
-    const modelMap = Object.fromEntries(model_extract.map(m=>[m._id.toString(),m]));
-    shoppingCart.forEach(item => {
-        if(item.product_model=="Model"){
-        //item.details = modelMap[item.product_id];
-        var prod = {};
-        prod.price = modelMap[item.product_id].variants[item.variant_no].price;
-        prod.quantity = item.quantity;
-        prod.id = item.product_id;
-        prod.type = item.intent;
-        prod.specs = Object.values(modelMap[item.product_id].specifications);
-        prod.img = modelMap[item.product_id].colors[item.color_no].thumbnail.url;
-        prod.name = modelMap[item.product_id].name;
-        prod.schema = 'Model';
-        prod.variant = item.variant_no;
-        prod.color = item.color_no;
-        prod.url = "/buydetails";
-
-        cart.push(prod);
-        }
-    });
-
+    var mcart = await modelCart(shoppingCart) ||[];
     //products
-    const unique_prod_ids =[...new Set(shoppingCart.filter(item=>item.product_model=='Product').map(item=>item.product_id))]; //unqiue ids from the entire shopping cart
-    const product_extract = await Product.find({_id:{$in:unique_prod_ids}}).lean();
-    const productMap = Object.fromEntries(product_extract.map(m=>[m._id.toString(),m]));
-    shoppingCart.forEach(item => {
-        if(item.product_model=="Product"){
-        //item.details = productMap[item.product_id];
-        var prod = {};
-        prod.price = productMap[item.product_id].variant.price.amount;
-        prod.quantity = item.quantity;
-        prod.id = item.product_id;
-        prod.type = item.intent;
-        prod.specs = Object.values(productMap[item.product_id].specifications);
-        prod.img = productMap[item.product_id].color.thumbnail.url;
-        prod.name = productMap[item.product_id].name;
-        prod.stock = productMap[item.product_id].stock || productMap[item.product_id].available;
-        prod.url = "/"+item.intent+"/details";
+    var pcart = await productCart(shoppingCart) ||[];
+    cart = [...mcart,...pcart];
 
-        if(item.intent =="rent"){
-            prod.startdate = item.duration.startDate;
-            prod.enddate = item.duration.endDate;
-            const start = new Date(prod.startdate);
-            const end = new Date(prod.enddate);
-
-            const oneDay = 1000 * 60 * 60 * 24;
-            const diffDays = Math.ceil((end - start) / oneDay);
-
-            var value = Math.round(diffDays*0.01*Number(productMap[item.product_id].variant.price.amount));
-            prod.price=value;
-        }
-        prod.schema = 'Product';
-        prod.color = productMap[item.product_id].color.color;
-        prod.variant = productMap[item.product_id].variant.label;
-
-        cart.push(prod);
-        }
-    });
-
+    console.log(cart);
     res.render("features/shoppingcart",{cart,coupons});
 }
 
@@ -318,6 +331,39 @@ module.exports.Cart = async (req,res)=>{
     res.json({valid:true,quantity:cart.quantity});
 }
 
+module.exports.Transaction = async(req,res)=>{
+    const code = req.query.code || "";
+    const couponCode = await Coupon.findOne({code:code})?? null;
+    var coupon_validity = false;
+    var shoppingCart = req.user.shoppingCart || [];
+    var cartItems = [];
+    var mcart = await modelCart(shoppingCart)||[];
+    var pcart = await productCart(shoppingCart)||[];
+    cartItems = [...mcart,...pcart];
+    var total = {all:0,buy:0,rent:0,refurbish:0};
+    cartItems.forEach(el=>{
+        total.all+= el.price*el.quantity;
+        total[el.type] += el.price*el.quantity;
+    });
+    if(couponCode){
+        const checker = couponCode.validity_check;
+        const membershipYears = getMembershipYears(req.user.createdAt);
+        const order_count = req.user.order_count;
+        if(checker.user_membership<=membershipYears && checker.user_order_count<=order_count && checker.min_order <= total[checker.applicable_category]){
+            coupon_validity = true;
+        }
+    };
+    if(coupon_validity){
+        if(couponCode.discount.type="flat"){
+            total.all -= couponCode.discount.value;
+        }else{
+            total.all -= (total.all*couponCode.discount.value/100);
+        }
+    }
+
+    console.log(total.all);
+    res.render("./features/transaction.ejs",{cartItems,total:total.all,code});
+}
 module.exports.Vendrix = async (req,res)=>{
     var cart_quantity = null;
     if(req.isAuthenticated()){

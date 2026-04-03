@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <script src="https://js.stripe.com/v3/"></script>
+</head>
+<body>
+  <button id="checkout">Pay ₹500</button>
+
+  <script>
+    const stripe = Stripe('<%=published_key%>'); // your publishable key
+
+    document.getElementById("checkout").addEventListener("click", async () => {
+      const res = await fetch("/stripe/checkoutSession", {
+        method: "POST"
+      });
+
+      const data = await res.json();
+
+      stripe.redirectToCheckout({
+        sessionId: data.id,
+      });
+    });
+  </script>
+</body>
+</html>

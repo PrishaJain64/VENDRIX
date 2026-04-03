@@ -41,6 +41,7 @@
     "passport": "^0.7.0",
     "passport-local": "^1.0.0",
     "passport-local-mongoose": "^9.0.1",
-    "puppeteer": "^24.40.0"
+    "puppeteer": "^24.40.0",
+    "stripe": "^21.0.1"
   }
 }

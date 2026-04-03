@@ -52,6 +52,7 @@ function addtoCart(intent,id,i,color){
   const qty = document.getElementById("qtyVal").textContent;
   const formdata = new FormData(form);
   formdata.append("quantity",qty);
+  console.log(formdata.get("enddate"));
 
   fetch(`/vendrix/cart/${intent}/${id}/${i}/${color}`,{
     method:"post",
