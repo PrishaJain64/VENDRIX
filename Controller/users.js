@@ -5,7 +5,11 @@ const { Model } = require('../models/versions');
 const { Product } = require('../models/products');
 const {Review} = require("../models/reviews");
 const {Coupon} = require("../models/coupons");
+const {Device} = require("../models/devices");
+
 const {Types} = require('mongoose');
+
+const { shippingRates } = require('./saveUserData');
 
 async function modelCart(shoppingCart){
     var mcart = [];
@@ -36,25 +40,34 @@ async function modelCart(shoppingCart){
     return mcart;
 }
 
-async function productCart(shoppingCart){
+async function productCart(shoppingCart,intent=null){
     var pcart = [];
     const unique_prod_ids =[...new Set(shoppingCart.filter(item=>item.product_model=='Product').map(item=>item.product_id))]; //unqiue ids from the entire shopping cart
-    const product_extract = await Product.find({_id:{$in:unique_prod_ids}}).lean();
+    if(unique_prod_ids.length===0) return pcart;
+    const query = {_id: { $in: unique_prod_ids }};
+    if(intent){
+        query.intent = intent;
+    }
+    const product_extract = await Product.find(query).lean();
+    if(product_extract.length===0) return pcart;
+    console.log(product_extract);
     const productMap = Object.fromEntries(product_extract.map(m=>[m._id.toString(),m]));
     shoppingCart.forEach(item => {
         if(item.product_model=="Product"){
-        //item.details = productMap[item.product_id];
+        const product = productMap[item.product_id];
+        if (!product) return;
+
         var prod = {};
-        prod.price = productMap[item.product_id].variant.price.amount;
+        prod.price = product.variant.price.amount;
         prod.quantity = item.quantity;
         prod.id = item.product_id;
         prod.type = item.intent;
-        prod.specs = Object.values(productMap[item.product_id].specifications);
-        prod.img = productMap[item.product_id].color.thumbnail.url;
-        prod.name = productMap[item.product_id].name;
-        prod.stock = productMap[item.product_id].stock || productMap[item.product_id].available;
+        prod.specs = Object.values(product.specifications);
+        prod.img = product.color.thumbnail.url;
+        prod.name = product.name;
+        prod.stock = product.stock || product.available;
         prod.url = "/"+item.intent+"/details";
-        prod.device = productMap[item.product_id].type;
+        prod.device = product.type;
 
         if(item.intent =="rent"){
             prod.startdate = item.duration.startDate;
@@ -69,8 +82,8 @@ async function productCart(shoppingCart){
             prod.price=value;
         }
         prod.schema = 'Product';
-        prod.color = productMap[item.product_id].color.color;
-        prod.variant = productMap[item.product_id].variant.label;
+        prod.color = product.color.color;
+        prod.variant = product.variant.label;
 
         pcart.push(prod);
         }
@@ -332,22 +345,34 @@ module.exports.Cart = async (req,res)=>{
 }
 
 module.exports.Transaction = async(req,res)=>{
+    //product_intent
+    const product_intent = req.query.intent;
     //address
     const address = req.user.address || [];
+    
     //cart+total
+    var shoppingCart = req.user.shoppingCart || [];
+    var cartItems = [];
+    if(product_intent ==="buy"){
+        var mcart = await modelCart(shoppingCart)||[];
+        var pcart = await productCart(shoppingCart,"refurbish")||[];
+        cartItems = [...mcart,...pcart];
+    }else if(product_intent === "rent"){
+        var pcart = await productCart(shoppingCart,product_intent)||[];
+        cartItems = [...pcart];
+    }
+    var total = {all:0,buy:0,rent:0,refurbish:0};
+        cartItems.forEach(el=>{
+            total.all+= el.price*el.quantity;
+            total[el.type] += el.price*el.quantity;
+        });
+        console.log("total = "+total.all);
+        console.log("total buy = "+total.buy);
+        console.log("total refurbish= "+total.refurbish);
+    //coupon
     const code = req.query.code || "";
     const couponCode = await Coupon.findOne({code:code})?? null;
     var coupon_validity = false;
-    var shoppingCart = req.user.shoppingCart || [];
-    var cartItems = [];
-    var mcart = await modelCart(shoppingCart)||[];
-    var pcart = await productCart(shoppingCart)||[];
-    cartItems = [...mcart,...pcart];
-    var total = {all:0,buy:0,rent:0,refurbish:0};
-    cartItems.forEach(el=>{
-        total.all+= el.price*el.quantity;
-        total[el.type] += el.price*el.quantity;
-    });
     if(couponCode){
         const checker = couponCode.validity_check;
         const membershipYears = getMembershipYears(req.user.createdAt);
@@ -357,12 +382,36 @@ module.exports.Transaction = async(req,res)=>{
         }
     };
     if(coupon_validity){
-        if(couponCode.discount.type="flat"){
+        if(couponCode.discount.type==="flat"){
             total.all -= couponCode.discount.value;
         }else{
-            total.all -= (total.all*couponCode.discount.value/100);
+            total.all -= (total[couponCode.validity_check.applicable_category]*couponCode.discount.value/100);
         }
     }
+    //weight
+    if(address.length>0){
+    const weights = await Device.aggregate([
+            {$project: {k: "$device",v: "$average_weight_kg"}},
+            {$group: {_id: null,data: { $push: { k: "$k", v: "$v" } } }},
+            {$project: {_id: 0, result: { $arrayToObject: "$data" }}}
+            ]);
+    const weightMap = weights[0]?.result||{};
+    var total_weight=0;
+    cartItems.forEach(el=>{
+        total_weight += (weightMap[el.device]||0)*el.quantity;
+    })
+    console.log(total_weight);
+
+   shippingRates({
+        pickup_pincode: String(address[0].pincode),
+        delivery_pincode: "400064",
+        weight: total_weight,
+        cod: 0
+        }).then(console.log);
+
+    console.log("hello world");
+    }
+
     res.render("./features/transaction.ejs",{cartItems,total:total.all,code,address});
 }
 module.exports.Vendrix = async (req,res)=>{

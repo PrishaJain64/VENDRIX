@@ -79,7 +79,8 @@
           </div>
         </div>
         <div id="savingsContainer"></div>
-        <a href="/vendrix/transaction" class="checkout-btn" id="checkoutBtn">Proceed CHECKOUT →</a>
+        <a href="/vendrix/transaction?intent=buy" class="checkout-btn" id="buyBtn">Proceed BUY →</a>
+        <a href="/vendrix/transaction?intent=rent" class="checkout-btn" id="rentBtn">Proceed LEASE →</a>
         <button class="continue-shopping">← CONTINUE SHOPPING</button>
       </div>
     </aside>
@@ -146,10 +147,21 @@
           </div>
           <div class="savings-text" style="font-size:.82rem;">You save: ${formatPrice(discount)}</div>
         </div>`;
-        const checkoutLink = document.getElementById("checkoutBtn");
-        checkoutLink.href = "/vendrix/transaction?code="+discountCode;
+        var pr = discountApplicable;
+        if(pr ==="buy" || pr==="refurbish"){
+        const buyBtn = document.getElementById("buyBtn");
+        buyBtn.href = "/vendrix/transaction?code="+discountCode+"&intent=buy";
+        }else{
+          const rentBtn = document.getElementById("rentBtn");
+          buyBtn.href = "/vendrix/transaction?code="+discountCode+"&intent=rent";
+        }
     } else {
       savingsContainer.innerHTML = '';
+    }
+    if(amount.rent === 0){
+      document.getElementById("rentBtn").style.display="none";
+    }if(amount.buy ===0 && amount.refurbish===0){
+      document.getElementById("buyBtn").style.display="none";
     }
     renderCouponCards();
 }

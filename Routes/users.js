@@ -44,7 +44,7 @@ router.post('/cart/:intent/:id/:variant_no/:color_no',upload.none(),userForShopp
 router.get("/shoppingcart",ShoppingCart);
 
 router.delete("/delete/:intent/:id/:variant_no/:color_no",deleteCart)
-router.get("/transaction",Transaction);
+router.get("/transaction",Transaction);//query ->intent- buy/sell/repair/rent/recycle
 router.get("/",Vendrix)
 
 router.get("/states",State)

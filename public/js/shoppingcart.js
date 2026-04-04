@@ -180,18 +180,6 @@ document.getElementById('promoInput').addEventListener('keypress', e => {
   if (e.key === 'Enter') applyCoupon();
 });
 
-document.getElementById('checkoutBtn').addEventListener('click', function() {
-  const r = this.getBoundingClientRect();
-  createParticles(r.left + r.width / 2, r.top + r.height / 2);
-  pulseElement(this);
-  this.textContent = '🚀 PROCESSING...';
-  this.disabled = true;
-  setTimeout(() => {
-    this.textContent = '✓ ORDER CONFIRMED';
-    this.style.background = 'linear-gradient(135deg,#4CAF50,#66BB6A)';
-  }, 800);
-});
-
 const style = document.createElement('style');
 style.innerHTML = `
   @keyframes pulse { 0%{transform:scale(1);box-shadow:0 0 0 0 rgba(255,107,53,.7);}50%{transform:scale(1.03);box-shadow:0 0 0 10px rgba(255,107,53,0);}100%{transform:scale(1);box-shadow:0 0 0 0 rgba(255,107,53,0);} }
