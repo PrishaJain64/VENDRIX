@@ -1063,3 +1063,43 @@
 
     /* Override: total-row show dash until address selected */
     #js-total { min-width: 60px; }
+select {
+  width: 100%;
+  padding: 12px 14px;
+  background-color: #1a0f0f; /* dark background */
+  color: #fff;
+  border: 1px solid #5a1f1f; /* subtle red border */
+  border-radius: 8px;
+  outline: none;
+  font-size: 14px;
+  appearance: none; /* removes default arrow */
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  cursor: pointer;
+
+  /* smooth transition */
+  transition: all 0.3s ease;
+}
+
+/* Hover + focus effects */
+select:hover,
+select:focus {
+  border-color: #ff4d4d;
+  box-shadow: 0 0 6px rgba(255, 77, 77, 0.4);
+}
+
+/* Custom arrow */
+.select-wrapper {
+  position: relative;
+}
+
+.select-wrapper::after {
+  content: "▼";
+  position: absolute;
+  right: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #aaa;
+  pointer-events: none;
+  font-size: 12px;
+}

@@ -155,8 +155,8 @@ module.exports.findTotalrepair = async(req,res)=>{
   const issues = req.body.issues;
   const device = req.body.device;
   const actual_price = Number(req.body.actual_price);
-
-  const total = await Totalrepair(issues,device);
+  
+  var total = await Totalrepair(issues,device);
 
   const fp = actual_price-total;
   res.json({deductions: total, finalprice: fp});

@@ -1,8 +1,9 @@
 const express=require('express');
+const axios = require("axios");
 const router=express.Router();
 
 const {userForShoppingCart, Register, Login, ShoppingCart, deleteCart, Cart, Vendrix, Transaction} = require('../Controller/users');
-
+const { State, City, SaveAddress,Loc } = require("../Controller/saveUserData");
 const multer = require('multer');
 const upload = multer();
 
@@ -45,5 +46,12 @@ router.get("/shoppingcart",ShoppingCart);
 router.delete("/delete/:intent/:id/:variant_no/:color_no",deleteCart)
 router.get("/transaction",Transaction);
 router.get("/",Vendrix)
+
+router.get("/states",State)
+
+router.post("/cities",City)
+router.post("/location",upload.none(),Loc);
+
+router.post("/saveAddress",upload.none(),SaveAddress)
 
 module.exports=router;

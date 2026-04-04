@@ -332,6 +332,9 @@ module.exports.Cart = async (req,res)=>{
 }
 
 module.exports.Transaction = async(req,res)=>{
+    //address
+    const address = req.user.address || [];
+    //cart+total
     const code = req.query.code || "";
     const couponCode = await Coupon.findOne({code:code})?? null;
     var coupon_validity = false;
@@ -360,9 +363,7 @@ module.exports.Transaction = async(req,res)=>{
             total.all -= (total.all*couponCode.discount.value/100);
         }
     }
-
-    console.log(total.all);
-    res.render("./features/transaction.ejs",{cartItems,total:total.all,code});
+    res.render("./features/transaction.ejs",{cartItems,total:total.all,code,address});
 }
 module.exports.Vendrix = async (req,res)=>{
     var cart_quantity = null;

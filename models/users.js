@@ -57,7 +57,11 @@ const userSchema=new Schema({
     order_count:{
         type:Number,
         default:0
-    }
+    },
+    address:[{
+        details :String,
+        pincode : Number
+}]
 },{timestamps:true});
 userSchema.plugin(passportLocalMongoose.default);
 module.exports=mongoose.model('User',userSchema);
