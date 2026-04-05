@@ -174,7 +174,7 @@
     </div>
     </form>
     <div class="action-row reveal rd3" style="margin-top:-6px;">
-      <button class="btn-buy"><i class="fas fa-bolt"></i> Buy Now</button>
+      <button id="buy" class="btn-buy"><i class="fas fa-bolt"></i> Buy Now</button>
     </div>
 
     <div class="trust-strip reveal rd4">
@@ -266,5 +266,10 @@
 }
 setTimeout(updateSummaryBars, 300);
 showReviews();
+
+document.getElementById("buy").addEventListener("click",function(){
+  const qty = document.getElementById("qtyVal").textContent;
+  window.location.href = "/vendrix/directTransaction/buy/"+'<%=spe._id%>'+"/"+'<%=i%>'+"/"+'<%=color_key%>'+'/'+qty;
+})
 </script>
 

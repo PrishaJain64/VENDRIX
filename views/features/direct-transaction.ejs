@@ -1,0 +1,394 @@
+<%
+const icons ={};
+icons["laptop"] = '💻';
+icons["phone"] = '📱';
+icons["smartwatch"]='⌚';
+icons["camera"] = '📷';
+icons["headphone"] = '🎧';
+icons["earbuds"] =  'ᖰ  ᖳ';
+icons["tablet"] = '🔲';
+%>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Vendrix — Secure Payment</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Mono:ital,wght@0,400;0,700;1,400&family=Syne:wght@600;700;800;900&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
+  <link rel="stylesheet" href="/css/payment.css"/>
+</head>
+<body>
+
+<div class="bg-grid"></div>
+<div class="bg-orb bg-orb--a"></div>
+<div class="bg-orb bg-orb--b"></div>
+
+<!-- ── SUCCESS OVERLAY ── -->
+<div class="success-overlay" id="js-success">
+  <div class="success-modal">
+    <div class="success-ring">
+      <svg width="42" height="42" viewBox="0 0 42 42" fill="none">
+        <circle cx="21" cy="21" r="19" stroke="#4ade80" stroke-width="1.5"/>
+        <path d="M11 21l7 7 13-14" stroke="#4ade80" stroke-width="2.2"
+          stroke-linecap="round" stroke-linejoin="round"
+          stroke-dasharray="60" stroke-dashoffset="60"
+          style="animation:checkmark .5s ease .45s both forwards"/>
+      </svg>
+    </div>
+    <div class="success-title">Payment Successful</div>
+    <div class="success-amount" id="suc-amount">₹1,80,399</div>
+    <div class="success-txid" id="suc-txid">TXN-XXXXXX</div>
+    <div class="success-sub">Your order has been confirmed. A receipt has been sent to your registered email.</div>
+    <div class="success-details">
+      <div class="suc-row"><span class="suc-row__lbl">Order ID</span><span class="suc-row__val">ORD-VX8K2F</span></div>
+      <div class="suc-row"><span class="suc-row__lbl">Date &amp; Time</span><span class="suc-row__val" id="suc-date">—</span></div>
+      <div class="suc-row"><span class="suc-row__lbl">Status</span><span class="suc-row__val" style="color:var(--green)">✓ Confirmed</span></div>
+    </div>
+    <button class="btn-done" onclick="closeSuc()"><i class="fas fa-arrow-left" style="margin-right:7px"></i>Back to Dashboard</button>
+    <button class="btn-receipt" onclick="fakeDownload()"><i class="fas fa-download" style="margin-right:7px"></i>Download Receipt</button>
+  </div>
+</div>
+
+<!-- ── HEADER ── -->
+<header class="site-header">
+  <div class="hdr-inner">
+    <div class="hdr-brand">
+      <a class="hdr-logo" href="#">VEND<span>R</span>IX</a>
+      <span class="hdr-tag">Secure Checkout</span>
+    </div>
+  </div>
+  <div class="prog-bar"><div class="prog-bar__fill" id="js-prog"></div></div>
+</header>
+
+<!-- ── PAGE ── -->
+<div class="page">
+
+  <!-- ══ LEFT ══ -->
+  <div>
+
+    <!-- ══ DELIVERY ADDRESS (always open, no dropdown) ══ -->
+    <div class="addr-section-flat" id="addr-section">
+
+      <div class="addr-section-title">
+        <div class="addr-icon"><i class="fas fa-location-dot"></i></div>
+        <div>
+          <div class="addr-title">Delivery Address</div>
+          <div class="addr-subtitle">Where should we send your order?</div>
+        </div>
+      </div>
+
+      <div class="addr-content-flat">
+        <div class="scan-line"></div>
+
+        <!-- Saved addresses list -->
+        <div class="section-label" style="margin-top:0"><i class="fas fa-bookmark"></i>Saved Addresses</div>
+        <div class="saved-addr-list" id="saved-addr-list">
+          <%address.forEach((ad,i)=>{%>
+            <label class="ad-op" data-idx="<%=i%>">
+          <div class="saved-addr-card">
+            <input <%= i == idx ? "checked" : "" %> type="radio" name="selected_add">
+            <div class="saved-addr-info" style="cursor:pointer;flex:1">
+              <div class="saved-addr-name"><%=ad.details%> </div></div>
+            </div>
+            </label>
+            <%})%>
+        </div>
+        <%if(address.length == 0){%>
+        <div class="no-addr-msg" id="no-addr-msg">
+          <i class="fas fa-map-pin" style="color:var(--og)"></i>
+          <span>No saved addresses yet. Add one below.</span>
+        </div>
+        <%}%>
+
+        <!-- Add new address toggle -->
+         <%if(address.length <3){%>
+        <div class="add-addr-toggle" id="add-addr-toggle" onclick="toggleNewAddr()">
+          <i class="fas fa-plus-circle"></i>
+          <span id="add-addr-label">Add a new address</span>
+        </div>
+        <%}else{%>
+        <div class="addr-max-notice" id="addr-max-notice">
+          <i class="fas fa-circle-info"></i> Maximum 3 addresses saved. Remove one to add a new address.
+        </div>
+        <%}%>
+
+        <!-- New address form -->
+        <div class="new-addr-form" id="new-addr-form" style="display:none">
+
+          <!-- Device Location -->
+           <form id="deviceloc">
+            <div class="grid-2 mb-field">
+            <div>
+              <div class="field-label"><i class="fas fa-door-open"></i>Flat / Wing</div>
+              <input name="flat" type="text" id="dev-flat" placeholder="e.g. 204, Wing B" autocomplete="off"/>
+              <div class="field-error" id="err-flat"></div>
+            </div>
+            <div>
+              <div class="field-label"><i class="fas fa-building"></i>Building Name</div>
+              <input name="building" type="text" id="dev-building" placeholder="e.g. Crescent Heights" autocomplete="off"/>
+              <div class="field-error" id="err-building"></div>
+            </div>
+          </div>
+          <div class="device-loc-section">
+            <button type="button" class="btn-device-loc" onclick="useDeviceLocation()">
+              <i class="fas fa-location-crosshairs"></i> Use Device Location
+            </button>
+          </div>
+          </form>
+          
+            <div class="device-loc-display" id="device-loc-display" style="display:none">
+              <i class="fas fa-map-marker-alt" style="color:var(--og);font-size:11px;margin-top:2px;flex-shrink:0"></i>
+              <span id="device-loc-txt">Fetching location…</span>
+            </div>
+
+          <div class="section-label"><i class="fas fa-map"></i>Address Details</div>
+          <form id="address">
+          <div class="grid-2 mb-field">
+            <div>
+              <div class="field-label"><i class="fas fa-door-open"></i>Flat / Wing</div>
+              <input name="flat" type="text" id="addr-flat" placeholder="e.g. 204, Wing B" autocomplete="off"/>
+              <div class="field-error" id="err-flat"></div>
+            </div>
+            <div>
+              <div class="field-label"><i class="fas fa-building"></i>Building Name</div>
+              <input name="building" type="text" id="addr-building" placeholder="e.g. Crescent Heights" autocomplete="off"/>
+              <div class="field-error" id="err-building"></div>
+            </div>
+          </div>
+          <div class="mb-field">
+            <div class="field-label"><i class="fas fa-map-pin"></i>Landmark</div>
+            <input name="landmark" type="text" id="addr-landmark" placeholder="e.g. Near Andheri Station" autocomplete="off"/>
+          </div>
+          <div class="mb-field">
+            <div class="field-label"><i class="fas fa-road"></i>Road Name</div>
+            <input name="road" type="text" id="addr-road" placeholder="e.g. Link Road" autocomplete="off"/>
+            <div class="field-error" id="err-road"></div>
+          </div>
+           <div class="grid-2 mb-field">
+            <div>
+              <div class="field-label"><i class="fas fa-hashtag"></i>Pincode</div>
+              <input name='pincode' type="text" id="addr-pin" maxlength="10" placeholder="e.g. 400053" oninput="onPinInput(this)" autocomplete="postal-code"/>
+              <div class="field-error" id="err-pin"></div>
+            </div>
+          </div>
+          <div class="grid-2 mb-field">
+            <div class="select-wrapper">
+              <div class="field-label"><i class="fas fa-map"></i>State</div>
+              <select name="state" id="stateDropdown"><option value="">Select State</option></select>
+              <div class="field-error" id="err-state"></div>
+            </div>
+            <div class="select-wrapper">
+              <div class="field-label"><i class="fas fa-city"></i>City</div>
+              <select name="city" id="cityDropdown"><option value="">Select City</option></select>
+              <div class="field-error" id="err-city"></div>
+            </div>
+          </div>
+          </form>
+          
+          <button type='button' class="btn-save-addr" onclick="saveNewAddr()">
+            <i class="fas fa-circle-check"></i> Save &amp; Use This Address
+          </button>
+        </div>
+
+      </div>
+    </div><!-- /addr-section-flat -->
+
+  </div>
+
+  <!-- ══ RIGHT: SIDEBAR ══ -->
+  <aside class="sidebar">
+    <div class="summary-card" style="position:relative">
+      <div class="summary-card__stripe"></div>
+      <div class="summary-card__head">
+        <div class="summary-card__title">Order Summary</div>
+      </div>
+      <div class="summary-card__body">
+        <div class="summary-scan"></div>
+
+        <div class="sum-item">
+          <div class="sum-item__emo"><%=icons[cartItem.type]|| "📦"%></div>
+          <div class="sum-item__body">
+            <div class="sum-item__name"><%=cartItem.name%></div>
+            <div class="sum-item__meta"><div class="sum-item__dot sum-item__dot--buy"></div>BUY · Qty <%=cartItem.quantity%></div>
+          </div>
+          <div class="sum-item__price"><%=total%></div>
+        </div>
+        <div class="sum-divider"></div>
+
+        <div class="fee-row"><span><i class="fas fa-box"></i>Subtotal </span><span class="fee-row__val">₹<%=total%></span></div>
+        <div class="fee-row--shipping">
+          <span><i class="fas fa-truck"></i><%=product_intent=="rent"?'Pick&Drop Charges':'Shipping Charges'%></span>
+        <%if(address.length==0){%>
+          <span class="fee-row__val" id="shipping-val"><span class="shipping-no-addr">Select an address first</span></span>
+        <%}else{%>
+        <div class="shipping-options" id="shipping-options">
+          <div class="shipping-opt" id="ship-default">
+            <div class="ship-opt__radio"></div>
+            <div class="ship-opt__logo"><i class="fas fa-box"></i></div>
+            <div class="ship-opt__body">
+              <div class="ship-opt__name">Standard</div>
+              <div class="ship-opt__company" id="ship-default-company"><%=shippingrates[0].name%></div>
+              <div class="ship-opt__" id="ship-default-days"><%=shippingrates[0].days%> business days</div>
+            </div>
+            <div class="ship-opt__price" id="ship-default-price">&#8377; <%=shippingrates[0].rate%></div>
+          </div>
+          <div class="shipping-opt" id="ship-fast">
+            <div class="ship-opt__radio"></div>
+            <div class="ship-opt__logo ship-opt__logo--fast"><i class="fas fa-bolt"></i></div>
+            <div class="ship-opt__body">
+              <div class="ship-opt__name">Express <span class="ship-fast-badge">FAST</span></div>
+              <div class="ship-opt__company" id="ship-fast-company"><%=shippingrates[1].name%></div>
+              <div class="ship-opt__" id="ship-fast-days"><%=shippingrates[1].days%> business days</div>
+
+            </div>
+            <div class="ship-opt__price" id="ship-fast-price">&#8377; <%=shippingrates[1].rate%></div>
+          </div>
+        </div>
+        <%}%>
+        </div>
+        <div class="fee-row">
+          <span><i class="fas fa-percent"></i>GST (18%)</span>
+          <%if(gst==0){%>
+          <span class="fee-row__val" id="gst-val"><span class="shipping-no-addr">Select an address first</span></span>
+          <%}else{%>
+          <span class="fee-row__val" id="gst">INR <%=gst%></span></div>
+          <%}%>
+          <%if(product_intent ==="rent"){%>
+            <div class="fee-row">
+              <span>Fixed Deposit</span>
+              <span class="fee-row_val" style="color: white;">INR <%=fixeddeposit%></span>
+            </div>
+          <%}%>
+        <div class="sum-divider sum-divider--og"></div>
+
+        <div class="total-row">
+          <div class="total-row__lbl">Total Due</div>
+          <%if(payment_total==0){%>
+          <div class="total-row__amt" id="js-total">—</div>
+          <%}else{%>
+          <div class="total-row__amt" id="payment-total">INR <%=payment_total%></div>
+          <%}%>
+        </div>
+        <div class="total-note" id="total-note" style="opacity:0">*Inclusive of all taxes &amp; fees</div>
+
+        <button class="btn-pay" id="js-pay">
+          <span class="btn-pay__sheen"></span>
+          <i class="fas fa-bolt"></i> <span id="pay-btn-txt">Pay</span>
+        </button>
+
+        <div class="pay-note"><i class="fas fa-lock"></i>Secured by Vendrix Shield™</div>
+
+      </div><!-- /summary-card__body -->
+
+      <!-- Payment processing overlay on card -->
+      <div class="pay-progress-overlay" id="pay-overlay">
+        <div class="pay-progress-spinner"></div>
+        <div class="pay-progress-label" id="pay-progress-lbl">Initializing…</div>
+        <div class="pay-progress-bar-wrap">
+          <div class="pay-progress-bar" id="pay-progress-bar"></div>
+        </div>
+      </div>
+    </div>
+  </aside>
+
+</div><!-- /page -->
+
+<div class="toast-wrap" id="toasts"></div>
+<script src="/js/payment.js"></script>
+<script>
+  const def = document.getElementById("ship-default");
+  const fast = document.getElementById("ship-fast");
+  const gst = document.getElementById("gst");
+  const payment = document.getElementById("payment-total");
+  const addressLabels = document.querySelectorAll('.ad-op');
+
+  def.classList.toggle('selected',true);
+
+  fetch("/vendrix/states").then(res=>res.json()).then(states=>{
+    const dropdown = document.getElementById("stateDropdown");
+
+    states.forEach(state => {
+      const option = document.createElement("option");
+      option.value = state.name;
+      option.textContent = state.name;
+      dropdown.appendChild(option);
+    });
+  }).catch(err=>console.log(err));
+
+  document.getElementById("stateDropdown").addEventListener("change", function () {
+  const selectedState = this.value;
+
+  fetch("/vendrix/cities", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify({ state: selectedState })
+  })
+  .then(res => res.json())
+  .then(cities => {
+    const cityDropdown = document.getElementById("cityDropdown");
+    console.log(cityDropdown);
+    cityDropdown.innerHTML = '<option value="">Select City</option>';
+
+    cities.forEach(city => {
+      const option = document.createElement("option");
+      option.value = city;
+      option.textContent = city;
+      cityDropdown.appendChild(option);
+    });
+  });
+});
+
+function total_calculate(shipping){
+      const formdata = new FormData();
+      formdata.append("subtotal",'<%=total%>');
+      formdata.append("shipping",JSON.stringify(shipping));
+    fetch("/vendrix/paymentAmount",{
+      method:"post",
+      body:formdata
+    }).then(res=>res.json()).then(data=>{
+      gst.textContent="INR "+data.gst;
+      payment.textContent="INR "+data.payment_total
+    });
+}
+
+document.getElementById("ship-default").addEventListener("click",function(){
+  fast.classList.toggle('selected',false);
+  selectedShipping = "default"
+   this.classList.toggle('selected', selectedShipping === "default");
+  document.getElementById('ship-default-company').textContent = '<%=shippingrates[0].name%>';
+    document.getElementById('ship-default-days').textContent     = '<%=shippingrates[0].days%> ' +'business days';
+    document.getElementById('ship-default-price').innerHTML     = '<%=shippingrates[0].rate%>' === 0
+      ? '<span class="fee-row__val--free">FREE</span>'
+      : '\u20B9' + '<%=shippingrates[0].rate%>'.toLocaleString('en-IN');
+      toast('\uD83D\ude9a', 'Standard delivery selected!');
+      total_calculate(<%-JSON.stringify(shippingrates[0])%>);
+});
+
+document.getElementById("ship-fast").addEventListener("click",function(){
+  def.classList.toggle('selected',false);
+  selectedShipping = "fast";
+  this.classList.toggle('selected', selectedShipping === "fast");
+  document.getElementById('ship-fast-company').textContent = '<%=shippingrates[1].name%>';
+    document.getElementById('ship-fast-days').textContent     = '<%=shippingrates[1].days%> ' +'business days';
+    document.getElementById('ship-fast-price').innerHTML     = '<%=shippingrates[1].rate%>' === 0
+      ? '<span class="fee-row__val--free">FREE</span>'
+      : '\u20B9' + '<%=shippingrates[1].rate%>'.toLocaleString('en-IN');
+      toast('\uD83D\ude9a', 'Express delivery selected!');
+      total_calculate(<%-JSON.stringify(shippingrates[1])%>);
+})
+
+addressLabels.forEach(label => {
+  label.addEventListener('click', function() {
+    const idx = this.dataset.idx;
+    window.location.href = `/vendrix/directTransaction/${'<%=product_intent%>'}/${'<%=cartItem._id%>'}/${'<%=variant_no%>'}/${'<%=color_no%>'}/${'<%=cartItem.quantity%>'}?adind=${idx}`;
+  });
+});
+
+</script>
+</body>
+</html>

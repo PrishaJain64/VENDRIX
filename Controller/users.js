@@ -346,8 +346,8 @@ module.exports.Cart = async (req,res)=>{
 module.exports.Transaction = async(req,res)=>{
     //product_intent
     const product_intent = req.query.intent;
-    const idx = Number(req.query.adind) ||0;
     //address
+    const idx = Number(req.query.adind) ||0;
     const address = req.user.address || [];
     
     //cart+total
@@ -424,6 +424,56 @@ module.exports.Transaction = async(req,res)=>{
     }
     res.render("./features/transaction.ejs",{cartItems,total:total.all,code,address,shippingrates,payment_total,gst,product_intent,idx,fixeddeposit});
 }
+
+module.exports.directTransaction = async(req,res)=>{
+    const qty = req.params.quantity;
+    //address
+    const idx = Number(req.query.adind) ||0;
+    const address = req.user.address || [];
+
+    //cart item
+    const {intent,id,variant_no,color_no} = req.params;
+    var cartItem = {};
+    var total =0;
+    if(intent=="buy"){
+        cartItem = await Model.findById(id);
+        cartItem = cartItem.toObject();
+        total = Number(cartItem.variants[Number(variant_no)].price)*Number(qty);
+        cartItem.device = cartItem.type;
+        cartItem.quantity = qty;
+    }
+
+    //weight+rates
+    var shippingrates = [];
+    var payment_total = 0,gst=0;
+    if(address.length>0){
+        console.log([cartItem]);
+    const total_weight = await Weight([cartItem]);
+    console.log(String(address[idx].pincode));
+    console.log(total_weight);
+    const shipping = await shippingRates({
+        pickup_pincode: String(address[idx].pincode),
+        delivery_pincode: "400064",
+        weight: total_weight,
+        cod: 0
+    });
+
+    const cheapest = shipping.reduce((min, curr) =>
+    curr.rate < min.rate ? curr : min
+    );
+    const fastest = shipping.reduce((min, curr) =>
+    curr.days < min.days ? curr : min
+    );
+    
+    shippingrates.push(cheapest);
+    shippingrates.push(fastest);
+    payment_total = total + shippingrates[0].rate;
+    gst = (0.18*payment_total).toFixed(1);
+    payment_total= (Number(payment_total)+Number(gst)).toFixed(1);
+    }
+    res.render("./features/direct-transaction.ejs",{cartItem,total,address,shippingrates,payment_total,gst,product_intent:intent,idx,variant_no,color_no});
+}
+
 module.exports.Vendrix = async (req,res)=>{
     var cart_quantity = null;
     if(req.isAuthenticated()){

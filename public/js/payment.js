@@ -9,9 +9,6 @@ var addrSelected    = false;
 var savedAddresses  = [];
 var selectedAddrIdx = -1;
 
-const BASE_SUBTOTAL = 152880;
-const GST_RATE      = 0.18;
-
 const PAYMENT_STEPS = [
   { lbl: 'Verifying details\u2026',   pct: 20 },
   { lbl: 'Connecting gateway\u2026', pct: 45 },
@@ -93,42 +90,6 @@ function saveNewAddr() {
     }
   })
 
-}
-
-/* ══════════════════════════════════════════
-   SUMMARY: SHIPPING + GST + TOTAL
-══════════════════════════════════════════ */
-
-function updateSummary(country) {
-  var rate    = getShippingRate(country);
-  var gst     = Math.round(BASE_SUBTOTAL * GST_RATE);
-  currentTotal = BASE_SUBTOTAL + gst + rate;
-
-  /* Shipping */
-  var shipEl = document.getElementById('shipping-val');
-  shipEl.innerHTML = rate === 0
-    ? '<span class="fee-row__val--free">FREE</span>'
-    : '<span>\u20B9' + rate.toLocaleString('en-IN') + '</span>';
-
-  /* GST */
-  document.getElementById('gst-val').innerHTML =
-    '<span>\u20B9' + gst.toLocaleString('en-IN') + '</span>';
-
-  /* Total */
-  var fmt = '\u20B9' + currentTotal.toLocaleString('en-IN');
-  document.getElementById('js-total').textContent      = fmt;
-  document.getElementById('pay-btn-txt').textContent   = 'Pay ' + fmt;
-  document.getElementById('total-note').style.opacity  = '1';
-}
-
-function clearSummary() {
-  var placeholder = '<span class="shipping-no-addr">Select an address first</span>';
-  document.getElementById('shipping-val').innerHTML = placeholder;
-  document.getElementById('gst-val').innerHTML      = placeholder;
-  document.getElementById('js-total').textContent   = '\u2014';
-  document.getElementById('pay-btn-txt').textContent = 'Pay';
-  document.getElementById('total-note').style.opacity = '0';
-  currentTotal = 0;
 }
 
 /* ══════════════════════════════════════════
