@@ -366,9 +366,6 @@ module.exports.Transaction = async(req,res)=>{
             total.all+= el.price*el.quantity;
             total[el.type] += el.price*el.quantity;
         });
-        console.log("total = "+total.all);
-        console.log("total buy = "+total.buy);
-        console.log("total refurbish= "+total.refurbish);
     //coupon
     const code = req.query.code || "";
     const couponCode = await Coupon.findOne({code:code})?? null;
@@ -390,6 +387,7 @@ module.exports.Transaction = async(req,res)=>{
     }
 
     //weight+rates
+    var fixeddeposit =0;
     var shippingrates = [];
     var payment_total = 0,gst=0;
     if(address.length>0){
@@ -409,14 +407,22 @@ module.exports.Transaction = async(req,res)=>{
     const fastest = shipping.reduce((min, curr) =>
     curr.days < min.days ? curr : min
     );
-
+    console.log(cheapest.rate+" "+fastest.rate);
+    if(product_intent=="rent"){
+        fastest.rate+=cheapest.rate;
+        cheapest.rate+=cheapest.rate;
+        fixeddeposit = total.rent*0.2;
+    }
     shippingrates.push(cheapest);
     shippingrates.push(fastest);
     payment_total = total.all + shippingrates[0].rate;
     gst = (0.18*payment_total).toFixed(1);
     payment_total= (Number(payment_total)+Number(gst)).toFixed(1);
+    if(product_intent=="rent"){
+        payment_total = (Number(payment_total)+Number(fixeddeposit)).toFixed(1);
     }
-    res.render("./features/transaction.ejs",{cartItems,total:total.all,code,address,shippingrates,payment_total,gst,product_intent,idx});
+    }
+    res.render("./features/transaction.ejs",{cartItems,total:total.all,code,address,shippingrates,payment_total,gst,product_intent,idx,fixeddeposit});
 }
 module.exports.Vendrix = async (req,res)=>{
     var cart_quantity = null;
