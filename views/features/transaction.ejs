@@ -214,6 +214,9 @@ icons["tablet"] = '🔲';
           <div class="sum-item__body">
             <div class="sum-item__name"><%=element.name%></div>
             <div class="sum-item__meta"><div class="sum-item__dot sum-item__dot--buy"></div><%=element.type%> · Qty <%=element.quantity%></div>
+            <%if(product_intent ==="rent"){%>
+            <div class="sum-item__meta"><div class="sum-item__dot sum-item__dot--buy"></div><%=new Date(element.startdate).toLocaleDateString("en-GB")%> to <%=new Date(element.enddate).toLocaleDateString("en-GB")%></div>
+              <%}%>
           </div>
           <div class="sum-item__price"><%=element.quantity*element.price%></div>
         </div>

@@ -212,7 +212,10 @@ icons["tablet"] = '🔲';
           <div class="sum-item__emo"><%=icons[cartItem.type]|| "📦"%></div>
           <div class="sum-item__body">
             <div class="sum-item__name"><%=cartItem.name%></div>
-            <div class="sum-item__meta"><div class="sum-item__dot sum-item__dot--buy"></div>BUY · Qty <%=cartItem.quantity%></div>
+            <div class="sum-item__meta"><div class="sum-item__dot sum-item__dot--buy"></div><%=product_intent.toUpperCase()%> · Qty <%=cartItem.quantity%></div>
+            <%if(product_intent ==="rent"){%>
+            <div class="sum-item__meta"><div class="sum-item__dot sum-item__dot--buy"></div><%=new Date(cartItem.startdate).toLocaleDateString("en-GB")%> to <%=new Date(cartItem.enddate).toLocaleDateString("en-GB")%></div>
+              <%}%>
           </div>
           <div class="sum-item__price"><%=total%></div>
         </div>
@@ -299,6 +302,7 @@ icons["tablet"] = '🔲';
 <div class="toast-wrap" id="toasts"></div>
 <script src="/js/payment.js"></script>
 <script>
+  console.log('<%product_intent%>')
   const def = document.getElementById("ship-default");
   const fast = document.getElementById("ship-fast");
   const gst = document.getElementById("gst");

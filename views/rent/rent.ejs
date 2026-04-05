@@ -208,7 +208,7 @@ const products = [
         <p class="buy-brand"><%=p.brand%></p>
         <h3 class="buy-name"><%=p.name%></h3>
         <div class="buy-price-row">
-          <span class="buy-price">INR <%=p.variant.price.amount%></span>
+          <span class="buy-price">INR <%=Math.round(p.variant.price.amount*0.01*7)%></span>
           <p class="buy-brand">Qty : <span class="product-qty"><%=p.quantity?p.quantity:0%></span></p>
           <button type="button" onclick="addtoCart(this,'<%=p._id%>','rent',Number('<%=p.available%>'))" class="add-cart-btn" <%=Number(p.quantity)>=Number(p.available)?"disabled":""%>><i class="fas fa-plus"></i> Add</button>
         </div>

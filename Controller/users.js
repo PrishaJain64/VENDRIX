@@ -407,7 +407,7 @@ module.exports.Transaction = async(req,res)=>{
     const fastest = shipping.reduce((min, curr) =>
     curr.days < min.days ? curr : min
     );
-    console.log(cheapest.rate+" "+fastest.rate);
+
     if(product_intent=="rent"){
         fastest.rate+=cheapest.rate;
         cheapest.rate+=cheapest.rate;
@@ -426,6 +426,9 @@ module.exports.Transaction = async(req,res)=>{
 }
 
 module.exports.directTransaction = async(req,res)=>{
+    const sd = req.query.startdate ||-1;
+    const ed = req.query.enddate ||-1;
+
     const qty = req.params.quantity;
     //address
     const idx = Number(req.query.adind) ||0;
@@ -441,16 +444,34 @@ module.exports.directTransaction = async(req,res)=>{
         total = Number(cartItem.variants[Number(variant_no)].price)*Number(qty);
         cartItem.device = cartItem.type;
         cartItem.quantity = qty;
+    }else if(intent =="rent"){
+        const start = new Date(sd);
+        const end = new Date(ed);
+        start.setHours(0,0,0,0);
+        end.setHours(0,0,0,0);
+        const oneDay = 1000 * 60 * 60 * 24;
+        const diffDays = Math.ceil((end - start) / oneDay);
+        if (diffDays <= 0) {
+            console.log(start+" negdiff "+end);
+            return;
+        }
+
+        cartItem = await Product.findById(id);
+        cartItem = cartItem.toObject();
+        total = Math.round(diffDays * 0.01 * Number(cartItem.variant.price.amount))*Number(qty);
+        cartItem.device = cartItem.type;
+        cartItem.quantity = qty;
+        cartItem.startdate = sd;
+        cartItem.enddate = ed;
     }
 
     //weight+rates
+    var fixeddeposit=0;
     var shippingrates = [];
     var payment_total = 0,gst=0;
     if(address.length>0){
-        console.log([cartItem]);
     const total_weight = await Weight([cartItem]);
-    console.log(String(address[idx].pincode));
-    console.log(total_weight);
+   
     const shipping = await shippingRates({
         pickup_pincode: String(address[idx].pincode),
         delivery_pincode: "400064",
@@ -464,14 +485,22 @@ module.exports.directTransaction = async(req,res)=>{
     const fastest = shipping.reduce((min, curr) =>
     curr.days < min.days ? curr : min
     );
+    if(intent=="rent"){
+        fastest.rate+=cheapest.rate;
+        cheapest.rate+=cheapest.rate;
+        fixeddeposit = total*0.2;
+    }
     
     shippingrates.push(cheapest);
     shippingrates.push(fastest);
     payment_total = total + shippingrates[0].rate;
     gst = (0.18*payment_total).toFixed(1);
     payment_total= (Number(payment_total)+Number(gst)).toFixed(1);
+    if(intent==="rent"){
+        payment_total = (Number(payment_total)+Number(fixeddeposit)).toFixed(1);
     }
-    res.render("./features/direct-transaction.ejs",{cartItem,total,address,shippingrates,payment_total,gst,product_intent:intent,idx,variant_no,color_no});
+    }
+    res.render("./features/direct-transaction.ejs",{cartItem,total,address,shippingrates,payment_total,gst,product_intent:intent,idx,variant_no,color_no,fixeddeposit});
 }
 
 module.exports.Vendrix = async (req,res)=>{

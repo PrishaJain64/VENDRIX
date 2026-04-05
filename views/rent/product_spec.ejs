@@ -176,7 +176,7 @@
     <div class="action-row reveal rd3" style="margin-top:-6px;">
       <p>Start Date : <input name = "startdate" type = "date" id = "startdate"></p>
       <p>End Date : <input name = "enddate" id = "enddate" type = "date"></p>
-      <button class = "btn-buy" type = "button" id = "savedata">Rent Now</button>
+      <button id="rent" class = "btn-buy" type = "button">Rent Now</button>
     </div>
     </form>
 
@@ -248,32 +248,32 @@
   var value = Math.round(diffDays*0.01*Number("<%= result.selectedDoc[0].variant.price.amount%>"));
   price.innerText =`₹${value} for ${diffDays} days`;
   
-  document.getElementById("savedata").addEventListener("click", function(){
-    const form = document.getElementById("form1");
-    const formdata = new FormData(form);
+  // document.getElementById("savedata").addEventListener("click", function(){
+  //   const form = document.getElementById("form1");
+  //   const formdata = new FormData(form);
 
-    const data = Object.fromEntries(formdata.entries());
+  //   const data = Object.fromEntries(formdata.entries());
 
-    if(!data.startdate || !data.enddate){
-      alert("Fill all the requirements");
-      return;
-    }else{
-      const spe = "<%=result.selectedDoc[0].name %>";
-      const label = "<%=result.selectedDoc[0].variant.label%>";
-      const color = "<%=result.selectedDoc[0].color.color%>";
-      formdata.append("product_name",spe);
-      formdata.append("product_label",label);
-      formdata.append("product_color",color);
+  //   if(!data.startdate || !data.enddate){
+  //     alert("Fill all the requirements");
+  //     return;
+  //   }else{
+  //     const spe = "<%=result.selectedDoc[0].name %>";
+  //     const label = "<%=result.selectedDoc[0].variant.label%>";
+  //     const color = "<%=result.selectedDoc[0].color.color%>";
+  //     formdata.append("product_name",spe);
+  //     formdata.append("product_label",label);
+  //     formdata.append("product_color",color);
 
-      fetch("/rent/duration", {
-      method: "POST",
-      body: formdata
-   }).then(res=>res.json())
-   .then(data =>{
-    window.location.href = data.redirect;
-   });
-  }
-  });
+  //     fetch("/rent/duration", {
+  //     method: "POST",
+  //     body: formdata
+  //  }).then(res=>res.json())
+  //  .then(data =>{
+  //   window.location.href = data.redirect;
+  //  });
+  // }
+  // });
 
   [startInput, endInput].forEach(input => {
     input.addEventListener("change", calculateRent);
@@ -364,5 +364,12 @@ document.getElementById("startdate").addEventListener("change",function(){
 });
 document.getElementById("enddate").addEventListener("change",function(){
   end = this.value;
+});
+
+document.getElementById("rent").addEventListener("click",function(){
+  const sd = startInput.value;
+  const ed = endInput.value;
+  const qty = document.getElementById("qtyVal").textContent;
+  window.location.href = "/vendrix/directTransaction/rent/"+'<%=result.selectedDoc[0]._id%>'+"/0/0/"+qty+"?startdate="+sd+"&enddate="+ed;
 })
 </script>
