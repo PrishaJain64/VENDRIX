@@ -20,6 +20,8 @@ const PAYMENT_STEPS = [
   { lbl: 'Finalizing\u2026',          pct: 100 }
 ];
 
+var selectedShipping = 'default'; /* 'default' | 'fast' */
+
 /* ══════════════════════════════════════════
    PROGRESS BAR
 ══════════════════════════════════════════ */
@@ -236,11 +238,3 @@ function killToast(el) {
   el.classList.add('out');
   setTimeout(function() { el.remove(); }, 220);
 }
-
-/* ══════════════════════════════════════════
-   INIT
-══════════════════════════════════════════ */
-// document.addEventListener('DOMContentLoaded', function() {
-//   renderSavedAddrs();
-//   clearSummary();
-// });

@@ -5,11 +5,10 @@ const { Model } = require('../models/versions');
 const { Product } = require('../models/products');
 const {Review} = require("../models/reviews");
 const {Coupon} = require("../models/coupons");
-const {Device} = require("../models/devices");
 
 const {Types} = require('mongoose');
 
-const { shippingRates } = require('./saveUserData');
+const { shippingRates, Weight } = require('./saveUserData');
 
 async function modelCart(shoppingCart){
     var mcart = [];
@@ -347,6 +346,7 @@ module.exports.Cart = async (req,res)=>{
 module.exports.Transaction = async(req,res)=>{
     //product_intent
     const product_intent = req.query.intent;
+    const idx = Number(req.query.adind) ||0;
     //address
     const address = req.user.address || [];
     
@@ -388,31 +388,35 @@ module.exports.Transaction = async(req,res)=>{
             total.all -= (total[couponCode.validity_check.applicable_category]*couponCode.discount.value/100);
         }
     }
-    //weight
+
+    //weight+rates
+    var shippingrates = [];
+    var payment_total = 0,gst=0;
     if(address.length>0){
-    const weights = await Device.aggregate([
-            {$project: {k: "$device",v: "$average_weight_kg"}},
-            {$group: {_id: null,data: { $push: { k: "$k", v: "$v" } } }},
-            {$project: {_id: 0, result: { $arrayToObject: "$data" }}}
-            ]);
-    const weightMap = weights[0]?.result||{};
-    var total_weight=0;
-    cartItems.forEach(el=>{
-        total_weight += (weightMap[el.device]||0)*el.quantity;
-    })
+    const total_weight = await Weight(cartItems);
     console.log(total_weight);
 
-   shippingRates({
-        pickup_pincode: String(address[0].pincode),
+    const shipping = await shippingRates({
+        pickup_pincode: String(address[idx].pincode),
         delivery_pincode: "400064",
         weight: total_weight,
         cod: 0
-        }).then(console.log);
+    });
 
-    console.log("hello world");
+    const cheapest = shipping.reduce((min, curr) =>
+    curr.rate < min.rate ? curr : min
+    );
+    const fastest = shipping.reduce((min, curr) =>
+    curr.days < min.days ? curr : min
+    );
+
+    shippingrates.push(cheapest);
+    shippingrates.push(fastest);
+    payment_total = total.all + shippingrates[0].rate;
+    gst = (0.18*payment_total).toFixed(1);
+    payment_total= (Number(payment_total)+Number(gst)).toFixed(1);
     }
-
-    res.render("./features/transaction.ejs",{cartItems,total:total.all,code,address});
+    res.render("./features/transaction.ejs",{cartItems,total:total.all,code,address,shippingrates,payment_total,gst,product_intent,idx});
 }
 module.exports.Vendrix = async (req,res)=>{
     var cart_quantity = null;

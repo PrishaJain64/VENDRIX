@@ -1063,6 +1063,7 @@
 
     /* Override: total-row show dash until address selected */
     #js-total { min-width: 60px; }
+
 select {
   width: 100%;
   padding: 12px 14px;
@@ -1103,3 +1104,74 @@ select:focus {
   pointer-events: none;
   font-size: 12px;
 }
+
+/* ── SHIPPING OPTIONS ── */
+    .fee-row--shipping { margin-bottom: 0; padding: .42rem 0; font-size: .8rem; color: var(--muted);}
+    .fee-row--shipping i { color: var(--og); font-size: 10px; margin-right: 6px; width: 12px; }
+
+    .shipping-options {
+      display:flex;
+      flex-direction: column; gap: .5rem;
+      margin: .55rem 0 .65rem;
+    }
+
+    .shipping-opt {
+      display: flex; align-items: center; gap: 10px;
+      padding: .75rem .9rem; border-radius: 9px;
+      border: 1px solid var(--bdr2); background: rgba(255,107,53,.02);
+      cursor: pointer; transition: border-color var(--t), background var(--t), box-shadow var(--t);
+      position: relative; overflow: hidden;
+    }
+    .shipping-opt:hover { border-color: var(--og-bdr); background: rgba(255,107,53,.05); }
+    .shipping-opt.selected {
+      border-color: var(--og);
+      background: rgba(255,107,53,.08);
+      box-shadow: 0 0 0 1px rgba(255,107,53,.08) inset, 0 4px 16px rgba(255,107,53,.1);
+    }
+
+    /* Radio dot */
+    .ship-opt__radio {
+      width: 14px; height: 14px; border-radius: 50%; flex-shrink: 0;
+      border: 1.5px solid var(--bdr2); background: transparent;
+      transition: border-color var(--t), background var(--t);
+      display: flex; align-items: center; justify-content: center;
+    }
+    .ship-opt__radio::after {
+      content: ''; width: 5px; height: 5px; border-radius: 50%;
+      background: #000; display: none;
+    }
+    .shipping-opt.selected .ship-opt__radio { border-color: var(--og); background: var(--og); }
+    .shipping-opt.selected .ship-opt__radio::after { display: block; }
+
+    /* Icon badge */
+    .ship-opt__logo {
+      width: 30px; height: 30px; border-radius: 7px; flex-shrink: 0;
+      background: rgba(255,107,53,.08); border: 1px solid var(--og-bdr);
+      display: flex; align-items: center; justify-content: center;
+      color: var(--og); font-size: 12px;
+      transition: background var(--t), box-shadow var(--t);
+    }
+    .shipping-opt.selected .ship-opt__logo { background: rgba(255,107,53,.16); box-shadow: 0 0 10px rgba(255,107,53,.2); }
+    .ship-opt__logo--fast { background: rgba(255,107,53,.12); color: var(--og-lt); }
+
+    /* Body text */
+    .ship-opt__body { flex: 1; min-width: 0; }
+    .ship-opt__name {
+      font-family: var(--fd); font-size: .75rem; font-weight: 700;
+      color: var(--txt); display: flex; align-items: center; gap: 6px;
+    }
+    .ship-fast-badge {
+      font-size: 6.5px; font-weight: 800; letter-spacing: .12em;
+      background: linear-gradient(135deg, var(--og), var(--og-lt));
+      color: #000; padding: 1px 5px; border-radius: 20px;
+    }
+    .ship-opt__company { font-size: 10px; color: var(--muted); margin-top: 1px; }
+    .ship-opt__eta     { font-size: 9px;  color: var(--dim);   margin-top: 1px; letter-spacing: .04em; }
+
+    /* Price */
+    .ship-opt__price {
+      font-family: var(--fd); font-size: .78rem; font-weight: 700;
+      color: var(--txt); white-space: nowrap; flex-shrink: 0;
+    }
+    .shipping-opt.selected .ship-opt__price { color: var(--og); }
+

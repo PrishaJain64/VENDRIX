@@ -87,9 +87,9 @@ icons["tablet"] = '🔲';
         <div class="section-label" style="margin-top:0"><i class="fas fa-bookmark"></i>Saved Addresses</div>
         <div class="saved-addr-list" id="saved-addr-list">
           <%address.forEach((ad,i)=>{%>
-            <label class="ad-op">
+            <label class="ad-op" data-idx="<%=i%>">
           <div class="saved-addr-card">
-            <input <%= i == 0 ? "checked" : "" %> type="radio" name="selected_add">
+            <input <%= i == idx ? "checked" : "" %> type="radio" name="selected_add">
             <div class="saved-addr-info" style="cursor:pointer;flex:1">
               <div class="saved-addr-name"><%=ad.details%> </div></div>
             </div>
@@ -221,18 +221,57 @@ icons["tablet"] = '🔲';
         <div class="sum-divider"></div>
 
         <div class="fee-row"><span><i class="fas fa-box"></i>Subtotal (<%=cartItems.length%> items)</span><span class="fee-row__val">₹<%=total%></span></div>
-        <div class="fee-row"><span><i class="fas fa-truck"></i>Shipping</span><span class="fee-row__val" id="shipping-val"><span class="shipping-no-addr">Select an address first</span></span></div>
-        <div class="fee-row"><span><i class="fas fa-percent"></i>GST (18%)</span><span class="fee-row__val" id="gst-val"><span class="shipping-no-addr">Select an address first</span></span></div>
+        <div class="fee-row--shipping">
+          <span><i class="fas fa-truck"></i>Shipping</span>
+        <%if(address.length==0){%>
+          <span class="fee-row__val" id="shipping-val"><span class="shipping-no-addr">Select an address first</span></span>
+        <%}else{%>
+        <div class="shipping-options" id="shipping-options">
+          <div class="shipping-opt" id="ship-default">
+            <div class="ship-opt__radio"></div>
+            <div class="ship-opt__logo"><i class="fas fa-box"></i></div>
+            <div class="ship-opt__body">
+              <div class="ship-opt__name">Standard</div>
+              <div class="ship-opt__company" id="ship-default-company"><%=shippingrates[0].name%></div>
+              <div class="ship-opt__" id="ship-default-days"><%=shippingrates[0].days%> business days</div>
+            </div>
+            <div class="ship-opt__price" id="ship-default-price">&#8377; <%=shippingrates[0].rate%></div>
+          </div>
+          <div class="shipping-opt" id="ship-fast">
+            <div class="ship-opt__radio"></div>
+            <div class="ship-opt__logo ship-opt__logo--fast"><i class="fas fa-bolt"></i></div>
+            <div class="ship-opt__body">
+              <div class="ship-opt__name">Express <span class="ship-fast-badge">FAST</span></div>
+              <div class="ship-opt__company" id="ship-fast-company"><%=shippingrates[1].name%></div>
+              <div class="ship-opt__" id="ship-fast-days"><%=shippingrates[1].days%> business days</div>
+
+            </div>
+            <div class="ship-opt__price" id="ship-fast-price">&#8377; <%=shippingrates[1].rate%></div>
+          </div>
+        </div>
+        <%}%>
+        </div>
+        <div class="fee-row">
+          <span><i class="fas fa-percent"></i>GST (18%)</span>
+          <%if(gst==0){%>
+          <span class="fee-row__val" id="gst-val"><span class="shipping-no-addr">Select an address first</span></span></div>
+          <%}else{%>
+          <span class="fee-row__val" id="gst">INR <%=gst%></span></div>
+          <%}%>
 
         <div class="sum-divider sum-divider--og"></div>
 
         <div class="total-row">
           <div class="total-row__lbl">Total Due</div>
+          <%if(payment_total==0){%>
           <div class="total-row__amt" id="js-total">—</div>
+          <%}else{%>
+          <div class="total-row__amt" id="payment-total">INR <%=payment_total%></div>
+          <%}%>
         </div>
         <div class="total-note" id="total-note" style="opacity:0">*Inclusive of all taxes &amp; fees</div>
 
-        <button class="btn-pay" id="js-pay" onclick="doPay(event)">
+        <button class="btn-pay" id="js-pay">
           <span class="btn-pay__sheen"></span>
           <i class="fas fa-bolt"></i> <span id="pay-btn-txt">Pay</span>
         </button>
@@ -257,6 +296,14 @@ icons["tablet"] = '🔲';
 <div class="toast-wrap" id="toasts"></div>
 <script src="/js/payment.js"></script>
 <script>
+  const def = document.getElementById("ship-default");
+  const fast = document.getElementById("ship-fast");
+  const gst = document.getElementById("gst");
+  const payment = document.getElementById("payment-total");
+  const addressLabels = document.querySelectorAll('.ad-op');
+
+  def.classList.toggle('selected',true);
+
   fetch("/vendrix/states").then(res=>res.json()).then(states=>{
     const dropdown = document.getElementById("stateDropdown");
 
@@ -292,6 +339,53 @@ icons["tablet"] = '🔲';
     });
   });
 });
+
+function total_calculate(shipping){
+      const formdata = new FormData();
+      formdata.append("subtotal",'<%=total%>');
+      formdata.append("shipping",JSON.stringify(shipping));
+    fetch("/vendrix/paymentAmount",{
+      method:"post",
+      body:formdata
+    }).then(res=>res.json()).then(data=>{
+      gst.textContent="INR "+data.gst;
+      payment.textContent="INR "+data.payment_total
+    });
+}
+
+document.getElementById("ship-default").addEventListener("click",function(){
+  fast.classList.toggle('selected',false);
+  selectedShipping = "default"
+   this.classList.toggle('selected', selectedShipping === "default");
+  document.getElementById('ship-default-company').textContent = '<%=shippingrates[0].name%>';
+    document.getElementById('ship-default-days').textContent     = '<%=shippingrates[0].days%> ' +'business days';
+    document.getElementById('ship-default-price').innerHTML     = '<%=shippingrates[0].rate%>' === 0
+      ? '<span class="fee-row__val--free">FREE</span>'
+      : '\u20B9' + '<%=shippingrates[0].rate%>'.toLocaleString('en-IN');
+      toast('\uD83D\ude9a', 'Standard delivery selected!');
+      total_calculate(<%-JSON.stringify(shippingrates[0])%>);
+});
+
+document.getElementById("ship-fast").addEventListener("click",function(){
+  def.classList.toggle('selected',false);
+  selectedShipping = "fast";
+  this.classList.toggle('selected', selectedShipping === "fast");
+  document.getElementById('ship-fast-company').textContent = '<%=shippingrates[1].name%>';
+    document.getElementById('ship-fast-days').textContent     = '<%=shippingrates[1].days%> ' +'business days';
+    document.getElementById('ship-fast-price').innerHTML     = '<%=shippingrates[1].rate%>' === 0
+      ? '<span class="fee-row__val--free">FREE</span>'
+      : '\u20B9' + '<%=shippingrates[1].rate%>'.toLocaleString('en-IN');
+      toast('\uD83D\ude9a', 'Express delivery selected!');
+      total_calculate(<%-JSON.stringify(shippingrates[1])%>);
+})
+
+addressLabels.forEach(label => {
+  label.addEventListener('click', function() {
+    const idx = this.dataset.idx;
+    window.location.href = "/vendrix/transaction?code="+'<%=code%>'+"&intent="+'<%=product_intent%>'+"&adind="+idx;
+  });
+});
+
 </script>
 </body>
 </html>

@@ -3,6 +3,7 @@ if(process.env.NODE_ENV!=='production'){
 }
 
 const axios = require("axios");
+const {Device} = require("../models/devices");
 
 let cachedToken = null;
 let tokenExpiry = null;
@@ -23,8 +24,6 @@ async function getToken() {
       }
     }
   );
-
-  console.log(response.data);
   const token = response.data.token;
 
   // ⏳ set expiry (safe buffer: 9 days)
@@ -154,4 +153,27 @@ module.exports.shippingRates = async({
   });
   return shipping;
   
+}
+
+module.exports.paymentAmount = (req,res)=>{
+  const subtotal = Number(req.body.subtotal);
+  const shipping = JSON.parse(req.body.shipping);
+  var payment_total = Number(shipping.rate)+Number(subtotal);
+  var gst =(payment_total*0.18).toFixed(1);
+  payment_total = (Number(payment_total)+Number(gst)).toFixed(1);
+  res.json({gst,payment_total});
+}
+
+module.exports.Weight = async(cartItems)=>{
+  const weights = await Device.aggregate([
+              {$project: {k: "$device",v: "$average_weight_kg"}},
+              {$group: {_id: null,data: { $push: { k: "$k", v: "$v" } } }},
+              {$project: {_id: 0, result: { $arrayToObject: "$data" }}}
+              ]);
+      const weightMap = weights[0]?.result||{};
+      var total_weight=0;
+      cartItems.forEach(el=>{
+          total_weight += (weightMap[el.device]||0)*el.quantity;
+      })
+      return total_weight;
 }

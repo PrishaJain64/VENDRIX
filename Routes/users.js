@@ -3,7 +3,7 @@ const axios = require("axios");
 const router=express.Router();
 
 const {userForShoppingCart, Register, Login, ShoppingCart, deleteCart, Cart, Vendrix, Transaction} = require('../Controller/users');
-const { State, City, SaveAddress,Loc } = require("../Controller/saveUserData");
+const { State, City, SaveAddress,Loc,paymentAmount } = require("../Controller/saveUserData");
 const multer = require('multer');
 const upload = multer();
 
@@ -53,5 +53,7 @@ router.post("/cities",City)
 router.post("/location",upload.none(),Loc);
 
 router.post("/saveAddress",upload.none(),SaveAddress)
+router.post("/paymentAmount",upload.none(),paymentAmount)
+
 
 module.exports=router;
