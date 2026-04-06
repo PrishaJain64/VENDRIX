@@ -392,7 +392,11 @@ addressLabels.forEach(label => {
   label.addEventListener('click', function() {
     console.log("hello");
     const idx = this.dataset.idx;
+    if('<%=cartItem.intent%>'=="refurbish"){
+    window.location.href = `/vendrix/directTransaction/${'<%=cartItem.intent%>'}/${'<%=cartItem.name%>'}/${'<%=variant_no%>'}/${'<%=color_no%>'}/${'<%=cartItem.quantity%>'}?adind=${idx}`;
+    }else{
     window.location.href = `/vendrix/directTransaction/${'<%=cartItem.intent%>'}/${'<%=cartItem._id%>'}/${'<%=variant_no%>'}/${'<%=color_no%>'}/${'<%=cartItem.quantity%>'}?adind=${idx}`;
+    }
   });
 });
 

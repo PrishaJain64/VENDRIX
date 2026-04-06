@@ -468,10 +468,17 @@ module.exports.directTransaction = async(req,res)=>{
     }else if(intent=="repair"){
         cartItem = await Model.findById(id);
         cartItem = cartItem.toObject();
-        if(req.session.order.intent =="repair")total = req.session.order.total;
+        if(req.session.order.intent =="repair")total = Number(req.session.order.total);
         cartItem.device = cartItem.type;
         cartItem.quantity = qty;
         cartItem.intent ="repair";
+    }else if(intent=="refurbish"){
+        cartItem = await Product.findOne({"name":id,"variant.label":variant_no,"color.color":color_no});
+        cartItem = cartItem.toObject();
+        total = Number(cartItem.variant.price.amount)*Number(qty);
+        cartItem.device = cartItem.type;
+        cartItem.quantity = qty;
+        cartItem.intent ="refurbish";
     }
 
     //weight+rates
