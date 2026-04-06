@@ -28,8 +28,10 @@ router.get("/details/:id/:ctr/:intent/:color_key",async (req,res)=>{
     const color_key = req.params.color_key;
 
     const spe = await Model.findById(id);
+    if(intnt =="sell"){
     const margin = 0.2*Number(spe.variants[i].price);
     spe.variants[i].price -= margin;
+    }
     const questions = await Question.find({type:spe.type,intent:"repair"},{_id:0});
     res.render("sell/product_spec",{spe,questions,intnt,i,color_key});
 })
@@ -82,8 +84,10 @@ router.get('/:intent/:device', async (req,res)=>{
         if(device && device != "all") filter.type = device;
         const allmod = await Model.find(filter);
         allmod.forEach(el=>{
+            if(intent=="sell"){
             const margin = el.variants[0].price*0.2;
             el.variants[0].price -= margin;
+            }
         })
         res.render("sell/sell",{allmod,intent,device,pr,psort,nsort,br,currentUrl:req.originalUrl,search,brand:brand||"all"});
 })

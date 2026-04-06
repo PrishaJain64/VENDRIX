@@ -155,7 +155,7 @@
 
     <form id = "form1" enctype="multipart/form-data">
     <div class="dq-slide active action-row reveal rd3" id="slide-1" style="margin-top:-6px;">
-      <a href="#dp-wrap" class = "btn-next btn-buy" data-slideno="1"><i class="fas fa-bolt"></i> Sell Now</a>
+      <a href="#dp-wrap" class = "btn-next btn-buy" data-slideno="1"><i class="fas fa-bolt"></i> <%=intnt=="sell"?"Sell Now":"Rent Now"%></a>
     </div>
 
     <div class="trust-strip reveal rd4">
@@ -188,6 +188,7 @@
 <script>
 
   document.getElementById("passdata").addEventListener("click", function(){
+    if('<%=intnt%>' === "sell"){
     const img = document.getElementById("thumbnail");
     if(img.files.length==0){
       img.style.border = "2px solid red";
@@ -224,5 +225,17 @@
     onFetchComplete(data.redirect);
    });
    
-  });
+  }else{
+    const formdata = new FormData();
+    formdata.append("intent","repair");
+    formdata.append("total",total);    
+    fetch("/vendrix/directTransaction",{
+      method:"post",
+      body:formdata
+    }).then(res=>res.json()).then(data=>{
+      if(data.valid)
+      window.location.href = "/vendrix/directTransaction/repair/" + "<%= spe._id %>" + "/" + "<%= i %>" + "/" + "<%= color_key %>" + "/1"
+    })
+
+  }});
 </script>

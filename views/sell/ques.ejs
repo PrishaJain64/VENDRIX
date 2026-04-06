@@ -65,7 +65,14 @@
         </div>
       </div>
       <div id="deductions"></div>
-    <% if(intnt === "sell"){ %><div id="total"></div><% } %>
+    <% if(intnt === "sell"){ %><div style="display: none;" id="total">
+        <div class="price-card total-card">
+        <div class="price-icon">🎉</div>
+        <div class="price-label">You'll receive</div>
+        <div class="price-amount total-amount" id="total-amount"></div>   
+        <div class="price-sub">Great price for your device!</div>
+      </div>
+      </div><% } %>
       <div class="dq-nav">
         <button type="button" class="btn-prev" data-slideno="<%= k %>">Back</button>
         <button type="button" id="passdata" class = 'proceed'>Proceed</button>
@@ -82,6 +89,8 @@
 </div>
 </form>
 <script>
+  var deductions = null;
+  var total = null;
   document.getElementById("getvalue").addEventListener("click",function(){
     const form = document.getElementById("form1");
     const formdata = new FormData(form);
@@ -98,9 +107,18 @@
     })
     .then(res=>res.json())
     .then(data =>{
-      const deductions = data.deductions;
-      const total = data.finalprice;
+      deductions = data.deductions;
+      total = data.finalprice;
 
+      if('<%=intnt%>' =="repair"){ 
+        document.getElementById('deductions').innerHTML =`<div class="price-card total-card">
+        <div class="price-icon">🎉</div>
+        <div class="price-label">Total Pay </div>
+        <div class="price-amount total-amount" id="total-amount">₹${deductions}</div>   
+        <div class="price-sub">Great price for your device!</div>
+      </div>`;
+
+      }else{
       document.getElementById('deductions').innerHTML = `
       <div class="price-card deductions-card">
         <div class="price-icon">✦</div>
@@ -108,15 +126,10 @@
         <div class="price-amount deduction-amount">− ₹${deductions}</div>
       </div>
     `;
+  }
 
-    document.getElementById('total').innerHTML = `
-      <div class="price-card total-card">
-        <div class="price-icon">🎉</div>
-        <div class="price-label">You'll receive</div>
-        <div class="price-amount total-amount">₹${total}</div>   
-        <div class="price-sub">Great price for your device!</div>
-      </div>
-    `;
+    document.getElementById('total').style.display="block";
+    document.getElementById('total-amount').innerText = "₹"+total;
 
     });
   });

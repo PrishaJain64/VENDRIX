@@ -26,7 +26,17 @@
   </div>
 </div>
 <div class="dq-slide" id="slide-<%= k +1%>">
-  <div id="deductions"></div>
+  <div style = "display:none" id="deductions">
+    <div class="price-card total-card">
+        <div class="price-icon">🎉</div>
+        <div class="price-label">You'll receive</div>
+        <div class="price-amount total-amount" id="total-amount"></div>   
+        <div class="price-sub">Great price for your device!</div>
+        <div class="dq-nav" style="margin-top:16px;">
+          <button type="button" id="payment" class="proceed">Proceed</button>
+        </div>
+      </div>
+    </div>
   <div class="dq-nav" style="margin-top:16px;">
     <button type="button" id="pdfDownload" class=" pdf proceed btn-primary">
       Download Eco Report
@@ -68,17 +78,8 @@
       results.deductions = data.reduction;
 
       const deductions = data.deductions;
-      document.getElementById('deductions').innerHTML = `
-      <div class="price-card total-card">
-        <div class="price-icon">🎉</div>
-        <div class="price-label">You'll receive</div>
-        <div class="price-amount total-amount">₹${deductions}</div>   
-        <div class="price-sub">Great price for your device!</div>
-        <div class="dq-nav" style="margin-top:16px;">
-          <button type="button" id="payment" class="proceed">Proceed</button>
-        </div>
-      </div>
-    `;
+      document.getElementById('deductions').style.display="block";
+      document.getElementById('total-amount').innerText = "₹"+deductions
     });
   });
 

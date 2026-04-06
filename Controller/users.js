@@ -444,6 +444,7 @@ module.exports.directTransaction = async(req,res)=>{
         total = Number(cartItem.variants[Number(variant_no)].price)*Number(qty);
         cartItem.device = cartItem.type;
         cartItem.quantity = qty;
+        cartItem.intent ="buy";
     }else if(intent =="rent"){
         const start = new Date(sd);
         const end = new Date(ed);
@@ -463,6 +464,14 @@ module.exports.directTransaction = async(req,res)=>{
         cartItem.quantity = qty;
         cartItem.startdate = sd;
         cartItem.enddate = ed;
+        cartItem.intent = "rent";
+    }else if(intent=="repair"){
+        cartItem = await Model.findById(id);
+        cartItem = cartItem.toObject();
+        if(req.session.order.intent =="repair")total = req.session.order.total;
+        cartItem.device = cartItem.type;
+        cartItem.quantity = qty;
+        cartItem.intent ="repair";
     }
 
     //weight+rates
@@ -489,8 +498,10 @@ module.exports.directTransaction = async(req,res)=>{
         fastest.rate+=cheapest.rate;
         cheapest.rate+=cheapest.rate;
         fixeddeposit = total*0.2;
+    }else if(intent=="repair"){
+        fastest.rate+=cheapest.rate;
+        cheapest.rate+=cheapest.rate;
     }
-    
     shippingrates.push(cheapest);
     shippingrates.push(fastest);
     payment_total = total + shippingrates[0].rate;

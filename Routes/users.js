@@ -55,5 +55,10 @@ router.post("/location",upload.none(),Loc);
 router.post("/saveAddress",upload.none(),SaveAddress)
 router.post("/paymentAmount",upload.none(),paymentAmount)
 router.get("/directTransaction/:intent/:id/:variant_no/:color_no/:quantity",directTransaction);
+router.post("/directTransaction",upload.none(),(req,res)=>{
+    const {intent,total} = req.body;
+    req.session.order = {intent,total};
+    res.json({valid:true});
+});
 
 module.exports=router;

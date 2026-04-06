@@ -212,7 +212,7 @@ icons["tablet"] = '🔲';
           <div class="sum-item__emo"><%=icons[cartItem.type]|| "📦"%></div>
           <div class="sum-item__body">
             <div class="sum-item__name"><%=cartItem.name%></div>
-            <div class="sum-item__meta"><div class="sum-item__dot sum-item__dot--buy"></div><%=product_intent.toUpperCase()%> · Qty <%=cartItem.quantity%></div>
+            <div class="sum-item__meta"><div class="sum-item__dot sum-item__dot--buy"></div><%=cartItem.intent.toUpperCase()%> · Qty <%=cartItem.quantity%></div>
             <%if(product_intent ==="rent"){%>
             <div class="sum-item__meta"><div class="sum-item__dot sum-item__dot--buy"></div><%=new Date(cartItem.startdate).toLocaleDateString("en-GB")%> to <%=new Date(cartItem.enddate).toLocaleDateString("en-GB")%></div>
               <%}%>
@@ -223,10 +223,12 @@ icons["tablet"] = '🔲';
 
         <div class="fee-row"><span><i class="fas fa-box"></i>Subtotal </span><span class="fee-row__val">₹<%=total%></span></div>
         <div class="fee-row--shipping">
-          <span><i class="fas fa-truck"></i><%=product_intent=="rent"?'Pick&Drop Charges':'Shipping Charges'%></span>
+          <span><i class="fas fa-truck"></i><%=(product_intent=="rent"||product_intent=="repair")?'Pick&Drop Charges':'Shipping Charges'%></span>
         <%if(address.length==0){%>
           <span class="fee-row__val" id="shipping-val"><span class="shipping-no-addr">Select an address first</span></span>
-        <%}else{%>
+        <%}else if(cartItem.intent=="recycle"){%>
+          <span class="fee-row__val" id="shipping-val">FREE</span>
+          <%}else{%>
         <div class="shipping-options" id="shipping-options">
           <div class="shipping-opt" id="ship-default">
             <div class="ship-opt__radio"></div>
@@ -309,7 +311,7 @@ icons["tablet"] = '🔲';
   const payment = document.getElementById("payment-total");
   const addressLabels = document.querySelectorAll('.ad-op');
 
-  def.classList.toggle('selected',true);
+  if(def)def.classList.toggle('selected',true);
 
   fetch("/vendrix/states").then(res=>res.json()).then(states=>{
     const dropdown = document.getElementById("stateDropdown");
@@ -360,36 +362,37 @@ function total_calculate(shipping){
     });
 }
 
-document.getElementById("ship-default").addEventListener("click",function(){
+if(def)document.getElementById("ship-default").addEventListener("click",function(){
   fast.classList.toggle('selected',false);
   selectedShipping = "default"
    this.classList.toggle('selected', selectedShipping === "default");
-  document.getElementById('ship-default-company').textContent = '<%=shippingrates[0].name%>';
-    document.getElementById('ship-default-days').textContent     = '<%=shippingrates[0].days%> ' +'business days';
-    document.getElementById('ship-default-price').innerHTML     = '<%=shippingrates[0].rate%>' === 0
+  document.getElementById('ship-default-company').textContent = '<%=shippingrates[0]?shippingrates[0].name:" "%>';
+    document.getElementById('ship-default-days').textContent     = '<%=shippingrates[0]?shippingrates[0].days:" "%> ' +'business days';
+    document.getElementById('ship-default-price').innerHTML     = '<%=shippingrates[0]?shippingrates[0].rate:" "%>' === 0
       ? '<span class="fee-row__val--free">FREE</span>'
-      : '\u20B9' + '<%=shippingrates[0].rate%>'.toLocaleString('en-IN');
+      : '\u20B9' + '<%=shippingrates[0]?shippingrates[0].rate:" "%>'.toLocaleString('en-IN');
       toast('\uD83D\ude9a', 'Standard delivery selected!');
       total_calculate(<%-JSON.stringify(shippingrates[0])%>);
 });
 
-document.getElementById("ship-fast").addEventListener("click",function(){
+if(fast)document.getElementById("ship-fast").addEventListener("click",function(){
   def.classList.toggle('selected',false);
   selectedShipping = "fast";
   this.classList.toggle('selected', selectedShipping === "fast");
-  document.getElementById('ship-fast-company').textContent = '<%=shippingrates[1].name%>';
-    document.getElementById('ship-fast-days').textContent     = '<%=shippingrates[1].days%> ' +'business days';
-    document.getElementById('ship-fast-price').innerHTML     = '<%=shippingrates[1].rate%>' === 0
+  document.getElementById('ship-fast-company').textContent = '<%=shippingrates[1]?shippingrates[1].name:" "%>';
+    document.getElementById('ship-fast-days').textContent     = '<%=shippingrates[1]?shippingrates[1].days:" "%> ' +'business days';
+    document.getElementById('ship-fast-price').innerHTML     = '<%=shippingrates[1]?shippingrates[1].rate:" "%>' === 0
       ? '<span class="fee-row__val--free">FREE</span>'
-      : '\u20B9' + '<%=shippingrates[1].rate%>'.toLocaleString('en-IN');
+      : '\u20B9' + '<%=shippingrates[1]?shippingrates[1].rate:" "%>'.toLocaleString('en-IN');
       toast('\uD83D\ude9a', 'Express delivery selected!');
       total_calculate(<%-JSON.stringify(shippingrates[1])%>);
 })
 
 addressLabels.forEach(label => {
   label.addEventListener('click', function() {
+    console.log("hello");
     const idx = this.dataset.idx;
-    window.location.href = `/vendrix/directTransaction/${'<%=product_intent%>'}/${'<%=cartItem._id%>'}/${'<%=variant_no%>'}/${'<%=color_no%>'}/${'<%=cartItem.quantity%>'}?adind=${idx}`;
+    window.location.href = `/vendrix/directTransaction/${'<%=cartItem.intent%>'}/${'<%=cartItem._id%>'}/${'<%=variant_no%>'}/${'<%=color_no%>'}/${'<%=cartItem.quantity%>'}?adind=${idx}`;
   });
 });
 
