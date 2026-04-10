@@ -2,7 +2,7 @@ const express=require('express');
 const axios = require("axios");
 const router=express.Router();
 
-const {userForShoppingCart, Register, Login, ShoppingCart, deleteCart, Cart, Vendrix, Transaction,directTransaction} = require('../Controller/users');
+const {userForShoppingCart, Register, Login, ShoppingCart, deleteCart, Cart, Vendrix, Transaction,directTransaction,Payable} = require('../Controller/users');
 const { State, City, SaveAddress,Loc,paymentAmount } = require("../Controller/saveUserData");
 const multer = require('multer');
 const upload = multer();
@@ -60,5 +60,5 @@ router.post("/directTransaction",upload.none(),(req,res)=>{
     req.session.order = {intent,total};
     res.json({valid:true});
 });
-
+router.get("/payableTransaction",Payable)
 module.exports=router;

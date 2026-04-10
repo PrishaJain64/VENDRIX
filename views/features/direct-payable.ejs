@@ -1,0 +1,350 @@
+<%
+const icons ={};
+icons["laptop"] = '💻';
+icons["phone"] = '📱';
+icons["smartwatch"]='⌚';
+icons["camera"] = '📷';
+icons["headphone"] = '🎧';
+icons["earbuds"] =  'ᖰ  ᖳ';
+icons["tablet"] = '🔲';
+%>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Vendrix — Secure Payment</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Mono:ital,wght@0,400;0,700;1,400&family=Syne:wght@600;700;800;900&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
+  <link rel="stylesheet" href="/css/payment.css"/>
+</head>
+<body>
+
+<div class="bg-grid"></div>
+<div class="bg-orb bg-orb--a"></div>
+<div class="bg-orb bg-orb--b"></div>
+
+<!-- ── SUCCESS OVERLAY ── -->
+<div class="success-overlay" id="js-success">
+  <div class="success-modal">
+    <div class="success-ring">
+      <svg width="42" height="42" viewBox="0 0 42 42" fill="none">
+        <circle cx="21" cy="21" r="19" stroke="#4ade80" stroke-width="1.5"/>
+        <path d="M11 21l7 7 13-14" stroke="#4ade80" stroke-width="2.2"
+          stroke-linecap="round" stroke-linejoin="round"
+          stroke-dasharray="60" stroke-dashoffset="60"
+          style="animation:checkmark .5s ease .45s both forwards"/>
+      </svg>
+    </div>
+    <div class="success-title">Payment Successful</div>
+    <div class="success-amount" id="suc-amount">₹1,80,399</div>
+    <div class="success-txid" id="suc-txid">TXN-XXXXXX</div>
+    <div class="success-sub">Your order has been confirmed. A receipt has been sent to your registered email.</div>
+    <div class="success-details">
+      <div class="suc-row"><span class="suc-row__lbl">Order ID</span><span class="suc-row__val">ORD-VX8K2F</span></div>
+      <div class="suc-row"><span class="suc-row__lbl">Date &amp; Time</span><span class="suc-row__val" id="suc-date">—</span></div>
+      <div class="suc-row"><span class="suc-row__lbl">Status</span><span class="suc-row__val" style="color:var(--green)">✓ Confirmed</span></div>
+    </div>
+    <button class="btn-done" onclick="closeSuc()"><i class="fas fa-arrow-left" style="margin-right:7px"></i>Back to Dashboard</button>
+    <button class="btn-receipt" onclick="fakeDownload()"><i class="fas fa-download" style="margin-right:7px"></i>Download Receipt</button>
+  </div>
+</div>
+
+<!-- ── HEADER ── -->
+<header class="site-header">
+  <div class="hdr-inner">
+    <div class="hdr-brand">
+      <a class="hdr-logo" href="#">VEND<span>R</span>IX</a>
+      <span class="hdr-tag">Secure Checkout</span>
+    </div>
+  </div>
+  <div class="prog-bar"><div class="prog-bar__fill" id="js-prog"></div></div>
+</header>
+
+<!-- ── PAGE ── -->
+<div class="page">
+
+  <!-- ══ LEFT ══ -->
+  <div>
+
+    <!-- ══ DELIVERY ADDRESS (always open, no dropdown) ══ -->
+    <div class="addr-section-flat" id="addr-section">
+
+      <div class="addr-section-title">
+        <div class="addr-icon"><i class="fas fa-location-dot"></i></div>
+        <div>
+          <div class="addr-title">Delivery Address</div>
+          <div class="addr-subtitle">Where should we send your order?</div>
+        </div>
+      </div>
+
+      <div class="addr-content-flat">
+        <div class="scan-line"></div>
+
+        <!-- Saved addresses list -->
+        <div class="section-label" style="margin-top:0"><i class="fas fa-bookmark"></i>Saved Addresses</div>
+        <div class="saved-addr-list" id="saved-addr-list">
+          <%address.forEach((ad,i)=>{%>
+            <label class="ad-op" data-idx="<%=i%>">
+          <div class="saved-addr-card">
+            <input <%= i == idx ? "checked" : "" %> type="radio" name="selected_add">
+            <div class="saved-addr-info" style="cursor:pointer;flex:1">
+              <div class="saved-addr-name"><%=ad.details%> </div></div>
+            </div>
+            </label>
+            <%})%>
+        </div>
+        <%if(address.length == 0){%>
+        <div class="no-addr-msg" id="no-addr-msg">
+          <i class="fas fa-map-pin" style="color:var(--og)"></i>
+          <span>No saved addresses yet. Add one below.</span>
+        </div>
+        <%}%>
+
+        <!-- Add new address toggle -->
+         <%if(address.length <3){%>
+        <div class="add-addr-toggle" id="add-addr-toggle" onclick="toggleNewAddr()">
+          <i class="fas fa-plus-circle"></i>
+          <span id="add-addr-label">Add a new address</span>
+        </div>
+        <%}else{%>
+        <div class="addr-max-notice" id="addr-max-notice">
+          <i class="fas fa-circle-info"></i> Maximum 3 addresses saved. Remove one to add a new address.
+        </div>
+        <%}%>
+
+        <!-- New address form -->
+        <div class="new-addr-form" id="new-addr-form" style="display:none">
+
+          <!-- Device Location -->
+           <form id="deviceloc">
+            <div class="grid-2 mb-field">
+            <div>
+              <div class="field-label"><i class="fas fa-door-open"></i>Flat / Wing</div>
+              <input name="flat" type="text" id="dev-flat" placeholder="e.g. 204, Wing B" autocomplete="off"/>
+              <div class="field-error" id="err-flat"></div>
+            </div>
+            <div>
+              <div class="field-label"><i class="fas fa-building"></i>Building Name</div>
+              <input name="building" type="text" id="dev-building" placeholder="e.g. Crescent Heights" autocomplete="off"/>
+              <div class="field-error" id="err-building"></div>
+            </div>
+          </div>
+          <div class="device-loc-section">
+            <button type="button" class="btn-device-loc" onclick="useDeviceLocation()">
+              <i class="fas fa-location-crosshairs"></i> Use Device Location
+            </button>
+          </div>
+          </form>
+          
+            <div class="device-loc-display" id="device-loc-display" style="display:none">
+              <i class="fas fa-map-marker-alt" style="color:var(--og);font-size:11px;margin-top:2px;flex-shrink:0"></i>
+              <span id="device-loc-txt">Fetching location…</span>
+            </div>
+
+          <div class="section-label"><i class="fas fa-map"></i>Address Details</div>
+          <form id="address">
+          <div class="grid-2 mb-field">
+            <div>
+              <div class="field-label"><i class="fas fa-door-open"></i>Flat / Wing</div>
+              <input name="flat" type="text" id="addr-flat" placeholder="e.g. 204, Wing B" autocomplete="off"/>
+              <div class="field-error" id="err-flat"></div>
+            </div>
+            <div>
+              <div class="field-label"><i class="fas fa-building"></i>Building Name</div>
+              <input name="building" type="text" id="addr-building" placeholder="e.g. Crescent Heights" autocomplete="off"/>
+              <div class="field-error" id="err-building"></div>
+            </div>
+          </div>
+          <div class="mb-field">
+            <div class="field-label"><i class="fas fa-map-pin"></i>Landmark</div>
+            <input name="landmark" type="text" id="addr-landmark" placeholder="e.g. Near Andheri Station" autocomplete="off"/>
+          </div>
+          <div class="mb-field">
+            <div class="field-label"><i class="fas fa-road"></i>Road Name</div>
+            <input name="road" type="text" id="addr-road" placeholder="e.g. Link Road" autocomplete="off"/>
+            <div class="field-error" id="err-road"></div>
+          </div>
+           <div class="grid-2 mb-field">
+            <div>
+              <div class="field-label"><i class="fas fa-hashtag"></i>Pincode</div>
+              <input name='pincode' type="text" id="addr-pin" maxlength="10" placeholder="e.g. 400053" oninput="onPinInput(this)" autocomplete="postal-code"/>
+              <div class="field-error" id="err-pin"></div>
+            </div>
+          </div>
+          <div class="grid-2 mb-field">
+            <div class="select-wrapper">
+              <div class="field-label"><i class="fas fa-map"></i>State</div>
+              <select name="state" id="stateDropdown"><option value="">Select State</option></select>
+              <div class="field-error" id="err-state"></div>
+            </div>
+            <div class="select-wrapper">
+              <div class="field-label"><i class="fas fa-city"></i>City</div>
+              <select name="city" id="cityDropdown"><option value="">Select City</option></select>
+              <div class="field-error" id="err-city"></div>
+            </div>
+          </div>
+          </form>
+          
+          <button type='button' class="btn-save-addr" onclick="saveNewAddr()">
+            <i class="fas fa-circle-check"></i> Save &amp; Use This Address
+          </button>
+        </div>
+
+      </div>
+    </div><!-- /addr-section-flat -->
+    <!-- ══ PICKUP SLOT ══ -->
+    <div class="pickup-slot-section" id="pickup-slot-section">
+      <div class="addr-section-title" style="padding:1.2rem 1.4rem 0">
+        <div class="addr-icon"><i class="fas fa-calendar-check"></i></div>
+        <div>
+          <div class="addr-title">Pickup Slot</div>
+          <div class="addr-subtitle">When should we collect your device?</div>
+        </div>
+      </div>
+
+      <div class="pickup-slot-content">
+        <div class="scan-line"></div>
+
+        <!-- Date selector -->
+        <div class="section-label" style="margin-top:0"><i class="fas fa-calendar-days"></i>Select Date</div>
+        <div class="pickup-dates" id="pickup-dates"></div>
+
+        <!-- Time slot selector -->
+        <div class="section-label" id="slot-time-label" style="display:none"><i class="fas fa-clock"></i>Select Time Slot</div>
+        <div class="pickup-slots" id="pickup-slots"></div>
+
+        <!-- Selected summary -->
+        <div class="slot-selected-pill" id="slot-selected-pill" style="display:none">
+          <i class="fas fa-circle-check"></i>
+          <span id="slot-selected-txt">—</span>
+          <span class="slot-clear" onclick="clearSlot()"><i class="fas fa-xmark"></i></span>
+        </div>
+      </div>
+    </div><!-- /pickup-slot-section -->
+  </div>
+
+  <!-- ══ RIGHT: SIDEBAR ══ -->
+    <!-- ══ RIGHT: SIDEBAR ══ -->
+  <aside class="sidebar">
+    <div class="summary-card" style="position:relative">
+      <div class="summary-card__stripe"></div>
+      <div class="summary-card__head">
+        <div class="summary-card__title">Payout Summary</div>
+        <div class="summary-card__id">SELL-VX4M9R</div>
+      </div>
+      <div class="summary-card__body">
+        <div class="summary-scan"></div>
+
+        <!-- Product being sold -->
+        <div class="sum-item">
+          <div class="sum-item__emo">💻</div>
+          <div class="sum-item__body">
+            <div class="sum-item__name">MacBook Air M2 — 8GB/256GB</div>
+            <div class="sum-item__meta"><div class="sum-item__dot sum-item__dot--buy"></div>Selling · Qty 1</div>
+          </div>
+          <div class="sum-item__price">₹72,000</div>
+        </div>
+
+        <div class="sum-divider"></div>
+
+        <!-- Payout breakdown -->
+        <div class="fee-row"><span><i class="fas fa-tag"></i>Your Quoted Price</span><span class="fee-row__val">₹72,000</span></div>
+        <div class="fee-row"><span><i class="fas fa-magnifying-glass"></i>Inspection Deduction</span><span class="fee-row__val payout-deduction">− ₹2,000</span></div>
+        <div class="fee-row"><span><i class="fas fa-truck"></i>Pickup Fee</span><span class="fee-row__val payout-deduction">− ₹0</span></div>
+
+        <div class="sum-divider sum-divider--og"></div>
+
+        <div class="payout-highlight">
+          <div class="payout-highlight__label"><i class="fas fa-circle-check"></i> You will receive</div>
+          <div class="payout-highlight__amount" id="js-total">₹70,000</div>
+        </div>
+        <div class="total-note" id="total-note" style="opacity:1">*Final amount subject to physical inspection at pickup</div>
+
+        <div class="payout-slot-status" id="payout-slot-status">
+          <i class="fas fa-calendar-xmark"></i>
+          <span>Book a pickup slot to continue</span>
+        </div>
+
+        <button class="btn-pay" id="js-pay" onclick="doPay(event)">
+          <span class="btn-pay__sheen"></span>
+          <i class="fas fa-hand-holding-dollar"></i> <span id="pay-btn-txt">Confirm</span>
+        </button>
+
+        <div class="pay-note"><i class="fas fa-lock"></i>Secured by Vendrix Shield™</div>
+
+      </div><!-- /summary-card__body -->
+
+      <!-- Payment processing overlay on card -->
+      <div class="pay-progress-overlay" id="pay-overlay">
+        <div class="pay-progress-spinner"></div>
+        <div class="pay-progress-label" id="pay-progress-lbl">Initializing…</div>
+        <div class="pay-progress-bar-wrap">
+          <div class="pay-progress-bar" id="pay-progress-bar"></div>
+        </div>
+      </div>
+    </div>
+  </aside>
+
+</div><!-- /page -->
+
+<div class="toast-wrap" id="toasts"></div>
+<script src="/js/payment.js"></script>
+<script src="/js/payable.js"></script>
+<script>
+  console.log('<%product_intent%>')
+  const addressLabels = document.querySelectorAll('.ad-op');
+
+  fetch("/vendrix/states").then(res=>res.json()).then(states=>{
+    const dropdown = document.getElementById("stateDropdown");
+
+    states.forEach(state => {
+      const option = document.createElement("option");
+      option.value = state.name;
+      option.textContent = state.name;
+      dropdown.appendChild(option);
+    });
+  }).catch(err=>console.log(err));
+
+  document.getElementById("stateDropdown").addEventListener("change", function () {
+  const selectedState = this.value;
+
+  fetch("/vendrix/cities", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify({ state: selectedState })
+  })
+  .then(res => res.json())
+  .then(cities => {
+    const cityDropdown = document.getElementById("cityDropdown");
+    console.log(cityDropdown);
+    cityDropdown.innerHTML = '<option value="">Select City</option>';
+
+    cities.forEach(city => {
+      const option = document.createElement("option");
+      option.value = city;
+      option.textContent = city;
+      cityDropdown.appendChild(option);
+    });
+  });
+});
+
+addressLabels.forEach(label => {
+  label.addEventListener('click', function() {
+    console.log("hello");
+    const idx = this.dataset.idx;
+    if('<%=cartItem.intent%>'=="refurbish"){
+    window.location.href = `/vendrix/directTransaction/${'<%=cartItem.intent%>'}/${'<%=cartItem.name%>'}/${'<%=variant_no%>'}/${'<%=color_no%>'}/${'<%=cartItem.quantity%>'}?adind=${idx}`;
+    }else{
+    window.location.href = `/vendrix/directTransaction/${'<%=cartItem.intent%>'}/${'<%=cartItem._id%>'}/${'<%=variant_no%>'}/${'<%=color_no%>'}/${'<%=cartItem.quantity%>'}?adind=${idx}`;
+    }
+  });
+});
+
+</script>
+</body>
+</html>

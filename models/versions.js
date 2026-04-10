@@ -51,7 +51,8 @@ const modelSchema = new Schema({
     release_date : {
         type : Date,
     },
-    base_recycle_value :Number
+    base_recycle_value :Number,
+    max_recycle_value:Number
 });
 
 module.exports.Model = mongoose.model('Model',modelSchema); 

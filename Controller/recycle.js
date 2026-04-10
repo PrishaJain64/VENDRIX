@@ -3,6 +3,8 @@ const puppeteer = require('puppeteer');
 const path = require('path');
 const ejs = require("ejs");
 const fs = require("fs");
+const { Device } = require('../models/devices.js');
+const { all } = require('axios');
 
 module.exports.Filter = async(req,res)=>{
     //brand, price,psort,nsort;
@@ -16,9 +18,14 @@ module.exports.Filter = async(req,res)=>{
     
         const match = {};
         const sort = {};
+
+        const recycleprice = await Device.findOne({device:device}).lean();
     
         if(device && device != "all") match["type"] = device;
-        if(pr) match["variants.0.price"] = {$lte : pr}
+        if(pr){ 
+          const estim = pr+recycleprice.max_recycle_addon;
+          match["base_recycle_value"] = {$lte : estim};
+        }
         if(br.length>0 && !br.includes("all")) match["brand"] = {$in : br};
         if(psort && (psort===1 || psort === -1)) sort["variants.0.price"] = psort;
         if(nsort) sort["name"] = nsort;
@@ -33,7 +40,11 @@ module.exports.Filter = async(req,res)=>{
         }
     
         const allmod = await Model.aggregate(pipeline).collation({locale :"en",strength : 2});
-        res.render("buy/buy",{allmod,device,pr,psort,nsort,br,currentUrl:req.originalUrl});
+        allmod.forEach(el=>{
+          el.maxvalue = el.base_recycle_value + recycleprice.max_recycle_addon;
+          console.log(el.maxvalue);
+        })
+        res.render("recycle/recycle",{allmod,device,pr,psort,nsort,br,currentUrl:req.originalUrl});
 }
 
 module.exports.All = async (req,res)=>{
@@ -45,10 +56,14 @@ module.exports.All = async (req,res)=>{
             var nsort = 0;
             var br = [];
            var filter = {};
+           const recycleprice = await Device.findOne({device:device}).lean();
        if(search) filter.name = {$regex:"^"+search, $options:"i"};
            if(brand) filter.brand = brand
            if(device) filter.type = device;
-            const allmod = await Model.find(filter);
+            const allmod = await Model.find(filter).lean();
+            allmod.forEach(el=>{
+              el.maxvalue = Number(el.base_recycle_value) + Number(recycleprice.max_recycle_addon);
+            })
         res.render("recycle/recycle",{allmod,pr,psort,nsort,br,device,currentUrl:req.originalUrl,search,brand:brand||"all"});
 }
 

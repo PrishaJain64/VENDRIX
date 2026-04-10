@@ -163,7 +163,7 @@ module.exports.Filter = async(req,res)=>{
         });
     }
     }
-    res.render(`${intent}/${intent}`,{allmod,device,pr,psort,nsort,br});
+    res.render(`${intent}/${intent}`,{allmod,device,pr,psort,nsort,br,max_value});
 }
 
 module.exports.All = async (req,res)=>{

@@ -41,7 +41,7 @@ router.post("/filters/:intent/:device",async(req,res)=>{
     let br = [];
     if(req.body.brand)
     br = Array.isArray(req.body.brand) ? req.body.brand : [req.body.brand];
-    const pr = Number(req.body.price) || 0;
+    const pr =Number(req.body.price) || 0;
     const psort = Number(req.body.psort) || 0;
     const nsort = Number(req.body.nsort) || 0;
     const device = req.params.device || "all";
@@ -51,7 +51,10 @@ router.post("/filters/:intent/:device",async(req,res)=>{
     const sort = {};
 
     if(device && device != "all") match["type"] = device;
-    if(pr) match["variants.0.price"] = {$lte : pr}
+    if(pr) {
+        estim = pr*1.2;
+        match["variants.0.price"] = {$lte : estim}
+    }
     if(br.length>0 && !br.includes("all")) match["brand"] = {$in : br};
     if(psort && (psort===1 || psort === -1)) sort["variants.0.price"] = psort;
     if(nsort) sort["name"] = nsort;
@@ -66,6 +69,12 @@ router.post("/filters/:intent/:device",async(req,res)=>{
     }
 
     const allmod = await Model.aggregate(pipeline).collation({locale :"en",strength : 2});
+    allmod.forEach(el=>{
+            if(intent=="sell"){
+            const margin = el.variants[0].price*0.2;
+            el.variants[0].price -= margin;
+            }
+        })
     res.render("sell/sell",{allmod,device,pr,psort,nsort,br,intent,currentUrl:req.originalUrl});
 })
 router.get('/:intent/:device', async (req,res)=>{

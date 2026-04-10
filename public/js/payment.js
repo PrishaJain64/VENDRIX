@@ -28,7 +28,6 @@ function bumpProgress(pts) {
   document.getElementById('js-prog').style.width = progScore + '%';
 }
 
-
 /* ══════════════════════════════════════════
    ADD NEW ADDRESS TOGGLE / FORM
 ══════════════════════════════════════════ */
