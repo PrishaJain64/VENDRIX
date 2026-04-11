@@ -3,11 +3,9 @@ if(process.env.NODE_ENV!=='production'){
 }
 
 const express = require('express');
-const bcrypt = require('bcrypt');
 const User=require('../models/users');
 const multer = require('multer');
 const jwt = require("jsonwebtoken");
-const passport = require('passport');
 const nodemailer = require('nodemailer');
 
 const router = express.Router();

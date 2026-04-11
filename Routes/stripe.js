@@ -1,11 +1,14 @@
 const Stripe = require("stripe");
 const express = require("express");
+const multer = require('multer');
+const upload = multer();
 
 const stripe = Stripe(process.env.STRIPE_SECRET_KEY);
 const router = express.Router();
 
-router.post("/checkoutSession", async (req, res) => {
+router.post("/checkoutSession",upload.none(), async (req, res) => {
   try {
+    const total = Number(req.body.total)*100;
     const session = await stripe.checkout.sessions.create({
       payment_method_types: ["card"],
       mode: "payment",
@@ -16,7 +19,7 @@ router.post("/checkoutSession", async (req, res) => {
             product_data: {
               name: "Test Product",
             },
-            unit_amount: 50000, // ₹500 (in paise)
+            unit_amount: total, // ₹500 (in paise)
           },
           quantity: 1,
         },

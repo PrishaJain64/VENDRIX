@@ -60,5 +60,12 @@ router.post("/directTransaction",upload.none(),(req,res)=>{
     req.session.order = {intent,total};
     res.json({valid:true});
 });
-router.get("/payableTransaction",Payable)
+
+router.post("/payableTransaction",upload.none(),(req,res)=>{
+    const {intent,finalprice,quoted} = req.body;
+    console.log(req.body);
+    req.session.order = {intent,finalprice,quoted};
+    res.json({valid:true});
+});
+router.get("/payableTransaction/:intent/:id",Payable)
 module.exports=router;

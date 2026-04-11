@@ -202,7 +202,6 @@ function doForgot(){
   // Populate email badge in modal
   document.getElementById('fp-em-show').textContent = em;
   document.getElementById('fp-em-show2').textContent = em;
-  window.email = em;
   // Reset to step 1
   fpGoStep(1, true);
   document.getElementById('fp-ov').classList.add('show');

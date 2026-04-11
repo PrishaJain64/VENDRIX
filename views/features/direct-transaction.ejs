@@ -19,6 +19,7 @@ icons["tablet"] = '🔲';
   <link href="https://fonts.googleapis.com/css2?family=Space+Mono:ital,wght@0,400;0,700;1,400&family=Syne:wght@600;700;800;900&display=swap" rel="stylesheet"/>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
   <link rel="stylesheet" href="/css/payment.css"/>
+  <script src="https://js.stripe.com/v3/"></script>
 </head>
 <body>
 
@@ -279,7 +280,7 @@ icons["tablet"] = '🔲';
         </div>
         <div class="total-note" id="total-note" style="opacity:0">*Inclusive of all taxes &amp; fees</div>
 
-        <button class="btn-pay" id="js-pay">
+        <button class="btn-pay" id="checkout">
           <span class="btn-pay__sheen"></span>
           <i class="fas fa-bolt"></i> <span id="pay-btn-txt">Pay</span>
         </button>
@@ -304,6 +305,7 @@ icons["tablet"] = '🔲';
 <div class="toast-wrap" id="toasts"></div>
 <script src="/js/payment.js"></script>
 <script>
+
   console.log('<%product_intent%>')
   const def = document.getElementById("ship-default");
   const fast = document.getElementById("ship-fast");
@@ -399,6 +401,22 @@ addressLabels.forEach(label => {
     }
   });
 });
+
+   const stripe = Stripe('<%=published_key%>'); // your publishable key
+   const formdata = new FormData();
+   formdata.append("total",'<%=payment_total%>')
+    document.getElementById("checkout").addEventListener("click", async () => {
+      const res = await fetch("/stripe/checkoutSession", {
+        method: "POST",
+        body:formdata
+      });
+
+      const data = await res.json();
+
+      stripe.redirectToCheckout({
+        sessionId: data.id,
+      });
+    });
 
 </script>
 </body>

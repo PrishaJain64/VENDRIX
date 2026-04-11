@@ -89,7 +89,7 @@ icons["tablet"] = '🔲';
           <%address.forEach((ad,i)=>{%>
             <label class="ad-op" data-idx="<%=i%>">
           <div class="saved-addr-card">
-            <input <%= i == idx ? "checked" : "" %> type="radio" name="selected_add">
+            <input type="radio" name="selected_add">
             <div class="saved-addr-info" style="cursor:pointer;flex:1">
               <div class="saved-addr-name"><%=ad.details%> </div></div>
             </div>
@@ -240,26 +240,26 @@ icons["tablet"] = '🔲';
 
         <!-- Product being sold -->
         <div class="sum-item">
-          <div class="sum-item__emo">💻</div>
+          <div class="sum-item__emo"><%=icons[cartItem.type]%></div>
           <div class="sum-item__body">
-            <div class="sum-item__name">MacBook Air M2 — 8GB/256GB</div>
-            <div class="sum-item__meta"><div class="sum-item__dot sum-item__dot--buy"></div>Selling · Qty 1</div>
+            <div class="sum-item__name"><%=cartItem.name%></div>
+            <div class="sum-item__meta"><div class="sum-item__dot sum-item__dot--buy"></div><%=cartItem.intent%></div>
           </div>
-          <div class="sum-item__price">₹72,000</div>
+          <div class="sum-item__price">₹<%=quoted%></div>
         </div>
 
         <div class="sum-divider"></div>
 
         <!-- Payout breakdown -->
-        <div class="fee-row"><span><i class="fas fa-tag"></i>Your Quoted Price</span><span class="fee-row__val">₹72,000</span></div>
-        <div class="fee-row"><span><i class="fas fa-magnifying-glass"></i>Inspection Deduction</span><span class="fee-row__val payout-deduction">− ₹2,000</span></div>
+        <div class="fee-row"><span><i class="fas fa-tag"></i>Your Quoted Price</span><span class="fee-row__val">₹<%=quoted%></span></div>
+        <div class="fee-row"><span><i class="fas fa-magnifying-glass"></i>Inspection Deduction</span><span class="fee-row__val payout-deduction">− ₹<%=deductions%></span></div>
         <div class="fee-row"><span><i class="fas fa-truck"></i>Pickup Fee</span><span class="fee-row__val payout-deduction">− ₹0</span></div>
 
         <div class="sum-divider sum-divider--og"></div>
 
         <div class="payout-highlight">
           <div class="payout-highlight__label"><i class="fas fa-circle-check"></i> You will receive</div>
-          <div class="payout-highlight__amount" id="js-total">₹70,000</div>
+          <div class="payout-highlight__amount" id="js-total">₹<%=finalprice%></div>
         </div>
         <div class="total-note" id="total-note" style="opacity:1">*Final amount subject to physical inspection at pickup</div>
 
@@ -294,8 +294,6 @@ icons["tablet"] = '🔲';
 <script src="/js/payment.js"></script>
 <script src="/js/payable.js"></script>
 <script>
-  console.log('<%product_intent%>')
-  const addressLabels = document.querySelectorAll('.ad-op');
 
   fetch("/vendrix/states").then(res=>res.json()).then(states=>{
     const dropdown = document.getElementById("stateDropdown");
@@ -330,18 +328,6 @@ icons["tablet"] = '🔲';
       option.textContent = city;
       cityDropdown.appendChild(option);
     });
-  });
-});
-
-addressLabels.forEach(label => {
-  label.addEventListener('click', function() {
-    console.log("hello");
-    const idx = this.dataset.idx;
-    if('<%=cartItem.intent%>'=="refurbish"){
-    window.location.href = `/vendrix/directTransaction/${'<%=cartItem.intent%>'}/${'<%=cartItem.name%>'}/${'<%=variant_no%>'}/${'<%=color_no%>'}/${'<%=cartItem.quantity%>'}?adind=${idx}`;
-    }else{
-    window.location.href = `/vendrix/directTransaction/${'<%=cartItem.intent%>'}/${'<%=cartItem._id%>'}/${'<%=variant_no%>'}/${'<%=color_no%>'}/${'<%=cartItem.quantity%>'}?adind=${idx}`;
-    }
   });
 });
 

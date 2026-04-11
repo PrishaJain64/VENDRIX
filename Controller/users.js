@@ -1,3 +1,6 @@
+if(process.env.NODE_ENV!=='production'){
+    require('dotenv').config()
+}
 const passport=require('passport');
 //model import
 const User=require('../models/users');
@@ -518,69 +521,24 @@ module.exports.directTransaction = async(req,res)=>{
         payment_total = (Number(payment_total)+Number(fixeddeposit)).toFixed(1);
     }
     }
-    res.render("./features/direct-transaction.ejs",{cartItem,total,address,shippingrates,payment_total,gst,product_intent:intent,idx,variant_no,color_no,fixeddeposit});
+    res.render("./features/direct-transaction.ejs",{cartItem,total,address,shippingrates,payment_total,gst,product_intent:intent,idx,variant_no,color_no,fixeddeposit,published_key : process.env.STRIPE_PUBLISHABLE_KEY});
 }
 
 module.exports.Payable=async(req,res)=>{
-    const sd = req.query.startdate ||-1;
-    const ed = req.query.enddate ||-1;
-
-    const qty = req.params.quantity;
-    //address
-    const idx = Number(req.query.adind) ||0;
     const address = req.user.address || [];
 
-    //cart item
-    const {intent,id,variant_no,color_no} = req.params;
+    const {intent,id} = req.params;
     var cartItem = {};
-    var total =0;
-    if(intent=="buy"){
-        cartItem = await Model.findById(id);
-        cartItem = cartItem.toObject();
-        total = Number(cartItem.variants[Number(variant_no)].price)*Number(qty);
-        cartItem.device = cartItem.type;
-        cartItem.quantity = qty;
-        cartItem.intent ="buy";
-    }else if(intent =="rent"){
-        const start = new Date(sd);
-        const end = new Date(ed);
-        start.setHours(0,0,0,0);
-        end.setHours(0,0,0,0);
-        const oneDay = 1000 * 60 * 60 * 24;
-        const diffDays = Math.ceil((end - start) / oneDay);
-        if (diffDays <= 0) {
-            console.log(start+" negdiff "+end);
-            return;
-        }
+    const quoted = req.session.order.quoted;
+    const finalprice = req.session.order.finalprice;
+    const deductions = Number(quoted)-Number(finalprice);
 
-        cartItem = await Product.findById(id);
-        cartItem = cartItem.toObject();
-        total = Math.round(diffDays * 0.01 * Number(cartItem.variant.price.amount))*Number(qty);
-        cartItem.device = cartItem.type;
-        cartItem.quantity = qty;
-        cartItem.startdate = sd;
-        cartItem.enddate = ed;
-        cartItem.intent = "rent";
-    }else if(intent=="repair"){
+    if(intent=="recycle"){
         cartItem = await Model.findById(id);
-        cartItem = cartItem.toObject();
-        if(req.session.order.intent =="repair")total = Number(req.session.order.total);
-        cartItem.device = cartItem.type;
-        cartItem.quantity = qty;
-        cartItem.intent ="repair";
-    }else if(intent=="refurbish"){
-        cartItem = await Product.findOne({"name":id,"variant.label":variant_no,"color.color":color_no});
-        cartItem = cartItem.toObject();
-        total = Number(cartItem.variant.price.amount)*Number(qty);
-        cartItem.device = cartItem.type;
-        cartItem.quantity = qty;
-        cartItem.intent ="refurbish";
+        cartItem.intent ="recycle";
     }
-
-    //weight+rates
-    var payment_total = 0,gst=0;
     
-    res.render("./features/direct-payable.ejs",{cartItem,total,address,payment_total,gst,product_intent:intent,idx,variant_no,color_no});
+    res.render("./features/direct-payable.ejs",{address,quoted,finalprice,deductions,cartItem});
 }
 
 module.exports.Vendrix = async (req,res)=>{
