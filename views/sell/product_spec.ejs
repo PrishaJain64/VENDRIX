@@ -15,7 +15,7 @@
     <div class="ltitle">Processing...</div>
     <p class="lsub" id="lsub">Please wait while we finalize your request.</p>
   </div>
-</div>
+</div> 
 
 <!-- TOP BAR -->
 <div class="topbar">
@@ -195,7 +195,6 @@
       alert("Uploading a front view photo is mandatory");
       return;
     }
-    const deductions = Number(document.getElementById("deductions").textContent);
 
     const form = document.getElementById("form1");
     const formdata = new FormData(form);
@@ -206,6 +205,8 @@
       const device = "<%= spe.type %>";
       const color = "<%= spe.colors[color_key].color%>";
       const hexcode = "<%= spe.colors[color_key].hexcode%>";
+      const quoted = "<%=spe.variants[i].price%>"
+      const finalprice = (Number(quoted) - Number(deductions)).toFixed(2);
 
       formdata.append("product_id",spe);
       formdata.append("ctr",i);
@@ -221,8 +222,26 @@
       body: formdata
    }).then(res=>res.json())
    .then(data =>{
-    window.location.href = data.redirect;
-    onFetchComplete(data.redirect);
+    
+    // window.location.href = data.redirect;
+    // onFetchComplete(data.redirect);
+    if(data.valid){
+      const formcontent = new FormData();
+      formcontent.append("intent","sell");
+      formcontent.append("quoted",quoted);  
+      formcontent.append("finalprice",finalprice);
+      fetch("/vendrix/payableTransaction",{
+        method:"post",
+        body:formcontent
+      }).then(res=>res.json()).then(data=>{
+        if(data.valid){
+          window.location.href = "/vendrix/payableTransaction/sell/"+'<%=spe._id%>';
+          onFetchComplete("/vendrix/payableTransaction/sell/"+'<%=spe._id%>')
+        }
+      
+    })
+    }
+
    });
    
   }else{

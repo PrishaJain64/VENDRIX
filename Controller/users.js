@@ -533,13 +533,12 @@ module.exports.Payable=async(req,res)=>{
     const finalprice = req.session.order.finalprice;
     const deductions = Number(quoted)-Number(finalprice);
 
-    if(intent=="recycle"){
-        cartItem = await Model.findById(id);
-        cartItem.intent ="recycle";
-    }
+    cartItem = await Model.findById(id);
+    cartItem.intent =intent;
     
     res.render("./features/direct-payable.ejs",{address,quoted,finalprice,deductions,cartItem});
 }
+
 
 module.exports.Vendrix = async (req,res)=>{
     var cart_quantity = null;

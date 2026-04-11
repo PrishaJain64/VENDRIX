@@ -132,6 +132,7 @@ async function Totalrepair(issues,device){
       }
     }
   }
+   total = total.toFixed(2);
   return total
 }
 async function Totalrecycle(issues,device){
@@ -159,7 +160,7 @@ module.exports.findTotalrepair = async(req,res)=>{
   
   var total = await Totalrepair(issues,device);
 
-  const fp = actual_price-total;
+  const fp = (actual_price-total).toFixed(2);
   res.json({deductions: total, finalprice: fp});
 
 }
@@ -268,7 +269,6 @@ module.exports.saveBroken = async(req,res)=>{
   broken.device = device;
   broken.product_id = req.body.product_id;
   broken.product_variant = req.body.ctr;
-  const sellorrepair = req.body.intent;
   
   var allquestions = await Question.find({type:device,intent :"repair"},{question :1, options:1});
 
@@ -282,13 +282,13 @@ module.exports.saveBroken = async(req,res)=>{
   const date = await DateEvaluator(device);
   
   broken.issues = Object.entries(issues).map(([name, value]) => ({name,value}));
-  broken.amount = Number(req.body.deductions) || 0;
+  broken.amount = Number(req.body.deductions).toFixed(2) || 0;
   broken.intent = intent;
   broken.scheduled_time = date;
 
   await broken.save();
 
-  res.json({redirect:"/allmodels/"+sellorrepair+"/"+device});
+  res.json({valid:true});
 }
 
 module.exports.rental_duration = async(req,res)=>{

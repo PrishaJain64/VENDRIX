@@ -89,7 +89,7 @@ icons["tablet"] = '🔲';
           <%address.forEach((ad,i)=>{%>
             <label class="ad-op" data-idx="<%=i%>">
           <div class="saved-addr-card">
-            <input type="radio" name="selected_add">
+            <input <%=i==0?"checked":""%> type="radio" name="selected_add">
             <div class="saved-addr-info" style="cursor:pointer;flex:1">
               <div class="saved-addr-name"><%=ad.details%> </div></div>
             </div>
