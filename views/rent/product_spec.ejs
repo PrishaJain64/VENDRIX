@@ -370,6 +370,6 @@ document.getElementById("rent").addEventListener("click",function(){
   const sd = startInput.value;
   const ed = endInput.value;
   const qty = document.getElementById("qtyVal").textContent;
-  window.location.href = "/vendrix/directTransaction/rent/"+'<%=result.selectedDoc[0]._id%>'+"/0/0/"+qty+"?startdate="+sd+"&enddate="+ed;
+  window.location.href = "/vendrix/directTransaction/rent/"+'<%=result.selectedDoc[0].name%>'+"/"+'<%=result.selectedDoc[0].variant.label%>'+"/"+'<%=result.selectedDoc[0].color.color%>'+'/'+qty+"?startdate="+sd+"&enddate="+ed;
 })
 </script>

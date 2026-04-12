@@ -425,7 +425,7 @@ module.exports.Transaction = async(req,res)=>{
         payment_total = (Number(payment_total)+Number(fixeddeposit)).toFixed(1);
     }
     }
-    res.render("./features/transaction.ejs",{cartItems,total:total.all,code,address,shippingrates,payment_total,gst,product_intent,idx,fixeddeposit});
+    res.render("./features/transaction.ejs",{cartItems,total:total.all,code,address,shippingrates,payment_total,gst,product_intent,idx,fixeddeposit,published_key : process.env.STRIPE_PUBLISHABLE_KEY});
 }
 
 module.exports.directTransaction = async(req,res)=>{
@@ -460,7 +460,7 @@ module.exports.directTransaction = async(req,res)=>{
             return;
         }
 
-        cartItem = await Product.findById(id);
+        cartItem = await Product.findOne({"name":id,"variant.label":variant_no,"color.color":color_no});
         cartItem = cartItem.toObject();
         total = Math.round(diffDays * 0.01 * Number(cartItem.variant.price.amount))*Number(qty);
         cartItem.device = cartItem.type;
@@ -507,7 +507,7 @@ module.exports.directTransaction = async(req,res)=>{
     if(intent=="rent"){
         fastest.rate+=cheapest.rate;
         cheapest.rate+=cheapest.rate;
-        fixeddeposit = total*0.2;
+        fixeddeposit = Number((total*0.2).toFixed(2));
     }else if(intent=="repair"){
         fastest.rate+=cheapest.rate;
         cheapest.rate+=cheapest.rate;

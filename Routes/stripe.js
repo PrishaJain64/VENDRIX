@@ -8,7 +8,7 @@ const router = express.Router();
 
 router.post("/checkoutSession",upload.none(), async (req, res) => {
   try {
-    const total = Number(req.body.total)*100;
+    const total =  Math.round(Number(req.body.total) * 100);
     const session = await stripe.checkout.sessions.create({
       payment_method_types: ["card"],
       mode: "payment",

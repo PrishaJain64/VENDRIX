@@ -305,8 +305,7 @@ icons["tablet"] = '🔲';
 <div class="toast-wrap" id="toasts"></div>
 <script src="/js/payment.js"></script>
 <script>
-
-  console.log('<%product_intent%>')
+  var checkoutAmount ='<%=payment_total%>';
   const def = document.getElementById("ship-default");
   const fast = document.getElementById("ship-fast");
   const gst = document.getElementById("gst");
@@ -360,7 +359,11 @@ function total_calculate(shipping){
       body:formdata
     }).then(res=>res.json()).then(data=>{
       gst.textContent="INR "+data.gst;
-      payment.textContent="INR "+data.payment_total
+      checkoutAmount = Number(data.payment_total);
+      if("<%=cartItem.intent%>" === 'rent'){
+        checkoutAmount+= Number("<%=fixeddeposit%>")
+      }
+      payment.textContent="INR "+checkoutAmount;
     });
 }
 
@@ -396,16 +399,19 @@ addressLabels.forEach(label => {
     const idx = this.dataset.idx;
     if('<%=cartItem.intent%>'=="refurbish"){
     window.location.href = `/vendrix/directTransaction/${'<%=cartItem.intent%>'}/${'<%=cartItem.name%>'}/${'<%=variant_no%>'}/${'<%=color_no%>'}/${'<%=cartItem.quantity%>'}?adind=${idx}`;
-    }else{
+    }else if('<%=cartItem.intent%>'=="buy"){
     window.location.href = `/vendrix/directTransaction/${'<%=cartItem.intent%>'}/${'<%=cartItem._id%>'}/${'<%=variant_no%>'}/${'<%=color_no%>'}/${'<%=cartItem.quantity%>'}?adind=${idx}`;
+    }else{
+    window.location.href = `/vendrix/directTransaction/${'<%=cartItem.intent%>'}/${'<%=cartItem.name%>'}/${'<%=variant_no%>'}/${'<%=color_no%>'}/${'<%=cartItem.quantity%>'}?adind=${idx}&startdate=${'<%=cartItem.startdate%>'}&enddate=${'<%=cartItem.enddate%>'}`;
     }
   });
 });
 
-   const stripe = Stripe('<%=published_key%>'); // your publishable key
-   const formdata = new FormData();
-   formdata.append("total",'<%=payment_total%>')
     document.getElementById("checkout").addEventListener("click", async () => {
+      const stripe = Stripe('<%=published_key%>'); // your publishable key
+      const formdata = new FormData();
+      formdata.append("total",checkoutAmount)
+
       const res = await fetch("/stripe/checkoutSession", {
         method: "POST",
         body:formdata
