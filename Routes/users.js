@@ -7,7 +7,7 @@ const { State, City, SaveAddress,Loc,paymentAmount } = require("../Controller/sa
 const multer = require('multer');
 const upload = multer();
 
-const {isLoggedIn} = require('../middleware.js');
+const {isLoggedIn, fetchisLoggedIn} = require('../middleware.js');
 
 function storeReturnTo(req,res,next){
     res.locals.returnTo=req.session.returnTo;
@@ -57,13 +57,13 @@ router.post("/location",isLoggedIn,upload.none(),Loc);
 router.post("/saveAddress",upload.none(),isLoggedIn,SaveAddress)
 router.post("/paymentAmount",upload.none(),isLoggedIn,paymentAmount)
 router.get("/directTransaction/:intent/:id/:variant_no/:color_no/:quantity",isLoggedIn,directTransaction);
-router.post("/directTransaction",isLoggedIn,upload.none(),(req,res)=>{
+router.post("/directTransaction",upload.none(),(req,res)=>{
     const {intent,total} = req.body;
     req.session.order = {intent,total};
     res.json({valid:true});
 });
 
-router.post("/payableTransaction",isLoggedIn,upload.none(),(req,res)=>{
+router.post("/payableTransaction",fetchisLoggedIn,upload.none(),(req,res)=>{
     const {intent,finalprice,quoted} = req.body;
     console.log(req.body);
     req.session.order = {intent,finalprice,quoted};

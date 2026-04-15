@@ -38,4 +38,8 @@ router.get("/buy/:id",isLoggedIn,async(req,res)=>{
         res.send(err);
     }
 })
+
+router.get("/sell",isLoggedIn,async(req,res)=>{
+    res.render("features/sell-confirmation");
+})
 module.exports=router;

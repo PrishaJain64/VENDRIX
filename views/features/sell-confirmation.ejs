@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <link rel="stylesheet" href="/css/sell-confirmation.css">
+    </head>
+    <body>
+        
+<div class="page">
+  <nav class="nav">
+    <div class="logo">VEND<span class="logo-r">R</span><span class="logo-ix">IX</span></div>
+    <div class="nav-links">
+      <a href="#">Home</a>
+      
+      <a href="#">Profile</a>
+      <a href="#">Products</a>
+      <a href="#">About</a>
+    </div>
+  </nav>
+
+  <div class="hero">
+    
+
+
+    <div class="check-ring">
+      <div class="pulse"></div><div class="pulse2"></div>
+      <svg width="32" height="32" viewBox="0 0 32 32" fill="none">
+        <polyline points="5,16 13,24 27,8" stroke="#ff6200" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+    </div>
+    <h1 id="hero-title">Your request is confirmed!</h1>
+    <p id="hero-sub">Request <span class="acc">#VTX-SR4821</span> is placed. A Vendrix partner has been assigned to pick up your device. You'll receive a confirmation once payment is processed.</p>
+  </div>
+
+  <div class="main">
+
+    <div class="payout-band">
+      <div class="payout-icon">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#ff6200" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+          <rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 0 0-4 0v2"/><line x1="12" y1="12" x2="12" y2="16"/><circle cx="12" cy="12" r="1" fill="#ff6200"/>
+        </svg>
+      </div>
+      <div class="pb-item">
+        <div class="lbl" id="payout-label">You'll receive</div>
+        <div class="big" id="payout-amount">₹70,000</div>
+      </div>
+      <div class="sep"></div>
+      <div class="pb-item">
+        <div class="lbl">Payout method</div>
+        <div class="val">UPI Transfer</div>
+      </div>
+      <div class="sep"></div>
+      <div class="pb-item">
+        <div class="lbl" id="pickup-label">Pickup date</div>
+        <div class="val">10 Apr 2026</div>
+      </div>
+      <div class="sep"></div>
+      <div class="pb-item">
+        <div class="lbl">Pickup address</div>
+        <div class="val">Goregaon East, Mumbai</div>
+      </div>
+    </div>
+
+    <div class="cards-row">
+      <div class="card">
+        <div class="card-title">Request details</div>
+        <div class="info-row"><span class="k">Request ID</span><span class="v">#VTX-SR4821</span></div>
+        <div class="info-row"><span class="k">Submitted</span><span class="v">8 Apr 2026, 10:14 AM</span></div>
+        <div class="info-row"><span class="k">Type</span><span class="v orange" id="req-type">Sell</span></div>
+        <div class="info-row"><span class="k">Inspection</span><span class="v green">Approved</span></div>
+        <div class="info-row"><span class="k">Invoice</span><span class="v orange" style="cursor:pointer">Download PDF</span></div>
+      </div>
+
+      <div class="card">
+        <div class="card-title" id="timeline-title">Sell progress</div>
+        <div class="tstep">
+          <div class="dot-col"><div class="dot done"></div><div class="tline"></div></div>
+          <div><div class="ts-label">Request submitted</div><div class="ts-sub">8 Apr · 10:14 AM</div></div>
+        </div>
+        <div class="tstep">
+          <div class="dot-col"><div class="dot done"></div><div class="tline"></div></div>
+          <div><div class="ts-label">Inspection approved</div><div class="ts-sub">8 Apr · 11:00 AM</div></div>
+        </div>
+        <div class="tstep">
+          <div class="dot-col"><div class="dot active"></div><div class="tline"></div></div>
+          <div><div class="ts-label">Partner assigned</div><div class="ts-sub">Pickup on 10 Apr</div></div>
+        </div>
+        <div class="tstep">
+          <div class="dot-col"><div class="dot"></div><div class="tline"></div></div>
+          <div><div class="ts-label" id="step4-label">Device picked up</div><div class="ts-sub">Expected 10 Apr</div></div>
+        </div>
+        <div class="tstep">
+          <div class="dot-col"><div class="dot"></div><div class="tline"></div></div>
+          <div><div class="ts-label" id="step5-label">Payment transferred</div><div class="ts-sub">Within 24 hrs of pickup</div></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="partner-card">
+      <div class="partner-header">
+        <div class="partner-avatar">RK</div>
+        <div>
+          <div class="partner-name">Ravi Kumar</div>
+          <div class="partner-meta">Verified Vendrix Partner · Mumbai Zone</div>
+        </div>
+        <div class="partner-badge">Assigned</div>
+      </div>
+      <div class="partner-stats">
+        <div class="pstat"><div class="pstat-val">4.9</div><div class="pstat-lbl">Rating</div></div>
+        <div class="pstat"><div class="pstat-val">340+</div><div class="pstat-lbl">Pickups done</div></div>
+        <div class="pstat"><div class="pstat-val">~30 min</div><div class="pstat-lbl">Avg response</div></div>
+      </div>
+    </div>
+
+    <div class="devices-card">
+      <div class="card-title" id="devices-title">Devices for sale (2)</div>
+
+      <div class="device-row sell-section show">
+        <div class="device-icon">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#ff6200" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/>
+          </svg>
+        </div>
+        <div>
+          <div class="device-name">MacBook Air M3</div>
+          <div class="device-meta">8GB / 256GB · Battery 87% · Good condition</div>
+        </div>
+        <div class="device-right">
+        
+          <div class="device-val">₹70,000</div>
+   
+        </div>
+      </div>
+
+
+
+        <div class="device-row recycle-section">
+          <div class="device-icon">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#4ade80" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+              <rect x="5" y="2" width="14" height="20" rx="2"/><line x1="12" y1="18" x2="12.01" y2="18"/>
+            </svg>
+          </div>
+          <div>
+            <div class="device-name">iPhone 11 (Damaged)</div>
+            <div class="device-meta">Screen cracked · Non-functional · 64GB</div>
+          </div>
+          <div class="device-right">
+            <div class="device-type recycle">Recycle</div>
+            <div class="device-val">₹1,200</div>
+            <div class="device-adj">Scrap value</div>
+          </div>
+        </div>
+
+      
+
+      <div class="summary-block">
+        <div class="sum-row sell-section show"><span class="sk">Quoted value</span><span class="sv" id="quoted-val">₹93,000</span></div>
+        <div class="sum-row sell-section show"><span class="sk">Condition adjustment</span><span class="sv" style="color:#f87171">–₹5,000</span></div>
+        <div class="sum-row sell-section show"><span class="sk">Payout method</span><span class="sv">UPI Transfer</span></div>
+        <div class="sum-row recycle-section"><span class="sk">Total scrap value</span><span class="sv">₹2,000</span></div>
+        <div class="sum-row recycle-section"><span class="sk">E-waste compliance</span><span class="sv" style="color:#4ade80">Certified</span></div>
+        <div class="sum-row recycle-section"><span class="sk">Payout method</span><span class="sv">UPI Transfer</span></div>
+        <div class="sum-final">
+          <span class="sf-label" id="final-label">Final payout</span>
+          <span class="sf-val" id="final-val">₹88,000</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="notice">
+      <div class="notice-icon">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#ff6200" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/>
+        </svg>
+      </div>
+      <div>
+        <div class="notice-title" id="notice-title">Payment timeline</div>
+        <div class="notice-body" id="notice-body">Payment will be transferred to your UPI ID within 24 hours after your device is picked up and verified by the partner. You'll receive an SMS and email confirmation once the transfer is initiated.</div>
+      </div>
+    </div>
+
+  </div>
+</div>
+    </body>
+</html>

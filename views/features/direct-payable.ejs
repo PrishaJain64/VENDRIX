@@ -268,7 +268,7 @@ icons["tablet"] = '🔲';
           <span>Book a pickup slot to continue</span>
         </div>
 
-        <button class="btn-pay" id="js-pay" onclick="doPay(event)">
+        <button class="btn-pay" id="confirm">
           <span class="btn-pay__sheen"></span>
           <i class="fas fa-hand-holding-dollar"></i> <span id="pay-btn-txt">Confirm</span>
         </button>
@@ -330,6 +330,10 @@ icons["tablet"] = '🔲';
     });
   });
 });
+
+document.getElementById("confirm").addEventListener("click",function(){
+  window.location.href="/confirmation/sell";
+})
 
 </script>
 </body>
