@@ -306,6 +306,7 @@ icons["tablet"] = '🔲';
 <script src="/js/payment.js"></script>
 <script>
   var checkoutAmount ='<%=payment_total%>';
+  var gstAmount = '<%=gst%>';
   const def = document.getElementById("ship-default");
   const fast = document.getElementById("ship-fast");
   const gst = document.getElementById("gst");
@@ -358,6 +359,7 @@ function total_calculate(shipping){
       method:"post",
       body:formdata
     }).then(res=>res.json()).then(data=>{
+      gstAmount = data.gst;
       gst.textContent="INR "+data.gst;
       checkoutAmount = Number(data.payment_total);
       if("<%=cartItem.intent%>" === 'rent'){
@@ -410,13 +412,34 @@ addressLabels.forEach(label => {
     document.getElementById("checkout").addEventListener("click", async () => {
       const stripe = Stripe('<%=published_key%>'); // your publishable key
       const formdata = new FormData();
+      var shipping = '';
+      if(selectedShipping =="fast"){
+        shipping = <%-JSON.stringify(shippingrates[1])%>;
+      }else{
+        shipping = <%-JSON.stringify(shippingrates[0])%>;
+      }
+      var cartItems = {};
+      cartItems.name = '<%=cartItem.name%>';
+      cartItems.quantity = '<%=cartItem.quantity%>';
+      cartItems.price = '<%=total/cartItem.quantity%>';
+
+      cartItems = [cartItems];
       formdata.append("total",checkoutAmount)
+
+      formdata.append('shipping',JSON.stringify(shipping));
+      formdata.append('address','<%=address[idx].details%>')
+      formdata.append('cartItems',JSON.stringify(cartItems));
+      formdata.append('discount[code]','');
+      formdata.append('discount[amount]',0);
+      formdata.append('gst',gstAmount);
+      if('<%=product_intent%>' === 'rent'){
+        formdata.append('fixeddeposit','<%=fixeddeposit%>');
+      }
 
       const res = await fetch("/stripe/checkoutSession", {
         method: "POST",
         body:formdata
       });
-
       const data = await res.json();
 
       stripe.redirectToCheckout({

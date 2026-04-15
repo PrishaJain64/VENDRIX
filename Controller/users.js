@@ -371,6 +371,7 @@ module.exports.Transaction = async(req,res)=>{
         });
     //coupon
     const code = req.query.code || "";
+    var discountAmount = 0;
     const couponCode = await Coupon.findOne({code:code})?? null;
     var coupon_validity = false;
     if(couponCode){
@@ -383,9 +384,11 @@ module.exports.Transaction = async(req,res)=>{
     };
     if(coupon_validity){
         if(couponCode.discount.type==="flat"){
-            total.all -= couponCode.discount.value;
+            discountAmount= couponCode.discount.value;
+            total.all -= discountAmount;
         }else{
-            total.all -= (total[couponCode.validity_check.applicable_category]*couponCode.discount.value/100);
+            discountAmount = (total[couponCode.validity_check.applicable_category]*couponCode.discount.value/100);
+            total.all -= discountAmount;
         }
     }
 
@@ -425,7 +428,7 @@ module.exports.Transaction = async(req,res)=>{
         payment_total = (Number(payment_total)+Number(fixeddeposit)).toFixed(1);
     }
     }
-    res.render("./features/transaction.ejs",{cartItems,total:total.all,code,address,shippingrates,payment_total,gst,product_intent,idx,fixeddeposit,published_key : process.env.STRIPE_PUBLISHABLE_KEY});
+    res.render("./features/transaction.ejs",{cartItems,total:total.all,code,discountAmount,address,shippingrates,payment_total,gst,product_intent,idx,fixeddeposit,published_key : process.env.STRIPE_PUBLISHABLE_KEY});
 }
 
 module.exports.directTransaction = async(req,res)=>{
@@ -471,9 +474,9 @@ module.exports.directTransaction = async(req,res)=>{
     }else if(intent=="repair"){
         cartItem = await Model.findById(id);
         cartItem = cartItem.toObject();
-        if(req.session.order.intent =="repair")total = Number(req.session.order.total);
         cartItem.device = cartItem.type;
         cartItem.quantity = qty;
+        if(req.session.order.intent =="repair")total = Number(req.session.order.total);
         cartItem.intent ="repair";
     }else if(intent=="refurbish"){
         cartItem = await Product.findOne({"name":id,"variant.label":variant_no,"color.color":color_no});

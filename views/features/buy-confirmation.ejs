@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Order Confirmed — Vendrix</title>
+<link rel="stylesheet" href="/css/buy-confirmation.css">
+
+</head>
+<body>
+<div class="page">
+
+  <!-- NAV -->
+  <nav class="nav">
+    <div class="logo">VEND<div class="logo1">R</div><div class="logo">IX</div></div>
+
+    <div class="nav-links">
+      <a href="/vendrix">Home</a>
+      <a href="#">Profile</a>
+      <a href="/buy/allmodels">Products</a>
+      <a href="#">About</a>
+
+    </div>
+  </nav>
+
+  <!-- HERO -->
+  <div class="hero">
+    <div class="confirmed-tag">Order placed</div>
+    <div class="check-ring">
+      <div class="pulse"></div>
+      <div class="pulse2"></div>
+      <svg viewBox="0 0 34 34" fill="none">
+        <polyline points="6,17 14,25 28,9" stroke="#ff6200" stroke-width="2.8"
+          stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+    </div>
+    <h1>Your order is confirmed!</h1>
+    <p>Thanks for shopping with us. Order <span class="order-num"><%=order.transactionId%></span> has been received and is being processed. You'll receive an email update shortly.</p>
+  </div>
+
+  <div class="main">
+
+    <!-- DELIVERY BAND -->
+    <div class="delivery-band">
+      <div class="truck-icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="#ff6200" stroke-width="1.8"
+          stroke-linecap="round" stroke-linejoin="round">
+          <rect x="1" y="3" width="15" height="13" rx="1"/>
+          <path d="M16 8h4l3 5v4h-7V8z"/>
+          <circle cx="5.5" cy="18.5" r="2.5"/>
+          <circle cx="18.5" cy="18.5" r="2.5"/>
+        </svg>
+      </div>
+      <div class="db-item">
+        <div class="label">Estimated delivery</div>
+        <div class="date"><%=estimateDate%></div>
+      </div>
+      <div class="sep"></div>
+      <div class="db-item">
+        <div class="label">Shipping via</div>
+        <div class="value"><%=order.shipping.name%></div>
+      </div>
+      <div class="sep"></div>
+      <div class="db-item">
+        <div class="label">Ship to</div><div class="value"><%=order.address%></div>
+      </div>
+    </div>
+
+    <!-- DETAIL CARDS ROW -->
+    <div class="cards-row">
+      <!-- Order Details -->
+      <div class="card">
+        <div class="card-title">Order details</div>
+        <div class="info-row"><span class="k">Order ID</span><span class="v"><%=order.transactionId%></span></div><br><br>
+        <div class="info-row"><span class="k">Date</span><span class="v"><%=currentDate%></span></div><br><br>
+        <div class="info-row"><span class="k">Payment</span><span class="v">Credit Card / Debit Card</span></div><br><br>
+        
+        <div class="info-row"><span class="k">Invoice</span><span class="v" style="color:#ff7c00;cursor:pointer">Download PDF</span></div>
+       
+      </div>
+    </div>
+
+    <!-- ORDER ITEMS -->
+    <div class="items-card">
+      <div class="card-title">Items in this order (<%=order.cartItems.length%>)</div>
+      <%order.cartItems.forEach(item=>{%>
+      <div class="item-row">
+        <div>
+          <div class="item-name"><%=item.name%></div>
+          <div class="item-meta">Qty: <%=item.quantity%></div>
+        </div>
+        <div class="item-price">₹<%=item.price%></div>
+      </div>
+      <%})%>
+    </div>
+
+      <div class="totals-block">
+        <div class="info-row"><span class="k">Subtotal</span><span class="v">₹<%=subtotal%></span></div>
+        <div class="info-row"><span class="k">Shipping</span><span class="v" style="color:var(--white30)"><%=order.shipping.rate%></span></div>
+
+        <%if(order.discount.amount){%>
+        <div class="info-row"><span class="k">Discount (<%=order.discount.code%>)</span><span class="v">−₹<%=order.discount.amount%></span></div>
+        <%}%>
+
+        <div class="info-row">
+          <span class="k">gst (18%)</span>
+          <span class="v">₹<%=order.gst%></span>
+        </div>
+
+        <%if(order.fixeddeposit){%>
+          <div class="info-row">
+          <span class="k">Fixed deposit</span>
+          <span class="v">₹<%=order.fixeddeposit%></span>
+        </div>
+        <%}%>
+
+      <div class="total-final">
+        <span class="total-label">Total paid</span>
+        <span class="total-val">₹<%=order.total%></span>
+      </div>
+    </div>
+
+
+  </div><!-- /main -->
+</div><!-- /page -->
+
+<script src="/js/buy-confirmation.js"></script>
+
+</body>
+</html>

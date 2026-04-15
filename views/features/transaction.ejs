@@ -24,36 +24,6 @@ icons["tablet"] = '🔲';
 </head>
 <body>
 
-<div class="bg-grid"></div>
-<div class="bg-orb bg-orb--a"></div>
-<div class="bg-orb bg-orb--b"></div>
-
-<!-- ── SUCCESS OVERLAY ── -->
-<div class="success-overlay" id="js-success">
-  <div class="success-modal">
-    <div class="success-ring">
-      <svg width="42" height="42" viewBox="0 0 42 42" fill="none">
-        <circle cx="21" cy="21" r="19" stroke="#4ade80" stroke-width="1.5"/>
-        <path d="M11 21l7 7 13-14" stroke="#4ade80" stroke-width="2.2"
-          stroke-linecap="round" stroke-linejoin="round"
-          stroke-dasharray="60" stroke-dashoffset="60"
-          style="animation:checkmark .5s ease .45s both forwards"/>
-      </svg>
-    </div>
-    <div class="success-title">Payment Successful</div>
-    <div class="success-amount" id="suc-amount">₹1,80,399</div>
-    <div class="success-txid" id="suc-txid">TXN-XXXXXX</div>
-    <div class="success-sub">Your order has been confirmed. A receipt has been sent to your registered email.</div>
-    <div class="success-details">
-      <div class="suc-row"><span class="suc-row__lbl">Order ID</span><span class="suc-row__val">ORD-VX8K2F</span></div>
-      <div class="suc-row"><span class="suc-row__lbl">Date &amp; Time</span><span class="suc-row__val" id="suc-date">—</span></div>
-      <div class="suc-row"><span class="suc-row__lbl">Status</span><span class="suc-row__val" style="color:var(--green)">✓ Confirmed</span></div>
-    </div>
-    <button class="btn-done" onclick="closeSuc()"><i class="fas fa-arrow-left" style="margin-right:7px"></i>Back to Dashboard</button>
-    <button class="btn-receipt" onclick="fakeDownload()"><i class="fas fa-download" style="margin-right:7px"></i>Download Receipt</button>
-  </div>
-</div>
-
 <!-- ── HEADER ── -->
 <header class="site-header">
   <div class="hdr-inner">
@@ -307,6 +277,7 @@ icons["tablet"] = '🔲';
 <script src="/js/payment.js"></script>
 <script>
   var checkoutAmount = '<%=payment_total%>';
+  var gstAmount = '<%=gst%>';
   const def = document.getElementById("ship-default");
   const fast = document.getElementById("ship-fast");
   const gst = document.getElementById("gst");
@@ -361,6 +332,7 @@ function total_calculate(shipping){
     }).then(res=>res.json()).then(data=>{
       gst.textContent="INR "+data.gst;
       checkoutAmount = Number(data.payment_total);
+      gstAmount = data.gst;
       if("<%=product_intent%>" === 'rent'){
         checkoutAmount+= Number("<%=fixeddeposit%>")
       }
@@ -404,8 +376,23 @@ addressLabels.forEach(label => {
 document.getElementById("checkout").addEventListener("click", async () => {
       const stripe = Stripe('<%=published_key%>'); // your publishable key
       const formdata = new FormData();
+      var shipping = '';
+      if(selectedShipping =="fast"){
+        shipping = <%-JSON.stringify(shippingrates[1])%>;
+      }else{
+        shipping = <%-JSON.stringify(shippingrates[0])%>;
+      }
+      const cartItems = <%-JSON.stringify(cartItems)%>
       formdata.append("total",checkoutAmount)
-
+      formdata.append('shipping',JSON.stringify(shipping));
+      formdata.append('address','<%=address[idx].details%>')
+      formdata.append('cartItems',JSON.stringify(cartItems));
+      formdata.append('discount[code]','<%=code%>');
+      formdata.append('discount[amount]','<%=discountAmount%>');
+      formdata.append('gst',gstAmount);
+      if('<%=product_intent%>' === 'rent'){
+        formdata.append('fixeddeposit','<%=fixeddeposit%>');
+      }
       const res = await fetch("/stripe/checkoutSession", {
         method: "POST",
         body:formdata

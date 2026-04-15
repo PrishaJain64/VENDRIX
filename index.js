@@ -40,6 +40,8 @@ const userRoutes=require('./Routes/users.js');
 const otpRoutes=require('./Routes/forgetpassword.js');
 const reviewRoutes=require('./Routes/review.js');
 const paymentRoutes =require('./Routes/stripe.js');
+const confirmationRoutes =require('./Routes/confirmation.js');
+
 
 
 app=express();
@@ -91,6 +93,7 @@ app.use("/vendrix",userRoutes);
 app.use("/forget",otpRoutes);
 app.use("/review",reviewRoutes);
 app.use("/stripe",paymentRoutes);
+app.use("/confirmation",confirmationRoutes);
 
 
 
@@ -98,9 +101,6 @@ app.get("/newmod",(req,res)=>{
     res.render("./features/mod.ejs");
 })
 
-app.get("/",(req,res)=>{
-    res.render("./features/payment.ejs",{published_key : process.env.STRIPE_PUBLISHABLE_KEY});
-})
 
 app.listen(3000,()=>{
     console.log(`Server Started`);
