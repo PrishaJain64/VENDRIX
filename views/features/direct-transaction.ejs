@@ -427,7 +427,8 @@ addressLabels.forEach(label => {
       formdata.append("total",checkoutAmount)
 
       formdata.append('shipping',JSON.stringify(shipping));
-      formdata.append('address','<%=address[idx].details%>')
+      const address = <%- JSON.stringify(address[idx] || null) %>;
+      formdata.append('address',address.details)
       formdata.append('cartItems',JSON.stringify(cartItems));
       formdata.append('discount[code]','');
       formdata.append('discount[amount]',0);

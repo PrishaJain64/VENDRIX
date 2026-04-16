@@ -105,11 +105,12 @@ module.exports.Download = async(req,res)=>{
     console.log("PDF saved at:", filePath);
 
      // Send PDF to client
-    // res.set({
-    //   "Content-Type": "application/pdf",
-    //   "Content-Disposition": "attachment; filename=eco-report-vendrix.pdf",
-    // });
-    // res.send(pdfBuffer);
+    res.set({
+      "Content-Type": "application/pdf",
+      "Content-Disposition": "attachment; filename=eco-report-vendrix.pdf",
+    });
+    
+    res.send(pdfBuffer);
 
   } catch (err) {
     console.error(err);

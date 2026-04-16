@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Vendrix — Invoice #JH56A1</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+<style>
+  <%=css%>
+</style>
+</head>
+<body>
+
+<div class="page">
+  <div class="watermark">VENDRIX</div>
+
+  <!-- Navbar -->
+  <div class="invoice-nav">
+    <a class="logo" href="#">VEND<span class="logo-r">R</span>IX</a>
+    <div class="nav-doc-type">Official Invoice</div>
+    <div class="nav-invoice-num"># JH56A1</div>
+  </div>
+
+  <!-- Hero -->
+  <div class="hero-strip">
+    <div class="hero-left">
+      <div class="invoice-eyebrow">Vendrix · Electronics &amp; Appliances</div>
+      <div class="invoice-big">INVOICE</div>
+    </div>
+    <div class="hero-right">
+      <div class="hero-stat">
+        <div class="hero-stat-label">Total Items</div>
+        <div class="hero-stat-value"><%=order.cartItems.length%> Products</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Meta strip -->
+  <div class="meta-strip">
+    <div class="meta-item">
+      <div class="meta-label">Order Date</div>
+      <div class="meta-value"><%=currentDate%></div>
+    </div>
+    <div class="meta-item">
+      <div class="meta-label">Shipping Company</div>
+      <div class="meta-value"><%=order.shipping.name%></div>
+    </div>
+    <div class="meta-item">
+      <div class="meta-label">Payment Method</div>
+      <div class="meta-value"><span class="payment-pill"><i class="fas fa-check-circle"></i> Credit Card</span></div>
+    </div>
+    <div class="meta-item">
+      <div class="meta-label">Order Status</div>
+      <div class="meta-value"><span class="status-pill"><i class="fas fa-box-open"></i> Completed</span></div>
+    </div>
+  </div>
+
+  <!-- Addresses -->
+  <div class="addresses">
+    <div class="address-block">
+      <div class="address-type">Billing Address</div>
+      <div class="address-name"><%=user.firstname%> <%=user.lastname%></div>
+      <div class="address-line">
+        <%=order.address%><br>
+        <%=user.email%>
+      </div>
+    </div>
+    <div class="address-block">
+      <div class="address-type">Shipping Address</div>
+      <div class="address-name"><%=user.firstname%> <%=user.lastname%></div>
+      <div class="address-line">
+        <%=order.address%><br>
+        <%=user.email%>
+      </div>
+    </div>
+  </div>
+
+  <!-- Line items -->
+  <div class="table-section">
+    <div class="table-header-row">
+      <div class="th">Product Description</div>
+      <div class="th center">Qty</div>
+      <div class="th center">Unit Price</div>
+      <div class="th right">Total</div>
+    </div>
+    <div class="table-body">
+
+        <% var subtotal=0; order.cartItems.forEach(item=>{ subtotal+= Number(item.quantity)*Number(item.price)%>
+      <div class="table-row">
+        <div class="td">
+          <div class="product-name"><%=item.name%></div>
+        </div>
+        <div class="td center"><%=item.quantity%></div>
+        <div class="td center">₹<%=item.price%></div>
+        <div class="td right"><span class="line-total">₹<%=Number(item.quantity)*Number(item.price)%></span></div>
+    </div>
+    <%})%>
+
+    </div>
+  </div>
+
+  <!-- Footer: Notes + Totals -->
+  <div class="footer-area">
+    <div class="notes-box">
+      <div class="notes-header">Notes &amp; Terms</div>
+      <div class="notes-body">
+        Please note that depending on the availability of your products, your order will be shipped within 5 to 7 business days. Rental items are subject to the Vendrix Rental Agreement. Refurbished items carry a 6-month warranty. Please review the return instructions and warranty details upon receiving your items.
+        <div class="notes-contact">
+          654-123-123 &nbsp;·&nbsp; support@vendrix.com
+        </div>
+      </div>
+    </div>
+
+    <div class="totals-box">
+      <div class="totals-row">
+        <span class="totals-label">Subtotal</span>
+        <span class="totals-value">₹<%=subtotal %></span>
+      </div>
+      <div class="totals-row">
+        <span class="totals-label">Discount</span>
+        <span class="totals-discount">– ₹<%= order.discount?.amount ?? 0 %></span>
+      </div>
+      <div class="totals-row">
+        <span class="totals-label">Shipping</span>
+        <span class="totals-value">₹<%=order.shipping.rate %></span>
+      </div>
+      <div class="totals-paid-row">
+        <span class="totals-label">gst</span>
+        <span class="totals-value">₹<%=order.gst %></span>
+      </div>
+      <div class="totals-due-row">
+        <span class="totals-due-label">Total Due</span>
+        <span class="totals-due-value">₹<%=order.total %></span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Page footer -->
+  <div class="page-footer">
+    <div class="footer-brand-small">VEND<span>R</span>IX</div>
+    <div class="footer-tagline">★ Thank you for shopping with Vendrix · Your trust is our greatest reward ★</div>
+    <div class="footer-page">Page 1 of 1</div>
+  </div>
+
+</div>
+</body>
+</html>
