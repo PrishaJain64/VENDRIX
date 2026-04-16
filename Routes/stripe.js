@@ -37,6 +37,8 @@ router.post("/checkoutSession",isLoggedIn,upload.none(), async (req, res) => {
       od.fixeddeposit = Number(order.fixeddeposit);
     };
     await od.save();
+    req.user.order_count +=1;
+    await req.user.save();
 
     const total =  Math.round(Number(req.body.total) * 100);
     const session = await stripe.checkout.sessions.create({

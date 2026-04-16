@@ -1,0 +1,542 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Vendrix — Member Dashboard</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Syne:wght@600;700;800;900&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
+ <link rel="stylesheet" href="/css/profile.css"/>
+ <link rel="stylesheet" href="/css/payment.css"/>
+
+</head>
+<body>
+
+  <div class="bg-grid"></div>
+  <div class="bg-glow bg-glow--a"></div>
+  <div class="bg-glow bg-glow--b"></div>
+
+  <!-- ── MODAL ── -->
+  <div class="modal-overlay" id="js-modal">
+    <div class="modal">
+      <div class="modal__title" id="js-modal-title">Are you sure?</div>
+      <div class="modal__body"  id="js-modal-body">This action cannot be undone.</div>
+      <div class="modal__btns">
+        <button class="btn btn--ghost"  style="flex:1" onclick="closeModal()"><span class="btn__sheen"></span><i class="fas fa-xmark"></i> Cancel</button>
+        <a href="/vendrix/deleteAccount" class="btn btn--danger" style="flex:1;text-decoration: none;" id="js-modal-confirm"><span class="btn__sheen"></span><i class="fas fa-check"></i> Confirm</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── HEADER ── -->
+  <header class="site-header">
+    <div class="site-header__inner">
+      <div class="site-header__brand">
+        <a class="site-header__logo" href="#">VEND<span class="site-header__logo-accent">R</span>IX</a>
+        <span class="site-header__tag">MEMBER DASHBOARD</span>
+      </div>
+      <div class="site-header__right">
+        <a class="hdr-btn hdr-btn--danger" href="/vendrix/logout">
+          <i class="fas fa-right-from-bracket"></i> Logout
+        </a>
+        <button onclick="openModal()" class="hdr-btn hdr-btn--danger" href="/vendrix/deleteAccount">
+          <i class="fas fa-right-from-bracket"></i> Delete Account
+        </button>
+      </div>
+    </div>
+    <div class="progress-bar"><div class="progress-bar__fill" id="js-progress-fill"></div></div>
+  </header>
+
+  <!-- ── TABS ── -->
+  <div class="tabs-bar">
+    <div class="tabs-bar__inner">
+      <button class="tab-btn tab-btn--active" id="tab-overview"     onclick="switchTab('overview',this)"><i class="fas fa-chart-line"></i> Overview</button>
+      <button class="tab-btn"                 id="tab-profile"      onclick="switchTab('profile',this)"><i class="fas fa-user"></i> Profile</button>
+      <button class="tab-btn"                 id="tab-transactions" onclick="switchTab('transactions',this)"><i class="fas fa-receipt"></i> Transactions</button>
+    </div>
+  </div>
+
+  <!-- ── PAGE WRAP ── -->
+  <div class="page-wrap">
+
+    <!-- ══ OVERVIEW ══ -->
+    <div class="panel panel--active" id="panel-overview">
+
+      <!-- Profile hero -->
+      <div class="profile-hero">
+        <div class="profile-hero__banner">
+          <div class="profile-hero__banner-glow"></div>
+          <div class="profile-hero__banner-glow profile-hero__banner-glow--b"></div>
+        </div>
+        <div class="profile-hero__body">
+          <div class="profile-hero__avatar-wrap">
+            <div class="profile-hero__avatar" id="js-avatar-initials"><%=user.firstname.slice(0,1)%></div>
+          </div>
+          <div class="profile-hero__name"  id="js-hero-name"><%=user.firstname+" "+user.lastname%></div>
+          <div class="profile-hero__email" id="js-hero-email"><%=user.email%></div>
+          <div class="profile-hero__divider"></div>
+          <div class="stat-grid">
+            <div class="stat-cell">
+              <div class="stat-cell__icon"><i class="fas fa-indian-rupee-sign"></i></div>
+              <div class="stat-cell__val" id="js-total-spent">₹<%=totalSpent%></div>
+              <div class="stat-cell__lbl">Total Spent</div>
+            </div>
+            <div class="stat-cell">
+              <div class="stat-cell__icon"><i class="fas fa-receipt"></i></div>
+              <div class="stat-cell__val" id="js-tx-count"><%=transactions.length%></div>
+              <div class="stat-cell__lbl">Transactions</div>
+            </div>
+            <div class="stat-cell">
+              <div class="stat-cell__icon"><i class="fas fa-cart-shopping"></i></div>
+              <div class="stat-cell__val" id="js-cart-stat"><%=user.shoppingCart.length%></div>
+              <div class="stat-cell__lbl">Cart Items</div>
+            </div>
+          </div>
+          <div class="btn-row">
+            <button class="btn btn--primary" onclick="switchTab('profile',getEl('tab-profile'))"><span class="btn__sheen"></span><i class="fas fa-pen"></i> Edit Profile</button>
+            <a style =  "text-decoration: none;" href="/vendrix/shoppingCart" class="btn btn--primary">View Cart</a>
+          </div>
+        </div>
+      </div>
+
+      <!-- Account Status + Analytics -->
+      <div class="grid-2">
+
+        <!-- Account Status -->
+        <div class="card">
+          <div class="card__corner-accent"></div><div class="card__corner-dot"></div>
+          <div class="card__head">
+            <div class="card__head-icon"><i class="fas fa-shield-halved"></i></div>
+            <div><div class="card__title">Account Status</div><div class="card__sub">Verification & Security</div></div>
+          </div>
+          <div class="card__scan"></div>
+          <div class="verified-badge">
+            <i class="fas fa-circle-check"></i>
+            <div><div class="verified-badge__title">Fully Verified</div><div class="verified-badge__sub">Email Confirmed</div></div>
+          </div>
+          <div class="info-row"><div class="info-row__label"><i class="fas fa-clock"></i> Last Update</div><div class="info-row__value"><%=updatedAt%></div></div>
+          <div class="info-row"><div class="info-row__label"><i class="fas fa-calendar-check"></i> Member Since</div><div class="info-row__value"><%=createdAt%></div></div>
+          <div class="info-row"><div class="info-row__label"><i class="fas fa-shield"></i> 2FA</div><div class="info-row__value info-row__value--green">Enabled</div></div>
+          <div class="info-row"><div class="info-row__label"><i class="fas fa-lock"></i> Password</div><div class="info-row__value info-row__value--cyan">Managed by Vendrix</div></div>
+        </div>
+
+        <!-- ══ Analytics Card with Bar Chart ══ -->
+        <div class="card">
+          <div class="card__corner-accent"></div><div class="card__corner-dot"></div>
+          <div class="card__head">
+            <div class="card__head-icon"><i class="fas fa-chart-line"></i></div>
+            <div><div class="card__title">Analytics</div><div class="card__sub">Usage Insights</div></div>
+          </div>
+
+          <!-- ── BAR CHART ── -->
+          <div class="chart-section">
+            <div class="chart-header">
+              <div class="chart-header-title">Monthly Transactions</div>
+              <div class="chart-year-btns" id="js-chart-year-btns"></div>
+            </div>
+            <div class="chart-canvas-wrap">
+              <canvas id="js-tx-bar-chart"></canvas>
+            </div>
+          </div>
+          <!-- ── END BAR CHART ── -->
+
+        </div>
+      </div>
+    </div>
+
+    <!-- ══ PROFILE ══ -->
+    <div class="panel" id="panel-profile">
+      <div class="card col-full">
+        <div class="card__corner-accent"></div><div class="card__corner-dot"></div>
+        <div class="card__head">
+          <div class="card__head-icon"><i class="fas fa-id-card"></i></div>
+          <div><div class="card__title">Personal Information</div><div class="card__sub">Update your details below</div></div>
+        </div>
+        <div class="card__scan"></div>
+
+        <form id="credentials">
+        <div class="form-section-label"><i class="fas fa-user"></i>Name</div>
+        <div class="form-row">
+          <div class="form-field">
+            <label class="form-field__label"><i class="fas fa-user"></i> First Name</label>
+            <input name="firstname" class="form-field__input" id="inp-firstname" type="text" placeholder="First name…" value="<%=user.firstname%>"/>
+          </div>
+          <div class="form-field">
+            <label class="form-field__label"><i class="fas fa-user"></i> Last Name</label>
+            <input name="lastname" class="form-field__input" id="inp-lastname" type="text" placeholder="Last name…" value="<%=user.lastname%>"/>
+          </div>
+        </div>
+
+        <div class="form-section-label"><i class="fas fa-address-card"></i>Contact</div>
+        <div class="form-row">
+          <div class="form-field">
+            <label class="form-field__label"><i class="fas fa-envelope"></i> Email Address</label>
+            <div><%=user.email%></div>
+          </div>
+        </div>
+        </form>
+
+        <div class="form-section-label"><i class="fas fa-location-dot"></i>Address</div>
+
+        <div class="saved-addr-list" id="saved-addr-list">
+          <%address.forEach((ad,i)=>{%>
+            <label class="ad-op" data-idx="<%=i%>">
+          <div class="saved-addr-card">
+            <div class="saved-addr-info" style="cursor:pointer;flex:1">
+              <div class="saved-addr-name"><%=ad.details%> </div></div>
+              <a href="/vendrix/deleteAddress/<%= i %>"><svg xmlns="http://www.w3.org/2000/svg" x="0px" y="0px" width="20" height="20" viewBox="0 0 32 32" style="fill:#FA5252;"><path d="M 15 4 C 14.476563 4 13.941406 4.183594 13.5625 4.5625 C 13.183594 4.941406 13 5.476563 13 6 L 13 7 L 7 7 L 7 9 L 8 9 L 8 25 C 8 26.644531 9.355469 28 11 28 L 23 28 C 24.644531 28 26 26.644531 26 25 L 26 9 L 27 9 L 27 7 L 21 7 L 21 6 C 21 5.476563 20.816406 4.941406 20.4375 4.5625 C 20.058594 4.183594 19.523438 4 19 4 Z M 15 6 L 19 6 L 19 7 L 15 7 Z M 10 9 L 24 9 L 24 25 C 24 25.554688 23.554688 26 23 26 L 11 26 C 10.445313 26 10 25.554688 10 25 Z M 12 12 L 12 23 L 14 23 L 14 12 Z M 16 12 L 16 23 L 18 23 L 18 12 Z M 20 12 L 20 23 L 22 23 L 22 12 Z"></path></svg></a>
+            </div>
+            </label>
+            <%})%>
+        </div>
+        <%if(address.length == 0){%>
+        <div class="no-addr-msg" id="no-addr-msg">
+          <i class="fas fa-map-pin" style="color:var(--og)"></i>
+          <span>No saved addresses yet. Add one below.</span>
+        </div>
+        <%}%>
+
+        <!-- Add new address toggle -->
+         <%if(address.length <3){%>
+        <div class="add-addr-toggle" id="add-addr-toggle" onclick="toggleNewAddr()">
+          <i class="fas fa-plus-circle"></i>
+          <span id="add-addr-label">Add a new address</span>
+        </div>
+        <%}else{%>
+        <div class="addr-max-notice" id="addr-max-notice">
+          <i class="fas fa-circle-info"></i> Maximum 3 addresses saved. Remove one to add a new address.
+        </div>
+        <%}%>
+
+        <!-- New address form -->
+        <div class="new-addr-form" id="new-addr-form" style="display:none">
+
+          <!-- Device Location -->
+           <form id="deviceloc">
+            <div class="grid-2 mb-field">
+            <div>
+              <div class="field-label"><i class="fas fa-door-open"></i>Flat / Wing</div>
+              <input name="flat" type="text" id="dev-flat" placeholder="e.g. 204, Wing B" autocomplete="off"/>
+              <div class="field-error" id="err-flat"></div>
+            </div>
+            <div>
+              <div class="field-label"><i class="fas fa-building"></i>Building Name</div>
+              <input name="building" type="text" id="dev-building" placeholder="e.g. Crescent Heights" autocomplete="off"/>
+              <div class="field-error" id="err-building"></div>
+            </div>
+          </div>
+          <div class="device-loc-section">
+            <button type="button" class="btn-device-loc" onclick="useDeviceLocation()">
+              <i class="fas fa-location-crosshairs"></i> Use Device Location
+            </button>
+          </div>
+          </form>
+          
+            <div class="device-loc-display" id="device-loc-display" style="display:none">
+              <i class="fas fa-map-marker-alt" style="color:var(--og);font-size:11px;margin-top:2px;flex-shrink:0"></i>
+              <span id="device-loc-txt">Fetching location…</span>
+            </div>
+
+          <div class="section-label"><i class="fas fa-map"></i>Address Details</div>
+          <form id="address">
+          <div class="grid-2 mb-field">
+            <div>
+              <div class="field-label"><i class="fas fa-door-open"></i>Flat / Wing</div>
+              <input name="flat" type="text" id="addr-flat" placeholder="e.g. 204, Wing B" autocomplete="off"/>
+              <div class="field-error" id="err-flat"></div>
+            </div>
+            <div>
+              <div class="field-label"><i class="fas fa-building"></i>Building Name</div>
+              <input name="building" type="text" id="addr-building" placeholder="e.g. Crescent Heights" autocomplete="off"/>
+              <div class="field-error" id="err-building"></div>
+            </div>
+          </div>
+          <div class="mb-field">
+            <div class="field-label"><i class="fas fa-map-pin"></i>Landmark</div>
+            <input name="landmark" type="text" id="addr-landmark" placeholder="e.g. Near Andheri Station" autocomplete="off"/>
+          </div>
+          <div class="mb-field">
+            <div class="field-label"><i class="fas fa-road"></i>Road Name</div>
+            <input name="road" type="text" id="addr-road" placeholder="e.g. Link Road" autocomplete="off"/>
+            <div class="field-error" id="err-road"></div>
+          </div>
+           <div class="grid-2 mb-field">
+            <div>
+              <div class="field-label"><i class="fas fa-hashtag"></i>Pincode</div>
+              <input name='pincode' type="text" id="addr-pin" maxlength="10" placeholder="e.g. 400053" oninput="onPinInput(this)" autocomplete="postal-code"/>
+              <div class="field-error" id="err-pin"></div>
+            </div>
+          </div>
+          <div class="grid-2 mb-field">
+            <div class="select-wrapper">
+              <div class="field-label"><i class="fas fa-map"></i>State</div>
+              <select name="state" id="stateDropdown"><option value="">Select State</option></select>
+              <div class="field-error" id="err-state"></div>
+            </div>
+            <div class="select-wrapper">
+              <div class="field-label"><i class="fas fa-city"></i>City</div>
+              <select name="city" id="cityDropdown"><option value="">Select City</option></select>
+              <div class="field-error" id="err-city"></div>
+            </div>
+          </div>
+          </form>
+          
+          <button type='button' class="btn-save-addr" onclick="saveNewAddr()">
+            <i class="fas fa-circle-check"></i> Save &amp; Use This Address
+          </button>
+        </div>
+
+      </div>
+
+        <div class="btn-row">
+          <button class="btn btn--primary" onclick="saveProfile()"><span class="btn__sheen"></span><i class="fas fa-floppy-disk"></i> Save Changes</button>
+          <a class="btn btn--ghost" href="/vendrix/profile"><span class="btn__sheen"></span><i class="fas fa-rotate-left"></i> Discard</a>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══ TRANSACTIONS ══ -->
+    <div class="panel" id="panel-transactions">
+      <div class="card">
+        <div class="card__head">
+          <div class="card__head-icon"><i class="fas fa-clock-rotate-left"></i></div>
+          <div><div class="card__title">Transaction History</div></div>
+        </div>
+        <div id="js-tx-list">
+          <%if(transactions.length == 0){%>
+            <div style="text-align:center;padding:2rem;color:var(--dim);font-size:.82rem">No transactions for this filter.</div>
+            <%}else{
+              transactions.forEach(tr=>{%>
+                <div class="tx-item">
+                <div class="tx-item__body">
+                  <div class="tx-item__name"><%=tr.cartItems.map(item => item.name).join(", ");%></div>
+                </div>
+                <div class="tx-item__right">
+                  <div class="tx-item__amount"><%=tr.total%></div>
+                  <div class="tx-item__status tx-item__status--completed">completed</div>
+                  <div class="tx-item__date"><%=tr.transactionId%></div>
+                </div>
+              </div>
+      <%})}%>
+              
+          
+        </div>
+      </div>
+    </div>
+
+  </div><!-- /page-wrap -->
+
+  <div class="toast-container" id="js-toast-container"></div>
+
+  <!-- Chart.js (must be before the bar chart init script) -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src = "/js/payment.js"></script>
+<script src = "/js/profile.js"></script>
+  <!-- ── BAR CHART INIT ── -->
+  <script>
+    fetch("/vendrix/states").then(res=>res.json()).then(states=>{
+    const dropdown = document.getElementById("stateDropdown");
+
+    states.forEach(state => {
+      const option = document.createElement("option");
+      option.value = state.name;
+      option.textContent = state.name;
+      dropdown.appendChild(option);
+    });
+  }).catch(err=>console.log(err));
+
+  document.getElementById("stateDropdown").addEventListener("change", function () {
+  const selectedState = this.value;
+
+  fetch("/vendrix/cities", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify({ state: selectedState })
+  })
+  .then(res => res.json())
+  .then(cities => {
+    const cityDropdown = document.getElementById("cityDropdown");
+    console.log(cityDropdown);
+    cityDropdown.innerHTML = '<option value="">Select City</option>';
+
+    cities.forEach(city => {
+      const option = document.createElement("option");
+      option.value = city;
+      option.textContent = city;
+      cityDropdown.appendChild(option);
+    });
+  });
+});
+
+  (function () {
+    const MONTHS = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+
+    /*
+     * TX_DATA — replace these arrays with real values from your backend.
+     * Shape: { [year]: { buy: [12 ints], rent: [12 ints], refurb: [12 ints] } }
+     */
+    const TX_DATA = {
+      2022: {
+        buy:    [3,5,4,6,8,7,5,9,6,7,8,10],
+        rent:   [2,3,2,4,3,5,4,6,5,4,3,5],
+        refurb: [1,1,2,1,2,2,3,2,1,2,3,2]
+      },
+      2023: {
+        buy:    [6,7,9,8,11,10,8,12,9,10,13,15],
+        rent:   [4,5,6,5,7,8,6,9,7,8,7,10],
+        refurb: [2,3,3,4,3,5,4,5,4,3,6,5]
+      },
+      2024: {
+        buy:    [10,12,14,11,16,15,13,18,14,17,20,22],
+        rent:   [7,8,9,8,11,12,10,13,11,12,14,16],
+        refurb: [4,5,5,6,6,7,6,8,7,7,9,8]
+      },
+      2025: {
+        buy:    [18,20,17,22,19,24,21,25,23,22,26,28],
+        rent:   [12,14,13,15,14,17,15,18,16,15,19,21],
+        refurb: [7,8,8,9,9,10,9,11,10,10,12,11]
+      }
+    };
+
+    const YEARS        = Object.keys(TX_DATA).map(Number).sort((a, b) => b - a);
+    let   activeYear   = YEARS[0];
+    let   chartInstance = null;
+
+    /* year-switcher pill buttons */
+    function buildYearBtns() {
+      const wrap = document.getElementById('js-chart-year-btns');
+      if (!wrap) return;
+      wrap.innerHTML = '';
+      YEARS.forEach(yr => {
+        const btn = document.createElement('button');
+        btn.className = 'chart-yr-btn' + (yr === activeYear ? ' chart-yr-btn--active' : '');
+        btn.textContent = yr;
+        btn.addEventListener('click', () => setYear(yr));
+        wrap.appendChild(btn);
+      });
+    }
+
+    /* mini-stat pills: total / peak / avg */
+    function updateMiniStats(yr) {
+      const d      = TX_DATA[yr];
+      const totals = MONTHS.map((_, i) => d.buy[i] + d.rent[i] + d.refurb[i]);
+      const grand  = totals.reduce((a, b) => a + b, 0);
+      const peakIdx = totals.indexOf(Math.max(...totals));
+      const avg    = Math.round(grand / 12);
+
+      const el = id => document.getElementById(id);
+      if (el('js-chart-total')) el('js-chart-total').innerHTML = grand + ' <span>txns</span>';
+      if (el('js-chart-peak'))  el('js-chart-peak').innerHTML  = MONTHS[peakIdx] + ' <span>(' + totals[peakIdx] + ')</span>';
+      if (el('js-chart-avg'))   el('js-chart-avg').innerHTML   = avg + ' <span>/mo</span>';
+    }
+
+    /* draw / redraw the stacked bar chart */
+    function drawChart(yr) {
+      const canvas = document.getElementById('js-tx-bar-chart');
+      if (!canvas) return;
+      if (chartInstance) { chartInstance.destroy(); chartInstance = null; }
+
+      const d = TX_DATA[yr];
+      chartInstance = new Chart(canvas.getContext('2d'), {
+        type: 'bar',
+        data: {
+          labels: MONTHS,
+          datasets: [
+            {
+              label: 'Buy',
+              data: d.buy,
+              backgroundColor: 'rgba(255,107,53,0.85)',
+              borderRadius: 3,
+              borderSkipped: false
+            },
+            {
+              label: 'Rent',
+              data: d.rent,
+              backgroundColor: 'rgba(62,200,255,0.80)',
+              borderRadius: 3,
+              borderSkipped: false
+            },
+            {
+              label: 'Refurbished',
+              data: d.refurb,
+              backgroundColor: 'rgba(180,130,255,0.80)',
+              borderRadius: 3,
+              borderSkipped: false
+            }
+          ]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: { display: false },
+            tooltip: {
+              backgroundColor: '#16161b',
+              borderColor: '#2a2a36',
+              borderWidth: 1,
+              titleColor: '#f0f0f4',
+              bodyColor: '#888899',
+              padding: 10,
+              callbacks: {
+                footer: items => 'Total: ' + items.reduce((s, i) => s + i.raw, 0)
+              }
+            }
+          },
+          scales: {
+            x: {
+              stacked: true,
+              grid: { color: 'rgba(255,107,53,0.07)' },
+              ticks: {
+                color: '#888899',
+                font: { size: 10, family: "'Space Mono', monospace" },
+                autoSkip: false,
+                maxRotation: 0
+              },
+              border: { color: 'transparent' }
+            },
+            y: {
+              stacked: true,
+              grid: { color: 'rgba(255,107,53,0.07)' },
+              ticks: {
+                color: '#888899',
+                font: { size: 10, family: "'Space Mono', monospace" },
+                stepSize: 5
+              },
+              border: { color: 'transparent' }
+            }
+          },
+          animation: { duration: 400, easing: 'easeInOutQuart' }
+        }
+      });
+    }
+
+    /* switch active year */
+    function setYear(yr) {
+      activeYear = yr;
+      document.querySelectorAll('.chart-yr-btn').forEach(b => {
+        b.classList.toggle('chart-yr-btn--active', parseInt(b.textContent) === yr);
+      });
+      updateMiniStats(yr);
+      drawChart(yr);
+    }
+
+    /* init */
+    function init() {
+      buildYearBtns();
+      updateMiniStats(activeYear);
+      drawChart(activeYear);
+    }
+
+    document.readyState === 'loading'
+      ? document.addEventListener('DOMContentLoaded', init)
+      : init();
+  })();
+  </script>
+
+  <script src="/js/profile.js"></script>
+</body>
+</html>

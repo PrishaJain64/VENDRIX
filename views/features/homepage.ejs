@@ -38,9 +38,9 @@ const products = [
   <%- include('../partials/navbar.ejs') %>
   <div class="nav-right">
     <%if(currentUser){%>
-      <a href="/vendrix/register"><span class="reviewer-avatar"><%=currentUser.firstname.slice(0,1)%></span></a>
+      <a href="/vendrix/profile"><span class="reviewer-avatar"><%=currentUser.firstname.slice(0,1)%></span></a>
     <%}else{%>
-      <a href="/vendrix/register" class="nav-icon"><i class="fas fa-user"></i></a>
+      <a href="/vendrix/register"><span class="nav-cta">Sign Up/In</span></a>
   <%}%>
     <a href="#" class="nav-about">About Us</a>
     <a href="/vendrix/shoppingcart" class="nav-cta">

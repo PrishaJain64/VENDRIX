@@ -14,6 +14,9 @@ const multer = require('multer');
 const upload = multer();
 const User = require("../models/users.js");
 const {isLoggedIn, fetchisLoggedIn} = require('../middleware.js');
+const {Order} = require("../models/order.js");
+const {Review} = require("../models/reviews.js");
+
 
 function storeReturnTo(req,res,next){
     res.locals.returnTo=req.session.returnTo;
@@ -42,6 +45,29 @@ router.get('/logout',(req,res)=>{
         res.redirect('/vendrix/login');
     })
 });
+
+router.get("/deleteAccount",isLoggedIn,async(req,res)=>{
+    try {
+    const userId = req.user._id;
+
+    // delete related data
+    await Review.deleteMany({ user:userId});
+    await Order.deleteMany({ user: userId });
+
+    // delete user
+    await User.findByIdAndDelete(userId);
+
+    // logout
+    req.logout(err => {
+      if (err) return res.json({ valid: false });
+      res.json({ valid: true });
+    });
+
+  } catch (err) {
+    console.log(err);
+    res.redirect("/vendrix");
+  }
+})
 
 //shopping cart
 router.get('/cart/:intent/:id/:variant_no/:color_no',Cart);
@@ -91,5 +117,44 @@ router.get("/auth/verify/:token",async(req,res)=>{
   } catch (err) {
     res.send(err+ "Link expired or invalid");
   }
+})
+router.get("/profile",isLoggedIn,async(req,res)=>{
+        const  update= new Date(req.user.updatedAt);
+        const  created= new Date(req.user.createdAt);
+
+
+        const options = {
+        timeZone: "Asia/Kolkata",
+        day: "2-digit",
+        month: "short",
+        year: "numeric",
+        hour: "2-digit",
+        minute: "2-digit",
+        hour12: true
+        };
+
+        const updatedAt = new Intl.DateTimeFormat("en-IN", options).format(update);
+        const createdAt = new Intl.DateTimeFormat("en-IN", options).format(created);
+
+        const transactions = await Order.find({user:req.user._id});
+        var totalSpent = 0;
+        transactions.forEach(tr=>{
+            totalSpent += tr.total;
+        })
+    res.render("features/profile.ejs",{user:req.user,address:req.user.address,idx:0,updatedAt,createdAt,totalSpent,transactions});
+})
+
+router.get("/deleteAddress/:idx",isLoggedIn,async(req,res)=>{
+    req.user.address.splice(Number(req.params.id),1);
+    req.user.save();
+    res.redirect("/vendrix/profile")
+})
+
+router.post("/updateName",isLoggedIn,upload.none(),async(req,res)=>{
+    console.log(req.body);
+    req.user.firstname = req.body.firstname;
+    req.user.lastname = req.body.lastname;
+    await req.user.save();
+    res.json({valid:true});
 })
 module.exports=router;
