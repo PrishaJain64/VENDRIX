@@ -25,6 +25,11 @@ const orderSchema = new Schema({
     user : {
         type: mongoose.Schema.Types.ObjectId,
         ref : 'User'
-    }
+    },
+    amountReceived : {
+        type:Boolean,
+        default:false
+    },
+    pickup:String
 });
 module.exports.Order = mongoose.model('Order',orderSchema);

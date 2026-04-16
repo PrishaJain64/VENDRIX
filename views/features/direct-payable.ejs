@@ -86,15 +86,17 @@ icons["tablet"] = '🔲';
         <!-- Saved addresses list -->
         <div class="section-label" style="margin-top:0"><i class="fas fa-bookmark"></i>Saved Addresses</div>
         <div class="saved-addr-list" id="saved-addr-list">
+          <form id="address">
           <%address.forEach((ad,i)=>{%>
             <label class="ad-op" data-idx="<%=i%>">
           <div class="saved-addr-card">
-            <input <%=i==0?"checked":""%> type="radio" name="selected_add">
+            <input <%=i==0?"checked":""%> type="radio" name="selectedAddress" value='<%-ad.details%>'>
             <div class="saved-addr-info" style="cursor:pointer;flex:1">
               <div class="saved-addr-name"><%=ad.details%> </div></div>
             </div>
             </label>
             <%})%>
+          </form>
         </div>
         <%if(address.length == 0){%>
         <div class="no-addr-msg" id="no-addr-msg">
@@ -332,7 +334,23 @@ icons["tablet"] = '🔲';
 });
 
 document.getElementById("confirm").addEventListener("click",function(){
-  window.location.href="/confirmation/sell";
+  const cartItem = <%-JSON.stringify(cartItem)%>;
+  const form = document.getElementById("address");
+  const formdata = new FormData(form);
+  formdata.append("cartItem",JSON.stringify(cartItem));
+  formdata.append("finalprice",'<%=finalprice%>')
+  formdata.append("quoted",'<%=quoted%>')
+  formdata.append("deductions",'<%=deductions%>')
+  formdata.append("pickup",nice);
+
+  fetch("/confirmation/sell",{
+    method:"post",
+    body:formdata
+  }).then(res=>res.json()).then(data=>{
+    if(data.valid){
+      window.location.href=`/confirmation/sell/${data.id}`;
+    }
+  })
 })
 
 </script>

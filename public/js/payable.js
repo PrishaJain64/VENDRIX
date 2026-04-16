@@ -1,4 +1,5 @@
 /* ══ PICKUP DATES ══ */
+var nice = null;
 function buildPickupDates() {
   var container = document.getElementById('pickup-dates');
   container.innerHTML = '';
@@ -76,7 +77,7 @@ function showSlotPill() {
   var d      = new Date(selectedSlotDate + 'T00:00:00');
   var days   = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
   var months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
-  var nice   = days[d.getDay()] + ', ' + d.getDate() + ' ' + months[d.getMonth()] + ' · ' + selectedSlotTime;
+  nice   = days[d.getDay()] + ', ' + d.getDate() + ' ' + months[d.getMonth()] + ' · ' + selectedSlotTime;
 
   document.getElementById('slot-selected-txt').textContent   = nice;
   document.getElementById('slot-selected-pill').style.display = 'flex';
