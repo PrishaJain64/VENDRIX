@@ -229,10 +229,10 @@ icons["tablet"] = '🔲';
         <div class="fee-row">
           <span><i class="fas fa-percent"></i>GST (18%)</span>
           <%if(gst==0){%>
-          <span class="fee-row__val" id="gst-val"><span class="shipping-no-addr">Select an address first</span></span>
+          <span class="fee-row__val" id="gst">Select an address first</span>
           <%}else{%>
-          <span class="fee-row__val" id="gst">INR <%=gst%></span></div>
-          <%}%>
+          <span class="fee-row__val" id="gst">INR <%=gst%></span>
+          <%}%></div>
           <%if(product_intent ==="rent"){%>
             <div class="fee-row">
               <span>Fixed Deposit</span>
@@ -244,6 +244,7 @@ icons["tablet"] = '🔲';
         <div class="total-row">
           <div class="total-row__lbl">Total Due</div>
           <%if(payment_total==0){%>
+            <br>
           <div class="total-row__amt" id="js-total">—</div>
           <%}else{%>
           <div class="total-row__amt" id="payment-total">INR <%=payment_total%></div>
@@ -344,11 +345,11 @@ document.getElementById("ship-default").addEventListener("click",function(){
   fast.classList.toggle('selected',false);
   selectedShipping = "default"
    this.classList.toggle('selected', selectedShipping === "default");
-  document.getElementById('ship-default-company').textContent = '<%=shippingrates[0].name%>';
-    document.getElementById('ship-default-days').textContent     = '<%=shippingrates[0].days%> ' +'business days';
-    document.getElementById('ship-default-price').innerHTML     = '<%=shippingrates[0].rate%>' === 0
+  document.getElementById('ship-default-company').textContent = '<%=shippingrates[0]?shippingrates[0].name:" "%>';
+    document.getElementById('ship-default-days').textContent     = '<%=shippingrates[0]?shippingrates[0].days:" "%> ' +'business days';
+    document.getElementById('ship-default-price').innerHTML     = '<%=shippingrates[0]?shippingrates[0].rate:" "%>' === 0
       ? '<span class="fee-row__val--free">FREE</span>'
-      : '\u20B9' + '<%=shippingrates[0].rate%>'.toLocaleString('en-IN');
+      : '\u20B9' + '<%=shippingrates[0]?shippingrates[0].rate:" "%>'.toLocaleString('en-IN');
       toast('\uD83D\ude9a', 'Standard delivery selected!');
       total_calculate(<%-JSON.stringify(shippingrates[0])%>);
 });
@@ -357,11 +358,11 @@ document.getElementById("ship-fast").addEventListener("click",function(){
   def.classList.toggle('selected',false);
   selectedShipping = "fast";
   this.classList.toggle('selected', selectedShipping === "fast");
-  document.getElementById('ship-fast-company').textContent = '<%=shippingrates[1].name%>';
-    document.getElementById('ship-fast-days').textContent     = '<%=shippingrates[1].days%> ' +'business days';
-    document.getElementById('ship-fast-price').innerHTML     = '<%=shippingrates[1].rate%>' === 0
+  document.getElementById('ship-fast-company').textContent = '<%=shippingrates[1]?shippingrates[1].name:" "%>';
+    document.getElementById('ship-fast-days').textContent     = '<%=shippingrates[1]?shippingrates[1].days:" "%> ' +'business days';
+    document.getElementById('ship-fast-price').innerHTML     = '<%=shippingrates[1]?shippingrates[1].rate:" "%>' === 0
       ? '<span class="fee-row__val--free">FREE</span>'
-      : '\u20B9' + '<%=shippingrates[1].rate%>'.toLocaleString('en-IN');
+      : '\u20B9' + '<%=shippingrates[1]?shippingrates[1].rate:" "%>'.toLocaleString('en-IN');
       toast('\uD83D\ude9a', 'Express delivery selected!');
       total_calculate(<%-JSON.stringify(shippingrates[1])%>);
 })

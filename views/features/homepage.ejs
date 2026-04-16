@@ -225,7 +225,7 @@ const products = [
         <form method = "post">
         <input type="hidden" name="returnTo" value="<%=currentUrl%>">
         <input type="hidden" name="quantity" value="<%=product.quantity?product.quantity+1:1%>">
-        <button formaction="/vendrix/cart/buy/<%=product._id%>/0/0" class="prod-cta"><i class="fas fa-shopping-bag"></i> Add to Cart</button>
+        <a href="/buydetails/<%=product._id%>/0/0" class="prod-cta"><i class="fas fa-shopping-bag"></i> View Details</a>
         </form>
       </div>
     </div>
