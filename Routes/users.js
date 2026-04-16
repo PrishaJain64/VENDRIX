@@ -1,12 +1,18 @@
+if(process.env.NODE_ENV!=='production'){
+    require('dotenv').config()
+}
+
 const express=require('express');
 const axios = require("axios");
 const router=express.Router();
+const jwt = require("jsonwebtoken");
+
 
 const {userForShoppingCart, Register, Login, ShoppingCart, deleteCart, Cart, Vendrix, Transaction,directTransaction,Payable} = require('../Controller/users');
-const { State, City, SaveAddress,Loc,paymentAmount } = require("../Controller/saveUserData");
+const { State, City, SaveAddress,Loc,paymentAmount,Verification} = require("../Controller/saveUserData");
 const multer = require('multer');
 const upload = multer();
-
+const User = require("../models/users.js");
 const {isLoggedIn, fetchisLoggedIn} = require('../middleware.js');
 
 function storeReturnTo(req,res,next){
@@ -14,13 +20,12 @@ function storeReturnTo(req,res,next){
     res.locals.shoppingCart = req.session.shoppingCart;
     next();
 }
-
 //register
 router.get('/register',(req,res)=>{
     res.render('user/auth',{type:"signup"})
 })
 
-router.post('/register',storeReturnTo,upload.none(),Register);
+router.post('/register',upload.none(),storeReturnTo,Register);
 
 //login
 router.get('/login',(req,res)=>{
@@ -70,4 +75,21 @@ router.post("/payableTransaction",fetchisLoggedIn,upload.none(),(req,res)=>{
     res.json({valid:true});
 });
 router.get("/payableTransaction/:intent/:id",isLoggedIn,Payable)
+router.get("/auth/verify/:token",async(req,res)=>{
+    try {
+    const decoded = jwt.verify(req.params.token, process.env.JWT_SECRET);
+
+    const user = await User.findById(decoded.userId);
+
+    if (!user) return res.send("Invalid link");
+
+    user.isVerified = true;
+    await user.save();
+
+    res.redirect("/vendrix/login?verified=true");
+
+  } catch (err) {
+    res.send(err+ "Link expired or invalid");
+  }
+})
 module.exports=router;

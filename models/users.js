@@ -5,6 +5,10 @@ const {Model} = require("./versions");
 const {Product} = require("./products");
 
 const userSchema=new Schema({
+    isVerified :{
+        type:Boolean,
+        default : false
+    },
     firstname :String,
     lastname : String,
     address : String,

@@ -8,6 +8,17 @@ const { Model } = require('../models/versions');
 const { Product } = require('../models/products');
 const {Review} = require("../models/reviews");
 const {Coupon} = require("../models/coupons");
+const jwt = require("jsonwebtoken");
+
+const nodemailer = require("nodemailer");
+
+const transporter = nodemailer.createTransport({
+  service: "gmail",
+  auth: {
+    user: process.env.email,
+    pass: process.env.email_pass     // NOT your normal password
+  }
+});
 
 const {Types} = require('mongoose');
 
@@ -186,28 +197,82 @@ module.exports.userForShoppingCart = (req,res,next)=>{
 module.exports.Register = async (req,res)=>{
     const {firstname,lastname,password,email}=req.body;
     const username = email;
-    console.log(req.body);
     
     const exisitinguser = await User.findOne({"username":username});
-    if(exisitinguser){
+    if(exisitinguser && exisitinguser.isVerified){
         res.status(401).json({valid:false, redirect:"/vendrix/login",email});
         return;
     }
+    var id = null;
+    if(exisitinguser){
+        id = exisitinguser._id;
+    }else{
     const user= new User({email,username,firstname,lastname});
     const registeredUser=await User.register(user,password);
-    console.log(registeredUser);
-    req.login(registeredUser,async err=>{
-        if(err){
-            return next(err)
-        }
-        if(res.locals.shoppingCart){
-            req.user.shoppingCart = structuredClone(res.locals.shoppingCart);
-            await req.user.save();
-            delete req.session.shoppingCart;
-        }
-        const redirectUrl = res.locals.returnTo || '/vendrix';
-        res.json({valid:true,redirect:redirectUrl});
-    })
+    id = registeredUser._id;
+    }
+
+    const token = jwt.sign(
+        { userId: id},
+        process.env.JWT_SECRET,
+        { expiresIn: "15m" }
+        );
+
+    const verifyUrl = `http://localhost:3000/vendrix/auth/verify/${token}`;
+
+        await transporter.sendMail({
+  to: username,
+  subject: "Email Verification",
+  html: `
+  <div style="background:#e6e6e6;padding:60px 0;font-family:Arial;">
+    <div style="max-width:600px;margin:auto;background:#f5f5f5;
+                padding:40px 30px;text-align:center;border-radius:6px;">
+      
+      <h2 style="color:#1f3a63;">
+        Your <span style="background:#f5c56b;padding:2px 6px;border-radius:3px;">
+        Verify Your Email</span>
+      </h2>
+
+      <p style="color:#444;">Click on the below link to confirm your validation</p>
+
+      <a href="${verifyUrl}"
+   style="
+     display:inline-block;
+     background-color:#1d4ed8;
+     color:#ffffff;
+     padding:12px 20px;
+     text-decoration:none;
+     border-radius:6px;
+     font-weight:600;
+     letter-spacing:1px;
+     font-family:Arial, sans-serif;
+   ">
+  Click me
+</a>
+
+      <p style="color:#444;line-height:1.6;">
+        If you did not request a link, you do not have to do anything.<br>
+        Just ignore this email the way your cat ignores you.
+      </p>
+    </div>
+  </div>
+  `
+});
+
+    // req.login(registeredUser,async err=>{
+    //     if(err){
+    //         return next(err)
+    //     }
+    //     if(res.locals.shoppingCart){
+    //         req.user.shoppingCart = structuredClone(res.locals.shoppingCart);
+    //         await req.user.save();
+    //         delete req.session.shoppingCart;
+    //     }
+    //     const redirectUrl = res.locals.returnTo || '/vendrix';
+    //     res.json({valid:true,redirect:redirectUrl});
+    // })
+    console.log("email sent");
+    res.json({valid:true,msg:"email sent"});
 }
 
 module.exports.Login = (req,res,next)=>{
@@ -218,7 +283,14 @@ module.exports.Login = (req,res,next)=>{
         }
         if(!user){
             return res.json({
-                valid:false
+                valid:false,
+                message:"Invalid Password"
+            });
+        }
+         if (!user.isVerified) {
+            return res.json({
+                valid: false,
+                message: "Please verify your email first"
             });
         }
         req.logIn(user,async(err)=>{

@@ -154,8 +154,9 @@ function doSignup(e){
   }).then(res=>res.json())
 .then(data=>{
   if(data.valid){
-    document.getElementById('fsup').reset();
-    showSov('Welcome, '+fn+'!','Your Vendrix account is ready. Explore thousands of certified refurbished devices.',data.redirect);
+    toast(data.msg,'g');
+  document.getElementById('bsub').classList.remove('ld');
+
   }else{
     document.getElementById("lem").value = data.email;
     document.getElementById("login").click(); 
@@ -184,7 +185,7 @@ function doLogin(e){
       document.getElementById('flg').reset();
       showSov('Welcome Back!','You\'ve successfully signed in to your Vendrix account.',data.redirect);
     }else{
-      toast('Incorrect Password','e');shake('lpw');
+      toast(data.message,'e');shake('lpw');
     }
   }
   )
