@@ -128,6 +128,12 @@
         <span class="totals-label">gst</span>
         <span class="totals-value">₹<%=order.gst %></span>
       </div>
+      <%if(order.fixeddeposit){%>
+        <div class="totals-paid-row">
+        <span class="totals-label">Fixed Deposit</span>
+        <span class="totals-value">₹<%=order.fixeddeposit %></span>
+      </div>
+      <%}%>
       <div class="totals-due-row">
         <span class="totals-due-label">Total Due</span>
         <span class="totals-due-value">₹<%=order.total %></span>

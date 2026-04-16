@@ -495,11 +495,12 @@ module.exports.directTransaction = async(req,res)=>{
     const total_weight = await Weight([cartItem]);
    
     const shipping = await shippingRates({
-        pickup_pincode: String(address[idx].pincode),
-        delivery_pincode: "400064",
+        pickup_pincode: "400064",
+        delivery_pincode: String(address[idx].pincode),
         weight: total_weight,
         cod: 0
     });
+    console.log(String(address[idx].pincode));
 
     const cheapest = shipping.reduce((min, curr) =>
     curr.rate < min.rate ? curr : min
