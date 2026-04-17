@@ -471,10 +471,10 @@ module.exports.Transaction = async(req,res)=>{
     if(address.length>0){
     const total_weight = await Weight(cartItems);
     console.log(total_weight);
-
+    const delivery = String(address[idx].pincode);
     const shipping = await shippingRates({
-        pickup_pincode: String(address[idx].pincode),
-        delivery_pincode: "400064",
+        pickup_pincode: "400064",
+        delivery_pincode: delivery,
         weight: total_weight,
         cod: 0
     });
@@ -565,10 +565,11 @@ module.exports.directTransaction = async(req,res)=>{
     var payment_total = 0,gst=0;
     if(address.length>0){
     const total_weight = await Weight([cartItem]);
+    const delivery = String(address[idx].pincode);
    
     const shipping = await shippingRates({
         pickup_pincode: "400064",
-        delivery_pincode: String(address[idx].pincode),
+        delivery_pincode: delivery,
         weight: total_weight,
         cod: 0
     });
@@ -625,8 +626,8 @@ module.exports.Vendrix = async (req,res)=>{
     }
     var devices = ['laptop','phone','smartwatch','camera','headphone','earbud','tablet'];
     var val=[];
-    val[0] = devices[Math.floor(Math.random()*9 + 1)];
-    val[1] = devices[Math.floor(Math.random()*9 + 1)];
+    val[0] = devices[Math.floor(Math.random() * 7)];
+    val[1] = devices[Math.floor(Math.random()*7)];
 
     var buy_products = await Model.aggregate([
         {$match :{type: {$in : val}}},

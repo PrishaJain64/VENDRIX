@@ -322,7 +322,46 @@ module.exports.rental_duration = async(req,res)=>{
 module.exports.createModel = async(req,res)=>{
     const images=req.files.map(f=>({url:f.path,filename:f.filename}));
 
-    const version = new Model();
+    const version = new Model({
+  "name": "Lenovo Legion 7i",
+  "brand": "Lenovo",
+  "type": "laptop",
+  "variants": [
+    {
+      "label": "Intel Core Ultra 7 | RTX 5070 | 16GB | 1TB SSD",
+      "price": 179990
+    },
+    {
+      "label": "Intel Core Ultra 9 | RTX 5080 | 32GB | 1TB SSD",
+      "price": 229990
+    }
+  ],
+  "specifications": {
+    "display": "16-inch 3.2K OLED, 165Hz",
+    "processor": "Intel Core Ultra HX Series",
+    "graphics": "NVIDIA RTX 50-series (AI DLSS 4)",
+    "battery": "Performance-optimized gaming battery"
+  },
+  "colors": [
+    {
+      "color": "Shadow Black",
+      "images": images.slice(1,3),
+      "thumbnail": images[0],
+      "hexcode": "#0B0B0B"
+    },
+    {
+      "color": "Glacier White",
+      "images": images.slice(4,6),
+      "thumbnail": images[3],
+      "hexcode": "#F5F5F5"
+    }
+  ],
+  "release_date": "2026-02-01T00:00:00.000Z",
+  "base_recycle_value": 20000
+}
+
+
+);
 
   await version.save();
   
