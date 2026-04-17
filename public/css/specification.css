@@ -980,3 +980,4 @@ textarea.form-input { height: 90px; }
     width: 100%;
   }
 }
+.reviewer-avatar { width: 36px; height: 36px; border-radius: 50%; background: var(--black5); border: 1px solid var(--border-w); display: flex; align-items: center; justify-content: center; font-family: 'Bebas Neue', sans-serif; font-size: 15px; color: var(--orange); flex-shrink: 0; }
