@@ -1,0 +1,990 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Terms &amp; Conditions — Vendrix</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Syne:wght@400;500;600;700;800&family=Manrope:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<style>
+/* ═══ TOKENS ═══ */
+:root {
+  --black:    #000000;
+  --black2:   #080808;
+  --black3:   #0f0f0f;
+  --black4:   #161616;
+  --black5:   #1e1e1e;
+  --black6:   #282828;
+  --orange:   #ff6200;
+  --orange2:  #ff7c00;
+  --orange3:  #e55500;
+  --og:       rgba(255,98,0,0.18);
+  --og-dim:   rgba(255,98,0,0.07);
+  --og-glow:  rgba(255,98,0,0.40);
+  --white:    #ffffff;
+  --white85:  rgba(255,255,255,0.85);
+  --white55:  rgba(255,255,255,0.55);
+  --white30:  rgba(255,255,255,0.30);
+  --white12:  rgba(255,255,255,0.12);
+  --white06:  rgba(255,255,255,0.06);
+  --white03:  rgba(255,255,255,0.03);
+  --border:   rgba(255,98,0,0.22);
+  --border-w: rgba(255,255,255,0.08);
+  --nav-h:    66px;
+  --radius:   12px;
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+body {
+  font-family: 'Manrope', sans-serif;
+  background: var(--black2);
+  color: var(--white85);
+  overflow-x: hidden;
+  cursor: none;
+}
+
+/* ═══ CURSOR ═══ */
+#cur-dot {
+  width: 6px; height: 6px;
+  background: var(--orange); border-radius: 50%;
+  position: fixed; z-index: 9999; pointer-events: none;
+  transform: translate(-50%, -50%);
+}
+#cur-ring {
+  width: 32px; height: 32px;
+  border: 1.5px solid var(--orange); border-radius: 50%;
+  position: fixed; z-index: 9998; pointer-events: none;
+  transform: translate(-50%, -50%);
+  transition: width 0.25s, height 0.25s, opacity 0.25s;
+  opacity: 0.5;
+}
+body:hover #cur-ring { opacity: 1; }
+
+/* ═══ TOPBAR ═══ */
+.topbar {
+  background: var(--black);
+  height: 32px; overflow: hidden;
+  border-bottom: 1px solid var(--border-w);
+}
+.topbar-track {
+  display: flex; gap: 48px; align-items: center;
+  height: 100%; white-space: nowrap;
+  animation: scroll-left 28s linear infinite;
+}
+.topbar-item {
+  font-size: 11px; font-weight: 500;
+  letter-spacing: 0.08em; text-transform: uppercase;
+  color: var(--white55);
+}
+.topbar-item::before {
+  content: '\2736'; margin-right: 20px;
+  color: var(--orange); font-size: 8px;
+}
+@keyframes scroll-left {
+  0%   { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
+}
+
+/* ═══ NAVBAR ═══ */
+.navbar {
+  position: sticky; top: 0; z-index: 900;
+  height: var(--nav-h);
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 0 32px;
+  background: rgba(8,8,8,0.92);
+  backdrop-filter: blur(18px);
+  border-bottom: 1px solid var(--border-w);
+  gap: 20px;
+}
+.logo {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 28px; letter-spacing: 0.05em;
+  color: var(--white); text-decoration: none;
+  flex-shrink: 0;
+}
+.logo .accent { color: var(--orange); }
+.nav-center {
+  display: flex; align-items: center; list-style: none;
+  gap: 0; height: 100%; flex: 1; justify-content: center;
+}
+.nav-center > li {
+  position: relative; height: 100%;
+  display: flex; align-items: center;
+}
+.nav-center > li > a {
+  display: flex; align-items: center; gap: 5px;
+  height: 100%; padding: 0 16px;
+  font-size: 13px; font-weight: 600;
+  letter-spacing: 0.03em; color: var(--white55);
+  text-decoration: none; white-space: nowrap;
+  transition: color 0.2s;
+  border-bottom: 2px solid transparent;
+}
+.nav-center > li > a:hover,
+.nav-center > li:hover > a { color: var(--white); border-bottom-color: var(--orange); }
+.chev { font-size: 9px; transition: transform 0.25s; }
+.nav-center > li:hover .chev { transform: rotate(180deg); }
+.drop-menu {
+  position: absolute; top: calc(var(--nav-h) - 1px); left: 0;
+  background: var(--black3); border: 1px solid var(--border-w);
+  border-radius: 12px; min-width: 200px; padding: 8px 0;
+  opacity: 0; pointer-events: none; transform: translateY(10px);
+  transition: opacity 0.22s, transform 0.22s;
+  box-shadow: 0 16px 48px rgba(0,0,0,0.6); z-index: 800;
+}
+.nav-center > li:hover .drop-menu { opacity: 1; pointer-events: auto; transform: translateY(0); }
+.drop-item > a {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 10px 20px; font-size: 13px; color: var(--white55); text-decoration: none;
+  transition: color 0.18s, background 0.18s;
+}
+.drop-item:hover > a { color: var(--orange); background: var(--og-dim); }
+.chev-r { font-size: 9px; color: var(--white30); }
+.sub-menu {
+  position: absolute; top: 0; left: 100%;
+  background: var(--black4); border: 1px solid var(--border-w);
+  border-radius: 12px; min-width: 160px; padding: 8px 0;
+  opacity: 0; pointer-events: none; transform: translateX(8px);
+  transition: opacity 0.2s, transform 0.2s;
+  box-shadow: 0 12px 36px rgba(0,0,0,0.5);
+}
+.drop-item:hover .sub-menu { opacity: 1; pointer-events: auto; transform: translateX(0); }
+.sub-menu a {
+  display: block; padding: 9px 18px; font-size: 13px; color: var(--white55); text-decoration: none;
+  transition: color 0.18s, background 0.18s;
+}
+.sub-menu a:hover { color: var(--orange); background: var(--og-dim); }
+.nav-right { display: flex; align-items: center; gap: 16px; flex-shrink: 0; }
+.nav-icon { color: var(--white55); font-size: 16px; text-decoration: none; transition: color 0.2s; }
+.nav-icon:hover { color: var(--orange); }
+.nav-about {
+  font-size: 13px; font-weight: 600; color: var(--orange); text-decoration: none;
+  letter-spacing: 0.04em; border-bottom: 1px solid var(--border); padding-bottom: 2px;
+}
+.nav-cta {
+  display: inline-flex; align-items: center; gap: 8px;
+  background: var(--orange); color: var(--white);
+  font-size: 13px; font-weight: 600;
+  padding: 9px 18px; border-radius: 8px; text-decoration: none;
+  transition: background 0.2s, transform 0.15s; white-space: nowrap;
+}
+.nav-cta:hover { background: var(--orange2); transform: translateY(-1px); }
+.nav-badge {
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 18px; height: 18px; border-radius: 50%;
+  background: var(--white); color: var(--orange);
+  font-size: 10px; font-weight: 800; line-height: 1;
+}
+
+/* ═══ PAGE HERO ═══ */
+.page-hero {
+  min-height: 52vh;
+  display: flex; align-items: center;
+  position: relative; overflow: hidden;
+  padding: 100px 80px 120px;
+  background: var(--black2);
+}
+.hero-noise {
+  position: absolute; inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.035'/%3E%3C/svg%3E");
+  background-size: 180px; pointer-events: none; opacity: 0.5;
+}
+.hero-orb {
+  position: absolute; border-radius: 50%; pointer-events: none;
+  background: radial-gradient(circle, rgba(255,98,0,0.10) 0%, transparent 70%);
+  width: 600px; height: 600px; top: -180px; right: -80px;
+}
+.hero-orb2 {
+  position: absolute; border-radius: 50%; pointer-events: none;
+  background: radial-gradient(circle, rgba(255,98,0,0.05) 0%, transparent 70%);
+  width: 350px; height: 350px; bottom: -80px; left: 80px;
+}
+.page-hero-inner { position: relative; z-index: 2; max-width: 900px; }
+.hero-eyebrow {
+  display: flex; align-items: center; gap: 14px; margin-bottom: 28px;
+}
+.hero-eyebrow-line { display: block; width: 36px; height: 2px; background: var(--orange); }
+.hero-eyebrow span:last-child {
+  font-size: 11px; font-weight: 600;
+  letter-spacing: 0.14em; text-transform: uppercase; color: var(--orange);
+}
+.page-hero h1 {
+  font-family: 'Syne', sans-serif;
+  font-size: clamp(44px, 7vw, 80px);
+  font-weight: 800; line-height: 1.05; color: var(--white); margin-bottom: 24px;
+}
+.page-hero h1 .og  { color: var(--orange); }
+.page-hero h1 .dim { color: var(--white30); }
+.hero-meta {
+  display: flex; gap: 32px; flex-wrap: wrap; margin-top: 36px;
+}
+.hero-meta-item {
+  display: flex; align-items: center; gap: 10px;
+  font-size: 13px; color: var(--white30); font-weight: 500;
+}
+.hero-meta-item i { color: var(--orange); font-size: 13px; }
+
+/* ═══ LAYOUT: SIDEBAR + CONTENT ═══ */
+.tc-layout {
+  display: grid;
+  grid-template-columns: 280px 1fr;
+  gap: 0;
+  min-height: 100vh;
+  align-items: start;
+}
+
+/* Sticky sidebar */
+.tc-sidebar {
+  position: sticky; top: var(--nav-h);
+  padding: 56px 40px 56px 80px;
+  border-right: 1px solid var(--border-w);
+  max-height: calc(100vh - var(--nav-h));
+  overflow-y: auto;
+}
+.tc-sidebar::-webkit-scrollbar { width: 2px; }
+.tc-sidebar::-webkit-scrollbar-thumb { background: var(--orange3); }
+
+.sidebar-label {
+  font-size: 10px; font-weight: 700; letter-spacing: 0.14em;
+  text-transform: uppercase; color: var(--white30); margin-bottom: 20px;
+}
+.toc-list { list-style: none; display: flex; flex-direction: column; gap: 2px; }
+.toc-list a {
+  display: block; padding: 9px 14px;
+  font-size: 13px; color: var(--white30); text-decoration: none; font-weight: 500;
+  border-left: 2px solid transparent; border-radius: 0 6px 6px 0;
+  transition: color 0.2s, border-color 0.2s, background 0.2s;
+}
+.toc-list a:hover, .toc-list a.active {
+  color: var(--orange); border-left-color: var(--orange); background: var(--og-dim);
+}
+.sidebar-footer {
+  margin-top: 40px; padding: 20px; background: var(--black5);
+  border: 1px solid var(--border-w); border-radius: 12px;
+}
+.sidebar-footer p { font-size: 12px; color: var(--white30); line-height: 1.7; margin-bottom: 12px; }
+.sidebar-footer a {
+  display: inline-flex; align-items: center; gap: 6px;
+  font-size: 12px; font-weight: 600; color: var(--orange); text-decoration: none;
+}
+.sidebar-footer a:hover { text-decoration: underline; }
+
+/* Content area */
+.tc-content {
+  padding: 56px 80px 96px 64px;
+}
+
+/* ═══ SECTION ═══ */
+.tc-section {
+  padding-bottom: 72px;
+  border-bottom: 1px solid var(--border-w);
+  margin-bottom: 72px;
+  scroll-margin-top: calc(var(--nav-h) + 24px);
+}
+.tc-section:last-child { border-bottom: none; padding-bottom: 0; margin-bottom: 0; }
+
+.sec-badge {
+  display: inline-flex; align-items: center; gap: 8px;
+  background: var(--og); border: 1px solid var(--border);
+  border-radius: 20px; padding: 5px 14px; margin-bottom: 20px;
+}
+.sec-badge-num {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 14px; color: var(--orange); letter-spacing: 0.06em;
+}
+.sec-badge-label {
+  font-size: 10px; font-weight: 700; letter-spacing: 0.12em;
+  text-transform: uppercase; color: var(--white30);
+}
+
+.tc-section h2 {
+  font-family: 'Syne', sans-serif;
+  font-size: clamp(22px, 3vw, 30px);
+  font-weight: 800; color: var(--white);
+  margin-bottom: 24px; line-height: 1.2;
+}
+.tc-section h2 .og { color: var(--orange); }
+
+.tc-section h3 {
+  font-family: 'Syne', sans-serif;
+  font-size: 18px; font-weight: 700; color: var(--white85);
+  margin: 32px 0 12px;
+}
+
+.tc-section p {
+  font-size: 14px; line-height: 1.9; color: var(--white55);
+  margin-bottom: 16px;
+}
+.tc-section p:last-child { margin-bottom: 0; }
+.tc-section p strong { color: var(--white85); font-weight: 600; }
+.tc-section p a { color: var(--orange); text-decoration: none; }
+.tc-section p a:hover { text-decoration: underline; }
+
+/* Callout box */
+.callout {
+  background: var(--og-dim); border: 1px solid var(--border);
+  border-radius: 12px; padding: 20px 24px;
+  display: flex; gap: 16px; align-items: flex-start; margin: 24px 0;
+}
+.callout-icon { color: var(--orange); font-size: 16px; margin-top: 2px; flex-shrink: 0; }
+.callout p { margin: 0; font-size: 14px; }
+
+/* Warning callout */
+.callout-warn {
+  background: rgba(255,98,0,0.05); border-color: rgba(255,98,0,0.30);
+}
+
+/* Bullet list */
+.tc-list { list-style: none; padding: 0; margin: 16px 0; display: flex; flex-direction: column; gap: 10px; }
+.tc-list li {
+  display: flex; gap: 12px; align-items: flex-start;
+  font-size: 14px; line-height: 1.75; color: var(--white55);
+}
+.tc-list li::before {
+  content: ''; flex-shrink: 0;
+  width: 6px; height: 6px; border-radius: 50%;
+  background: var(--orange); margin-top: 8px;
+}
+.tc-list li strong { color: var(--white85); font-weight: 600; }
+
+/* Policy table */
+.policy-table { width: 100%; border-collapse: collapse; margin: 24px 0; }
+.policy-table th {
+  text-align: left; padding: 12px 16px;
+  font-size: 11px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase;
+  color: var(--white30); border-bottom: 1px solid var(--border-w);
+  background: var(--black5);
+}
+.policy-table th:first-child { border-radius: 8px 0 0 0; }
+.policy-table th:last-child  { border-radius: 0 8px 0 0; }
+.policy-table td {
+  padding: 14px 16px; font-size: 13px; color: var(--white55);
+  border-bottom: 1px solid var(--border-w); line-height: 1.65;
+}
+.policy-table tr:last-child td { border-bottom: none; }
+.policy-table tr:hover td { background: var(--white03); }
+.policy-table td strong { color: var(--white85); font-weight: 600; }
+.pill {
+  display: inline-block; padding: 3px 10px; border-radius: 20px;
+  font-size: 11px; font-weight: 600; letter-spacing: 0.05em;
+}
+.pill-green  { background: rgba(34,197,94,0.12); color: #4ade80; border: 1px solid rgba(34,197,94,0.25); }
+.pill-orange { background: var(--og); color: var(--orange); border: 1px solid var(--border); }
+.pill-red    { background: rgba(239,68,68,0.10); color: #f87171; border: 1px solid rgba(239,68,68,0.2); }
+
+/* ═══ SECTION COMMON ═══ */
+.sec-alt  { background: var(--black3); }
+
+/* ═══ CTA STRIP ═══ */
+.cta-strip {
+  background: var(--black2); padding: 96px 80px;
+  position: relative; overflow: hidden;
+}
+.cta-strip-glow {
+  position: absolute; inset: 0;
+  background: radial-gradient(ellipse at center, rgba(255,98,0,0.07) 0%, transparent 70%);
+  pointer-events: none;
+}
+.cta-strip-inner {
+  position: relative; z-index: 2;
+  display: flex; align-items: center; justify-content: space-between; gap: 40px; flex-wrap: wrap;
+}
+.cta-strip h2 {
+  font-family: 'Syne', sans-serif; font-size: clamp(28px, 4vw, 44px);
+  font-weight: 800; color: var(--white); line-height: 1.2;
+}
+.cta-strip h2 .og { color: var(--orange); }
+.cta-strip p { font-size: 15px; color: var(--white55); margin-top: 12px; max-width: 480px; line-height: 1.7; }
+.cta-actions { display: flex; gap: 14px; flex-shrink: 0; flex-wrap: wrap; }
+.btn-fill {
+  display: inline-flex; align-items: center; gap: 10px;
+  background: var(--orange); color: var(--white); font-size: 14px; font-weight: 600;
+  padding: 14px 28px; border-radius: 10px; text-decoration: none;
+  transition: background 0.2s, transform 0.15s;
+}
+.btn-fill:hover { background: var(--orange2); transform: translateY(-2px); }
+.btn-ghost {
+  display: inline-flex; align-items: center; gap: 10px;
+  border: 1px solid var(--border-w); color: var(--white55);
+  font-size: 14px; font-weight: 500;
+  padding: 14px 28px; border-radius: 10px; text-decoration: none;
+  transition: border-color 0.2s, color 0.2s, transform 0.15s;
+}
+.btn-ghost:hover { border-color: var(--orange); color: var(--orange); transform: translateY(-2px); }
+
+/* ═══ FOOTER ═══ */
+footer { background: var(--black); border-top: 1px solid var(--border-w); }
+.footer-top {
+  display: grid; grid-template-columns: 2fr 1fr 1fr 1fr;
+  gap: 48px; padding: 64px 80px;
+}
+.footer-logo {
+  font-family: 'Bebas Neue', sans-serif; font-size: 32px;
+  letter-spacing: 0.04em; color: var(--white); text-decoration: none;
+  display: block; margin-bottom: 16px;
+}
+.footer-about { font-size: 13px; line-height: 1.8; color: var(--white30); margin-bottom: 24px; max-width: 280px; }
+.footer-socials { display: flex; gap: 10px; }
+.fsoc {
+  width: 36px; height: 36px; border: 1px solid var(--border-w); border-radius: 8px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 14px; color: var(--white30); text-decoration: none;
+  transition: border-color 0.2s, color 0.2s;
+}
+.fsoc:hover { border-color: var(--orange); color: var(--orange); }
+.footer-col-title {
+  font-size: 11px; font-weight: 700; letter-spacing: 0.12em;
+  text-transform: uppercase; color: var(--white); margin-bottom: 20px;
+}
+.footer-link {
+  display: block; font-size: 13px; color: var(--white30);
+  text-decoration: none; margin-bottom: 10px; transition: color 0.2s;
+}
+.footer-link:hover { color: var(--orange); }
+.footer-bottom {
+  border-top: 1px solid var(--border-w); padding: 24px 80px;
+  display: flex; align-items: center; justify-content: space-between;
+  font-size: 12px; color: var(--white30);
+}
+.footer-bottom-right { display: flex; gap: 24px; }
+.footer-bottom-right a { color: var(--white30); text-decoration: none; transition: color 0.2s; }
+.footer-bottom-right a:hover { color: var(--white55); }
+
+/* ═══ REVEAL ═══ */
+.reveal { opacity: 0; transform: translateY(28px); transition: opacity 0.6s ease, transform 0.6s ease; }
+.reveal.visible { opacity: 1; transform: translateY(0); }
+.reveal-d1 { transition-delay: 0.1s; }
+.reveal-d2 { transition-delay: 0.2s; }
+
+/* ═══ SCROLLBAR ═══ */
+::-webkit-scrollbar { width: 4px; }
+::-webkit-scrollbar-track { background: var(--black2); }
+::-webkit-scrollbar-thumb { background: var(--orange3); border-radius: 2px; }
+</style>
+</head>
+<body>
+
+<div id="cur-dot"></div>
+<div id="cur-ring"></div>
+
+<!-- TOPBAR -->
+<div class="topbar">
+  <div class="topbar-track">
+    <span class="topbar-item">1-Year Warranty on All Devices</span>
+    <span class="topbar-item">7-Day Hassle-Free Returns</span>
+    <span class="topbar-item">50-Point Quality Check</span>
+    <span class="topbar-item">24H Fast Delivery</span>
+    <span class="topbar-item">Certified Pre-Owned Tech</span>
+    <span class="topbar-item">Pan-India Operations</span>
+    <span class="topbar-item">1-Year Warranty on All Devices</span>
+    <span class="topbar-item">7-Day Hassle-Free Returns</span>
+    <span class="topbar-item">50-Point Quality Check</span>
+    <span class="topbar-item">24H Fast Delivery</span>
+    <span class="topbar-item">Certified Pre-Owned Tech</span>
+    <span class="topbar-item">Pan-India Operations</span>
+  </div>
+</div>
+
+<!-- NAVBAR -->
+<header class="navbar">
+  <a href="#" class="logo">Vend<span class="accent">r</span>ix</a>
+  
+  <div class="nav-right">
+    <a href="#" onclick="history.back()" class="nav-cta">Back</a>
+  </div>
+</header>
+
+<!-- HERO -->
+<section class="page-hero">
+  <div class="hero-noise"></div>
+  <div class="hero-orb"></div>
+  <div class="hero-orb2"></div>
+  <div class="page-hero-inner">
+    <div class="hero-eyebrow reveal">
+      <span class="hero-eyebrow-line"></span>
+      <span>Legal</span>
+    </div>
+    <h1 class="reveal reveal-d1">
+      Terms &amp; <span class="og">Conditions</span><br>
+      <span class="dim">of Use</span>
+    </h1>
+    <div class="hero-meta reveal reveal-d2">
+      <div class="hero-meta-item"><i class="fas fa-calendar-alt"></i> Effective: 1 April 2026</div>
+      <div class="hero-meta-item"><i class="fas fa-map-marker-alt"></i> Jurisdiction: India</div>
+      <div class="hero-meta-item"><i class="fas fa-building"></i> Vendrix Technologies Pvt. Ltd.</div>
+    </div>
+  </div>
+</section>
+
+<!-- MAIN: SIDEBAR + CONTENT -->
+<div class="tc-layout">
+
+  <!-- SIDEBAR -->
+  <aside class="tc-sidebar">
+    <div class="sidebar-label">On this page</div>
+    <ul class="toc-list" id="toc">
+      <li><a href="#s1" class="active">1. Acceptance of Terms</a></li>
+      <li><a href="#s2">2. Eligibility</a></li>
+      <li><a href="#s3">3. Our Services</a></li>
+      <li><a href="#s4">4. Buying &amp; Selling</a></li>
+      <li><a href="#s5">5. Rental Policy</a></li>
+      <li><a href="#s6">6. Repair Services</a></li>
+      <li><a href="#s7">7. Recycle Program</a></li>
+      <li><a href="#s8">8. Warranty &amp; Returns</a></li>
+      <li><a href="#s9">9. Payments &amp; Pricing</a></li>
+      <li><a href="#s10">10. Shipping &amp; Delivery</a></li>
+      <li><a href="#s11">11. User Accounts</a></li>
+      <li><a href="#s12">12. Intellectual Property</a></li>
+      <li><a href="#s13">13. Prohibited Conduct</a></li>
+      <li><a href="#s14">14. Disclaimers</a></li>
+      <li><a href="#s15">15. Limitation of Liability</a></li>
+      <li><a href="#s16">16. Governing Law</a></li>
+      <li><a href="#s17">17. Changes to Terms</a></li>
+      <li><a href="#s18">18. Contact Us</a></li>
+    </ul>
+    <div class="sidebar-footer">
+      <p>Questions about our terms? Our team is here to help.</p>
+      <a href="mailto:hello@vendrix.in"><i class="fas fa-envelope"></i> hello@vendrix.in</a>
+    </div>
+  </aside>
+
+  <!-- CONTENT -->
+  <main class="tc-content">
+
+    <!-- Intro callout -->
+    <div class="callout reveal" style="margin-bottom:56px;">
+      <i class="fas fa-info-circle callout-icon"></i>
+      <p>Please read these Terms &amp; Conditions carefully before using any Vendrix service. By accessing our website, placing an order, selling a device, renting equipment, using our repair service or participating in our recycling program, <strong>you agree to be bound by these terms.</strong> If you do not agree, please discontinue use of our platform immediately.</p>
+    </div>
+
+    <!-- 1 -->
+    <section class="tc-section reveal" id="s1">
+      <div class="sec-badge"><span class="sec-badge-num">01</span><span class="sec-badge-label">Foundation</span></div>
+      <h2>Acceptance of <span class="og">Terms</span></h2>
+      <p>These Terms &amp; Conditions ("Terms") constitute a legally binding agreement between you ("User", "you", "your") and <strong>Vendrix Technologies Private Limited</strong> ("Vendrix", "we", "us", "our"), a company incorporated under the Companies Act, 2013, with its registered office at 14th Floor, Tower B, One BKC, Bandra Kurla Complex, Mumbai – 400 051, Maharashtra, India.</p>
+      <p>These Terms govern your use of the Vendrix website, mobile application, and all associated services including but not limited to buying, selling, renting, repairing, refurbishing and recycling technology products (collectively, the "Platform").</p>
+      <p>By clicking "I Agree", completing a purchase, submitting a sell request or otherwise using the Platform, you confirm that you have read, understood and agree to these Terms, together with our Privacy Policy and any other policies referenced herein.</p>
+    </section>
+
+    <!-- 2 -->
+    <section class="tc-section reveal" id="s2">
+      <div class="sec-badge"><span class="sec-badge-num">02</span><span class="sec-badge-label">Who Can Use Vendrix</span></div>
+      <h2>Eligibility</h2>
+      <p>To use the Vendrix Platform you must:</p>
+      <ul class="tc-list">
+        <li>Be at least <strong>18 years of age</strong>, or the age of majority in your state or territory of residence.</li>
+        <li>Be a resident of <strong>India</strong> and have a valid Indian delivery address.</li>
+        <li>Possess the legal capacity and authority to enter into a binding contract under the Indian Contract Act, 1872.</li>
+        <li>Not be barred from receiving services under any applicable law in India.</li>
+        <li>Provide accurate, current and complete registration and billing information.</li>
+      </ul>
+      <div class="callout callout-warn">
+        <i class="fas fa-exclamation-triangle callout-icon"></i>
+        <p>Users under the age of 18 may use the Platform only under direct supervision of a parent or legal guardian who agrees to these Terms on their behalf. Vendrix reserves the right to verify eligibility at any point and suspend accounts that do not meet these criteria.</p>
+      </div>
+    </section>
+
+    <!-- 3 -->
+    <section class="tc-section reveal" id="s3">
+      <div class="sec-badge"><span class="sec-badge-num">03</span><span class="sec-badge-label">What We Offer</span></div>
+      <h2>Our <span class="og">Services</span></h2>
+      <p>Vendrix operates a multi-service technology marketplace. The following services are currently available on the Platform:</p>
+      <table class="policy-table">
+        <thead>
+          <tr>
+            <th>Service</th>
+            <th>Description</th>
+            <th>Status</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>Buy</strong></td>
+            <td>Purchase new or certified pre-owned devices with 1-year warranty and 7-day returns.</td>
+            <td><span class="pill pill-green">Available</span></td>
+          </tr>
+          <tr>
+            <td><strong>Sell</strong></td>
+            <td>Sell your used devices with instant valuation, free pickup and 24-hour payment.</td>
+            <td><span class="pill pill-green">Available</span></td>
+          </tr>
+          <tr>
+            <td><strong>Rent</strong></td>
+            <td>Daily, weekly or monthly rentals for phones, laptops and cameras with insurance.</td>
+            <td><span class="pill pill-green">Available</span></td>
+          </tr>
+          <tr>
+            <td><strong>Repair</strong></td>
+            <td>Same-day certified repair service at authorised centres across India.</td>
+            <td><span class="pill pill-green">Available</span></td>
+          </tr>
+          <tr>
+            <td><strong>Recycle</strong></td>
+            <td>Responsible e-waste recycling with platform credits in return.</td>
+            <td><span class="pill pill-green">Available</span></td>
+          </tr>
+          <tr>
+            <td><strong>Refurbish</strong></td>
+            <td>Professional device restoration to near-new condition.</td>
+            <td><span class="pill pill-orange">Select Cities</span></td>
+          </tr>
+        </tbody>
+      </table>
+      <p>Vendrix reserves the right to modify, suspend or discontinue any service at any time with reasonable notice. Not all services are available in all cities. Availability is displayed at checkout and on each service page.</p>
+    </section>
+
+    <!-- 4 -->
+    <section class="tc-section reveal" id="s4">
+      <div class="sec-badge"><span class="sec-badge-num">04</span><span class="sec-badge-label">Transactions</span></div>
+      <h2>Buying &amp; <span class="og">Selling</span></h2>
+      <h3>Buying on Vendrix</h3>
+      <p>All devices listed for purchase on Vendrix are either <strong>brand new</strong> or <strong>certified pre-owned</strong>. Every pre-owned device listed on the Platform has passed our mandatory 50-point quality inspection and has been assigned a condition grade (Excellent, Good, Fair). The grade, visible on each product listing, reflects the cosmetic and functional condition of the device.</p>
+      <ul class="tc-list">
+        <li>All listed prices are <strong>inclusive of GST</strong> unless stated otherwise.</li>
+        <li>Product photographs and descriptions are representative of the condition grade, not the specific unit unless explicitly stated.</li>
+        <li>Vendrix reserves the right to cancel an order if a listed device is found to be unavailable, mispriced or fails a final pre-dispatch quality check. A full refund will be issued within 5 business days.</li>
+        <li>Title and risk of loss transfer to the buyer upon delivery and confirmation of receipt.</li>
+      </ul>
+      <h3>Selling to Vendrix</h3>
+      <p>When you submit a sell request, Vendrix will provide an <strong>indicative valuation</strong> based on the device details you provide. This is not a confirmed offer. The final buy price will be determined after physical inspection of the device at collection.</p>
+      <ul class="tc-list">
+        <li>You must be the <strong>lawful owner</strong> of any device you sell to Vendrix. Selling stolen, lost or encumbered devices is a criminal offence and will be reported to the appropriate authorities.</li>
+        <li>All data on a device must be backed up and the device must be <strong>factory reset</strong> before collection. Vendrix is not responsible for any data loss.</li>
+        <li>If the device presented at collection materially differs from your submission, Vendrix reserves the right to revise or withdraw the offer.</li>
+        <li>Payment will be made within <strong>24 hours</strong> of device acceptance via the method selected at the time of submission.</li>
+        <li>Accepted devices become the property of Vendrix upon collection. Returns of sold devices are not permitted after the final offer is accepted.</li>
+      </ul>
+    </section>
+
+    <!-- 5 -->
+    <section class="tc-section reveal" id="s5">
+      <div class="sec-badge"><span class="sec-badge-num">05</span><span class="sec-badge-label">Rental</span></div>
+      <h2>Rental <span class="og">Policy</span></h2>
+      <p>Vendrix offers short-term and long-term device rentals for phones, laptops and cameras. All rentals are governed by a separate Rental Agreement entered into at the time of booking, which forms part of these Terms.</p>
+      <ul class="tc-list">
+        <li><strong>Rental period</strong> commences on the date of delivery and ends on the agreed return date. Late returns will attract a per-day surcharge at the rate stated in your Rental Agreement.</li>
+        <li>A <strong>refundable security deposit</strong> is collected at the time of booking. The deposit amount varies by device and rental duration and is displayed before checkout.</li>
+        <li>All rental devices are insured against accidental damage up to the device's insured value. Damage beyond normal wear and tear, loss, or theft will result in deduction from the security deposit or additional charges as applicable.</li>
+        <li>You must return the device in the same condition it was delivered, with all original accessories, packaging and documentation provided.</li>
+        <li>You may not sub-rent, pledge, sell or otherwise transfer possession of a rented device to a third party.</li>
+        <li>Vendrix may remotely lock a rental device if it is not returned within 48 hours of the agreed return date.</li>
+      </ul>
+    </section>
+
+    <!-- 6 -->
+    <section class="tc-section reveal" id="s6">
+      <div class="sec-badge"><span class="sec-badge-num">06</span><span class="sec-badge-label">Repairs</span></div>
+      <h2>Repair <span class="og">Services</span></h2>
+      <p>Vendrix operates certified repair centres across India staffed by trained technicians using genuine or OEM-grade parts. By submitting a device for repair you agree to the following:</p>
+      <ul class="tc-list">
+        <li>A <strong>repair estimate</strong> will be provided before any work commences. You must approve the estimate before work begins. Approval may be provided in writing, via email, or on the app.</li>
+        <li>Vendrix is not responsible for any <strong>data loss</strong> during repair. Please back up all data before submitting your device.</li>
+        <li>All repairs carry a <strong>90-day service warranty</strong> covering the specific component repaired. This warranty does not cover physical damage caused after the repair or unrelated faults.</li>
+        <li>If a device is found to be beyond economical repair after inspection, you will be notified and may choose to retrieve the device or opt for our Recycle Program.</li>
+        <li>Uncollected devices will be held for a maximum of <strong>30 days</strong> after completion of repair. After this period, Vendrix reserves the right to recycle or dispose of the device.</li>
+        <li>Repair pricing is subject to parts availability. Vendrix will notify you of any change in estimate before proceeding.</li>
+      </ul>
+    </section>
+
+    <!-- 7 -->
+    <section class="tc-section reveal" id="s7">
+      <div class="sec-badge"><span class="sec-badge-num">07</span><span class="sec-badge-label">E-Waste</span></div>
+      <h2>Recycle <span class="og">Program</span></h2>
+      <p>Vendrix is committed to responsible e-waste management in accordance with India's E-Waste Management Rules, 2022. Our Recycle Program allows you to drop off or arrange pickup of devices that are no longer functional or economically repairable.</p>
+      <ul class="tc-list">
+        <li>By participating in the Recycle Program you confirm that you are the <strong>lawful owner</strong> of the device and grant Vendrix full authority to recycle, dismantle, or dispose of it in accordance with applicable environmental regulations.</li>
+        <li><strong>Vendrix Credits</strong> are issued upon acceptance of recycled devices. Credits are non-transferable, non-refundable and cannot be exchanged for cash. Credits expire 12 months from the date of issue.</li>
+        <li>Device data will be securely wiped before recycling. Vendrix shall not be liable for any residual data recovery by third parties.</li>
+        <li>Hazardous materials (batteries, displays, circuit boards) are disposed of through Vendrix's certified recycling partners in compliance with applicable law.</li>
+      </ul>
+    </section>
+
+    <!-- 8 -->
+    <section class="tc-section reveal" id="s8">
+      <div class="sec-badge"><span class="sec-badge-num">08</span><span class="sec-badge-label">Guarantee</span></div>
+      <h2>Warranty &amp; <span class="og">Returns</span></h2>
+      <h3>1-Year Warranty</h3>
+      <p>All devices purchased on Vendrix are backed by a <strong>1-year Vendrix Warranty</strong> covering functional defects. The warranty covers:</p>
+      <ul class="tc-list">
+        <li>Hardware failures not caused by physical damage, liquid damage or unauthorised tampering.</li>
+        <li>Battery health falling below 80% of rated capacity within the warranty period under normal usage conditions.</li>
+        <li>Software issues directly attributable to a hardware defect.</li>
+      </ul>
+      <p>The warranty <strong>does not cover</strong> cosmetic damage, cracked screens, water damage, damage from third-party repairs or modifications, or issues resulting from software misuse.</p>
+      <h3>7-Day Return Policy</h3>
+      <p>You may return a purchased device within <strong>7 calendar days</strong> of delivery if:</p>
+      <ul class="tc-list">
+        <li>The device is materially different from its listing description or condition grade.</li>
+        <li>The device has a functional defect that was not disclosed at the time of purchase.</li>
+        <li>The wrong device was delivered.</li>
+      </ul>
+      <div class="callout">
+        <i class="fas fa-undo callout-icon"></i>
+        <p>To initiate a return, contact <strong>support@vendrix.in</strong> or use the Returns portal in your account within 7 days of delivery. The device must be returned in its original condition with all accessories and packaging. Refunds will be processed within <strong>5–7 business days</strong> of receipt and inspection of the returned device.</p>
+      </div>
+      <p>Change-of-mind returns are not accepted. Vendrix reserves the right to reject a return if the device shows signs of damage or tampering post-delivery.</p>
+    </section>
+
+    <!-- 9 -->
+    <section class="tc-section reveal" id="s9">
+      <div class="sec-badge"><span class="sec-badge-num">09</span><span class="sec-badge-label">Billing</span></div>
+      <h2>Payments &amp; <span class="og">Pricing</span></h2>
+      <p>All prices on the Platform are listed in <strong>Indian Rupees (INR)</strong> and include applicable GST unless stated otherwise. Vendrix accepts the following payment methods:</p>
+      <ul class="tc-list">
+        <li>Credit and debit cards (Visa, Mastercard, RuPay)</li>
+        <li>UPI (all UPI-enabled apps)</li>
+        <li>Net banking (major Indian banks)</li>
+        <li>EMI (available on select orders above ₹5,000 from partner banks)</li>
+        <li>Vendrix Credits (up to 100% of order value where applicable)</li>
+      </ul>
+      <p>All payment transactions are processed through RBI-compliant payment gateways. Vendrix does not store card data on its servers. <strong>Cash on Delivery (COD)</strong> is not available for pre-owned devices.</p>
+      <p>In the event of a payment failure, your order will not be confirmed. If an amount is debited but the order is not confirmed, it will be automatically refunded within <strong>5–7 business days</strong>.</p>
+      <p>Vendrix reserves the right to correct pricing errors at any time. If a product is listed at an incorrect price due to a typographical error, Vendrix may cancel the order and issue a full refund.</p>
+    </section>
+
+    <!-- 10 -->
+    <section class="tc-section reveal" id="s10">
+      <div class="sec-badge"><span class="sec-badge-num">10</span><span class="sec-badge-label">Logistics</span></div>
+      <h2>Shipping &amp; <span class="og">Delivery</span></h2>
+      <p>Vendrix offers <strong>pan-India delivery</strong> to all pin codes serviceable by our logistics partners. Delivery timelines are estimates and not guarantees.</p>
+      <table class="policy-table">
+        <thead>
+          <tr><th>Delivery Type</th><th>Estimated Timeline</th><th>Charge</th></tr>
+        </thead>
+        <tbody>
+          <tr><td><strong>Standard Delivery</strong></td><td>2–4 business days</td><td>Free on orders above ₹5,000</td></tr>
+          <tr><td><strong>Express Delivery</strong></td><td>Next business day</td><td>₹199 – ₹399</td></tr>
+          <tr><td><strong>Same-Day Delivery</strong></td><td>Within 24 hours</td><td>Select cities only; charges apply</td></tr>
+          <tr><td><strong>Rental Delivery</strong></td><td>As per booking confirmation</td><td>Included in rental price</td></tr>
+          <tr><td><strong>Repair Pickup</strong></td><td>Within 24 hours of booking</td><td>Free within serviceable areas</td></tr>
+        </tbody>
+      </table>
+      <ul class="tc-list">
+        <li>All shipments are insured for their full declared value. In the event of loss or damage in transit, Vendrix will arrange a replacement or full refund.</li>
+        <li>You must inspect the package at the time of delivery. Any visible damage to the outer packaging should be noted on the delivery receipt before signing.</li>
+        <li>Vendrix is not responsible for delays caused by natural disasters, civil unrest, government restrictions, or other force majeure events.</li>
+        <li>Deliveries require an adult signature. If no one is available, our logistics partner will attempt re-delivery up to two times before returning the package.</li>
+      </ul>
+    </section>
+
+    <!-- 11 -->
+    <section class="tc-section reveal" id="s11">
+      <div class="sec-badge"><span class="sec-badge-num">11</span><span class="sec-badge-label">Accounts</span></div>
+      <h2>User <span class="og">Accounts</span></h2>
+      <p>You must create a Vendrix account to complete most transactions. By creating an account you agree to:</p>
+      <ul class="tc-list">
+        <li>Provide accurate, current and complete information during registration and keep it up to date.</li>
+        <li>Maintain the <strong>confidentiality of your password</strong> and not share access credentials with any third party.</li>
+        <li>Notify Vendrix immediately at <a href="mailto:support@vendrix.in">support@vendrix.in</a> if you become aware of any unauthorised use of your account.</li>
+        <li>Accept responsibility for all activity that occurs under your account, whether or not authorised by you.</li>
+      </ul>
+      <p>Vendrix reserves the right to suspend or permanently terminate accounts that violate these Terms, engage in fraudulent activity, or provide false information. Upon termination, all pending orders will be cancelled and refunds processed as applicable.</p>
+    </section>
+
+    <!-- 12 -->
+    <section class="tc-section reveal" id="s12">
+      <div class="sec-badge"><span class="sec-badge-num">12</span><span class="sec-badge-label">IP Rights</span></div>
+      <h2>Intellectual <span class="og">Property</span></h2>
+      <p>All content on the Vendrix Platform — including but not limited to text, graphics, logos, icons, images, product descriptions, software and the overall look and feel of the website — is the exclusive property of <strong>Vendrix Technologies Private Limited</strong> or its licensors and is protected by applicable Indian and international copyright, trademark and intellectual property laws.</p>
+      <p>You are granted a limited, non-exclusive, non-transferable, revocable licence to access and use the Platform strictly for personal, non-commercial purposes. You may not:</p>
+      <ul class="tc-list">
+        <li>Copy, reproduce, republish, upload, post, transmit or distribute any Platform content without prior written consent from Vendrix.</li>
+        <li>Use the Vendrix name, logo or branding in any manner that implies endorsement or affiliation without written permission.</li>
+        <li>Reverse-engineer, decompile or attempt to extract the source code of any software on the Platform.</li>
+        <li>Use automated tools (bots, scrapers, crawlers) to collect data from the Platform.</li>
+      </ul>
+    </section>
+
+    <!-- 13 -->
+    <section class="tc-section reveal" id="s13">
+      <div class="sec-badge"><span class="sec-badge-num">13</span><span class="sec-badge-label">Rules</span></div>
+      <h2>Prohibited <span class="og">Conduct</span></h2>
+      <p>You agree not to use the Vendrix Platform to:</p>
+      <ul class="tc-list">
+        <li>Sell, attempt to sell, or submit for recycling any device that is <strong>stolen, lost or subject to a finance agreement</strong> you do not have authority to discharge.</li>
+        <li>Provide false, misleading or fraudulent information in any form, including device condition, identity or payment details.</li>
+        <li>Interfere with, disrupt or attempt to gain unauthorised access to the Platform or its underlying infrastructure.</li>
+        <li>List, sell or rent counterfeit or non-genuine devices.</li>
+        <li>Engage in price manipulation, review fraud or any other deceptive marketplace practice.</li>
+        <li>Violate any applicable Indian law, including the IT Act 2000, Consumer Protection Act 2019, or E-Waste Management Rules 2022.</li>
+      </ul>
+      <div class="callout callout-warn">
+        <i class="fas fa-gavel callout-icon"></i>
+        <p>Violations of this section may result in immediate account termination, reversal of transactions, and referral to law enforcement authorities. Vendrix cooperates fully with investigations by Indian police, the Enforcement Directorate and other regulatory bodies.</p>
+      </div>
+    </section>
+
+    <!-- 14 -->
+    <section class="tc-section reveal" id="s14">
+      <div class="sec-badge"><span class="sec-badge-num">14</span><span class="sec-badge-label">Disclaimers</span></div>
+      <h2>Disclaimers &amp; <span class="og">Limitations</span></h2>
+      <p>The Vendrix Platform is provided on an <strong>"as is" and "as available"</strong> basis. While we strive for accuracy and reliability, Vendrix does not warrant that:</p>
+      <ul class="tc-list">
+        <li>The Platform will be uninterrupted, error-free or completely secure at all times.</li>
+        <li>Product listings are free from typographical errors (in which case we reserve the right to correct them).</li>
+        <li>Third-party brand names or logos displayed on the Platform indicate an official partnership or endorsement unless expressly stated.</li>
+      </ul>
+      <p>Device specifications, brand names and trademarks (Apple, Samsung, OnePlus, HP, Lenovo, Sony, JBL, Garmin, Canon, etc.) are the property of their respective owners and are referenced for identification purposes only. Vendrix is an independent reseller and is not an authorised dealer or service centre for any of these brands unless explicitly stated.</p>
+    </section>
+
+    <!-- 15 -->
+    <section class="tc-section reveal" id="s15">
+      <div class="sec-badge"><span class="sec-badge-num">15</span><span class="sec-badge-label">Liability</span></div>
+      <h2>Limitation of <span class="og">Liability</span></h2>
+      <p>To the maximum extent permitted by applicable Indian law, Vendrix, its directors, employees, agents and partners shall not be liable for:</p>
+      <ul class="tc-list">
+        <li>Any <strong>indirect, incidental, special, consequential or punitive damages</strong>, including loss of profits, data or goodwill arising out of your use of the Platform or our services.</li>
+        <li>Loss or corruption of data stored on a device submitted for repair or recycling.</li>
+        <li>Delays in delivery or service caused by third-party logistics providers or force majeure events.</li>
+        <li>Damage caused by reliance on any information, product description or advice provided on the Platform that is not expressly confirmed in writing by a Vendrix representative.</li>
+      </ul>
+      <p>In any event, Vendrix's total aggregate liability to you for any claim arising out of or related to these Terms or our services shall not exceed the <strong>total amount you paid</strong> for the specific transaction giving rise to the claim in the 12 months preceding the claim.</p>
+      <p>Nothing in these Terms limits liability for death or personal injury caused by Vendrix's negligence, fraud or fraudulent misrepresentation, or any liability that cannot be excluded under applicable law.</p>
+    </section>
+
+    <!-- 16 -->
+    <section class="tc-section reveal" id="s16">
+      <div class="sec-badge"><span class="sec-badge-num">16</span><span class="sec-badge-label">Legal</span></div>
+      <h2>Governing Law &amp; <span class="og">Disputes</span></h2>
+      <p>These Terms shall be governed by and construed in accordance with the laws of <strong>India</strong>. Any disputes arising out of or in connection with these Terms shall be subject to the exclusive jurisdiction of the courts in <strong>Mumbai, Maharashtra</strong>.</p>
+      <p>Before initiating formal legal proceedings, both parties agree to attempt to resolve any dispute in good faith through direct negotiation. If a dispute cannot be resolved within 30 days, either party may pursue resolution through arbitration under the Arbitration and Conciliation Act, 1996, with a sole arbitrator appointed by mutual agreement. The arbitration shall be conducted in English in Mumbai.</p>
+      <p>For consumer disputes, you also have the right to approach the appropriate Consumer Disputes Redressal Forum under the <strong>Consumer Protection Act, 2019</strong>. Our Grievance Officer is available at <a href="mailto:grievance@vendrix.in">grievance@vendrix.in</a>.</p>
+    </section>
+
+    <!-- 17 -->
+    <section class="tc-section reveal" id="s17">
+      <div class="sec-badge"><span class="sec-badge-num">17</span><span class="sec-badge-label">Updates</span></div>
+      <h2>Changes to <span class="og">Terms</span></h2>
+      <p>Vendrix may update these Terms at any time to reflect changes in our services, applicable law or business practices. When we make material changes, we will:</p>
+      <ul class="tc-list">
+        <li>Update the <strong>"Effective Date"</strong> at the top of this page.</li>
+        <li>Send a notification to your registered email address at least <strong>14 days</strong> before the changes take effect.</li>
+        <li>Display a prominent notice on the Platform for at least 14 days following the update.</li>
+      </ul>
+      <p>Your continued use of the Platform after the effective date of any updated Terms constitutes your acceptance of the revised Terms. If you do not agree with any changes, please discontinue using the Platform and contact us to close your account.</p>
+    </section>
+
+    <!-- 18 -->
+    <section class="tc-section reveal" id="s18">
+      <div class="sec-badge"><span class="sec-badge-num">18</span><span class="sec-badge-label">Reach Out</span></div>
+      <h2>Contact <span class="og">Us</span></h2>
+      <p>If you have any questions, concerns or complaints regarding these Terms or our services, please reach out to us through any of the following channels:</p>
+      <table class="policy-table">
+        <thead><tr><th>Purpose</th><th>Contact</th></tr></thead>
+        <tbody>
+          <tr><td><strong>General Enquiries</strong></td><td><a href="mailto:hello@vendrix.in" style="color:var(--orange)">hello@vendrix.in</a></td></tr>
+          <tr><td><strong>Order Support</strong></td><td><a href="mailto:support@vendrix.in" style="color:var(--orange)">support@vendrix.in</a></td></tr>
+          <tr><td><strong>Legal &amp; Compliance</strong></td><td><a href="mailto:legal@vendrix.in" style="color:var(--orange)">legal@vendrix.in</a></td></tr>
+          <tr><td><strong>Grievance Officer</strong></td><td><a href="mailto:grievance@vendrix.in" style="color:var(--orange)">grievance@vendrix.in</a></td></tr>
+          <tr><td><strong>Press &amp; Media</strong></td><td><a href="mailto:press@vendrix.in" style="color:var(--orange)">press@vendrix.in</a></td></tr>
+          <tr><td><strong>Sales Helpline</strong></td><td><a href="tel:+919820955122">+91 9820955122</a></td></tr>
+          <tr><td><strong>Repair Helpline</strong></td><td><a href="tel:+919820355122">+91 9820355122</a></td></tr>
+          <tr><td><strong>Registered Office</strong></td><td>14th Floor, Tower B, One BKC, Bandra Kurla Complex, Mumbai – 400 051, Maharashtra</td></tr>
+        </tbody>
+      </table>
+      <p>We aim to respond to all enquiries within <strong>2 business days</strong>. Our team is available Monday to Saturday 9 AM – 8 PM IST, Sunday 10 AM – 6 PM IST, with 24/7 chat support available through the Platform.</p>
+    </section>
+
+  </main>
+</div>
+
+<!-- CTA -->
+<section class="cta-strip">
+  <div class="cta-strip-glow"></div>
+  <div class="cta-strip-inner">
+    <div class="reveal">
+      <h2>Ready to experience<br><span class="og">smarter tech?</span></h2>
+      <p>Shop certified devices, sell your old ones, or get your gadgets repaired — all in one place, backed by India's strongest guarantee.</p>
+    </div>
+    <div class="cta-actions reveal reveal-d1">
+      <a href="#" class="btn-fill">Shop Now <i class="fas fa-arrow-right"></i></a>
+      <a href="#" class="btn-ghost">Sell Your Device <i class="fas fa-arrow-right"></i></a>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-top">
+    <div>
+      <a href="#" class="footer-logo">Vend<span style="color:var(--orange)">r</span>ix</a>
+      <div class="footer-about">Premium tech for modern professionals. Every device certified, tested &amp; guaranteed — delivered fast across India.</div>
+      <div class="footer-socials">
+        <a href="#" class="fsoc"><i class="fab fa-instagram"></i></a>
+        <a href="#" class="fsoc"><i class="fab fa-twitter"></i></a>
+        <a href="#" class="fsoc"><i class="fab fa-facebook-f"></i></a>
+        <a href="#" class="fsoc"><i class="fab fa-youtube"></i></a>
+      </div>
+    </div>
+    <div>
+      <div class="footer-col-title">Company</div>
+      <a href="#" class="footer-link">About Us</a>
+      <a href="#" class="footer-link">Careers</a>
+      <a href="#" class="footer-link">Press</a>
+      <a href="#" class="footer-link">Blog</a>
+      <a href="#" class="footer-link">Store Locator</a>
+    </div>
+    <div>
+      <div class="footer-col-title">Support</div>
+      <a href="#" class="footer-link">Shipping Info</a>
+      <a href="#" class="footer-link">Returns &amp; Refunds</a>
+      <a href="#" class="footer-link">Warranty Policy</a>
+      <a href="#" class="footer-link">Track My Order</a>
+      <a href="#" class="footer-link">Contact Us</a>
+    </div>
+    <div>
+      <div class="footer-col-title">Services</div>
+      <a href="#" class="footer-link">Buy Devices</a>
+      <a href="#" class="footer-link">Sell Your Device</a>
+      <a href="#" class="footer-link">Rent Tech</a>
+      <a href="#" class="footer-link">Expert Repair</a>
+      <a href="#" class="footer-link">Recycle Program</a>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <span>© 2026 Vendrix Technologies Pvt. Ltd. All rights reserved.</span>
+    <div class="footer-bottom-right">
+      <a href="#">Privacy Policy</a>
+      <a href="#" style="color:var(--orange)">Terms of Use</a>
+      <a href="#">Cookie Policy</a>
+    </div>
+  </div>
+</footer>
+
+<script>
+/* CURSOR */
+var dot = document.getElementById('cur-dot');
+var ring = document.getElementById('cur-ring');
+var mx = 0, my = 0, rx = 0, ry = 0;
+document.addEventListener('mousemove', function(e) { mx = e.clientX; my = e.clientY; });
+(function loop() {
+  rx += (mx - rx) * 0.15;
+  ry += (my - ry) * 0.15;
+  dot.style.left = mx + 'px'; dot.style.top = my + 'px';
+  ring.style.left = rx + 'px'; ring.style.top = ry + 'px';
+  requestAnimationFrame(loop);
+})();
+
+/* REVEAL */
+var obs = new IntersectionObserver(function(entries) {
+  entries.forEach(function(e) { if (e.isIntersecting) e.target.classList.add('visible'); });
+}, { threshold: 0.08 });
+document.querySelectorAll('.reveal').forEach(function(el) { obs.observe(el); });
+
+/* TOC ACTIVE TRACKING */
+var sections = document.querySelectorAll('.tc-section');
+var tocLinks = document.querySelectorAll('.toc-list a');
+var io = new IntersectionObserver(function(entries) {
+  entries.forEach(function(entry) {
+    if (entry.isIntersecting) {
+      tocLinks.forEach(function(a) { a.classList.remove('active'); });
+      var link = document.querySelector('.toc-list a[href="#' + entry.target.id + '"]');
+      if (link) link.classList.add('active');
+    }
+  });
+}, { rootMargin: '-20% 0px -70% 0px' });
+sections.forEach(function(s) { io.observe(s); });
+</script>
+</body>
+</html>

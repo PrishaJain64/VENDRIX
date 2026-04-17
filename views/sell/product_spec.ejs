@@ -40,7 +40,7 @@
   <a href="#" class="logo">Vend<span class="accent">r</span>ix</a>
   <%- include('../partials/navbar.ejs') %>
   <div class="nav-right">
-    <a href="#" class="nav-about">About Us</a>
+    <a href="/vendrix/aboutUs" class="nav-about">About Us</a>
     <%if(currentUser){%>
       <a href="/vendrix/profile"><span class="reviewer-avatar"><%=currentUser.firstname.slice(0,1)%></span></a>
     <%}else{%>

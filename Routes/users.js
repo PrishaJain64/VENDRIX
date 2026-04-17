@@ -157,4 +157,13 @@ router.post("/updateName",isLoggedIn,upload.none(),async(req,res)=>{
     await req.user.save();
     res.json({valid:true});
 })
+
+router.get("/aboutUs",(req,res)=>{
+    res.render("vendrix/aboutus.ejs")
+})
+
+router.get("/toc",(req,res)=>{
+    res.render("vendrix/toc.ejs")
+})
+
 module.exports=router;

@@ -1,0 +1,1067 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>About Us — Vendrix</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Syne:wght@400;500;600;700;800&family=Manrope:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<style>
+/* ═══ TOKENS ═══ */
+:root {
+  --black:    #000000;
+  --black2:   #080808;
+  --black3:   #0f0f0f;
+  --black4:   #161616;
+  --black5:   #1e1e1e;
+  --black6:   #282828;
+  --orange:   #ff6200;
+  --orange2:  #ff7c00;
+  --orange3:  #e55500;
+  --og:       rgba(255,98,0,0.18);
+  --og-dim:   rgba(255,98,0,0.07);
+  --og-glow:  rgba(255,98,0,0.40);
+  --white:    #ffffff;
+  --white85:  rgba(255,255,255,0.85);
+  --white55:  rgba(255,255,255,0.55);
+  --white30:  rgba(255,255,255,0.30);
+  --white12:  rgba(255,255,255,0.12);
+  --white06:  rgba(255,255,255,0.06);
+  --white03:  rgba(255,255,255,0.03);
+  --border:   rgba(255,98,0,0.22);
+  --border-w: rgba(255,255,255,0.08);
+  --nav-h:    66px;
+  --radius:   12px;
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+body {
+  font-family: 'Manrope', sans-serif;
+  background: var(--black2);
+  color: var(--white85);
+  overflow-x: hidden;
+  cursor: none;
+}
+
+/* ═══ CURSOR ═══ */
+#cur-dot {
+  width: 6px; height: 6px;
+  background: var(--orange); border-radius: 50%;
+  position: fixed; z-index: 9999; pointer-events: none;
+  transform: translate(-50%, -50%);
+}
+#cur-ring {
+  width: 32px; height: 32px;
+  border: 1.5px solid var(--orange); border-radius: 50%;
+  position: fixed; z-index: 9998; pointer-events: none;
+  transform: translate(-50%, -50%);
+  transition: width 0.25s, height 0.25s, opacity 0.25s;
+  opacity: 0.5;
+}
+body:hover #cur-ring { opacity: 1; }
+
+/* ═══ TOPBAR ═══ */
+.topbar {
+  background: var(--black);
+  height: 32px; overflow: hidden;
+  border-bottom: 1px solid var(--border-w);
+}
+.topbar-track {
+  display: flex; gap: 48px; align-items: center;
+  height: 100%; white-space: nowrap;
+  animation: scroll-left 28s linear infinite;
+}
+.topbar-item {
+  font-size: 11px; font-weight: 500;
+  letter-spacing: 0.08em; text-transform: uppercase;
+  color: var(--white55);
+}
+.topbar-item::before {
+  content: '\2736'; margin-right: 20px;
+  color: var(--orange); font-size: 8px;
+}
+@keyframes scroll-left {
+  0%   { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
+}
+
+/* ═══ NAVBAR ═══ */
+.navbar {
+  position: sticky; top: 0; z-index: 900;
+  height: var(--nav-h);
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 0 40px;
+  background: rgba(8,8,8,0.88);
+  backdrop-filter: blur(18px);
+  border-bottom: 1px solid var(--border-w);
+}
+.logo {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 28px; letter-spacing: 0.05em;
+  color: var(--white); text-decoration: none;
+}
+.logo .accent { color: var(--orange); }
+.nav-right { display: flex; align-items: center; gap: 20px; }
+.nav-icon {
+  color: var(--white55); font-size: 16px;
+  text-decoration: none; transition: color 0.2s;
+}
+.nav-icon:hover { color: var(--orange); }
+/* FIX 1: Cart removed. About Us styled as active page indicator */
+.nav-about {
+  font-size: 13px; font-weight: 600;
+  color: var(--orange); text-decoration: none;
+  letter-spacing: 0.04em;
+  border-bottom: 1px solid var(--border);
+  padding-bottom: 2px;
+}
+
+/* ═══ HERO ═══ */
+.about-hero {
+  min-height: 92vh;
+  display: flex; align-items: center;
+  position: relative; overflow: hidden;
+  padding: 100px 80px 160px;
+  background: var(--black2);
+}
+.hero-noise {
+  position: absolute; inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.035'/%3E%3C/svg%3E");
+  background-size: 180px; pointer-events: none; opacity: 0.5;
+}
+.hero-orb {
+  position: absolute; border-radius: 50%; pointer-events: none;
+  background: radial-gradient(circle, rgba(255,98,0,0.12) 0%, transparent 70%);
+  width: 700px; height: 700px; top: -200px; right: -100px;
+}
+.hero-orb2 {
+  position: absolute; border-radius: 50%; pointer-events: none;
+  background: radial-gradient(circle, rgba(255,98,0,0.06) 0%, transparent 70%);
+  width: 400px; height: 400px; bottom: -100px; left: 100px;
+}
+.about-hero-inner { position: relative; z-index: 2; max-width: 780px; }
+.hero-eyebrow {
+  display: flex; align-items: center; gap: 14px; margin-bottom: 28px;
+}
+.hero-eyebrow-line { display: block; width: 36px; height: 2px; background: var(--orange); }
+.hero-eyebrow span:last-child {
+  font-size: 11px; font-weight: 600;
+  letter-spacing: 0.14em; text-transform: uppercase; color: var(--orange);
+}
+.about-hero h1 {
+  font-family: 'Syne', sans-serif;
+  font-size: clamp(52px, 8vw, 96px);
+  font-weight: 800; line-height: 1.0; color: var(--white); margin-bottom: 32px;
+}
+.about-hero h1 .og  { color: var(--orange); }
+.about-hero h1 .dim { color: var(--white30); }
+.hero-lead {
+  font-size: 18px; line-height: 1.75; color: var(--white55);
+  max-width: 580px; margin-bottom: 48px;
+}
+.hero-lead strong { color: var(--white85); font-weight: 600; }
+.hero-actions { display: flex; gap: 16px; flex-wrap: wrap; }
+
+.btn-fill {
+  display: inline-flex; align-items: center; gap: 10px;
+  background: var(--orange); color: var(--white);
+  font-size: 14px; font-weight: 600;
+  padding: 14px 28px; border-radius: 10px; text-decoration: none;
+  transition: background 0.2s, transform 0.15s;
+}
+.btn-fill:hover { background: var(--orange2); transform: translateY(-2px); }
+.btn-ghost {
+  display: inline-flex; align-items: center; gap: 10px;
+  border: 1px solid var(--border-w); color: var(--white55);
+  font-size: 14px; font-weight: 500;
+  padding: 14px 28px; border-radius: 10px; text-decoration: none;
+  transition: border-color 0.2s, color 0.2s, transform 0.15s;
+}
+.btn-ghost:hover { border-color: var(--orange); color: var(--orange); transform: translateY(-2px); }
+
+.hero-stats-bar {
+  position: absolute; bottom: 0; left: 0; right: 0;
+  display: grid; grid-template-columns: repeat(4,1fr);
+  border-top: 1px solid var(--border-w);
+  background: rgba(8,8,8,0.7); backdrop-filter: blur(12px);
+}
+.hstat {
+  padding: 28px 32px; border-right: 1px solid var(--border-w);
+  transition: background 0.2s;
+}
+.hstat:last-child { border-right: none; }
+.hstat:hover { background: var(--og-dim); }
+.hstat-num {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 40px; letter-spacing: 0.04em;
+  color: var(--orange); line-height: 1; margin-bottom: 6px;
+}
+.hstat-label {
+  font-size: 12px; font-weight: 500;
+  letter-spacing: 0.08em; text-transform: uppercase; color: var(--white30);
+}
+
+/* ═══ SECTION COMMON ═══ */
+.sec { padding: 96px 80px; }
+.sec-alt  { background: var(--black3); }
+.sec-dark { background: var(--black4); }
+
+.sec-label {
+  display: flex; align-items: center; gap: 12px;
+  font-size: 11px; font-weight: 600;
+  letter-spacing: 0.14em; text-transform: uppercase;
+  color: var(--orange); margin-bottom: 16px;
+}
+.sec-label-line {
+  display: block; width: 28px; height: 1.5px;
+  background: var(--orange);
+}
+.sec-heading {
+  font-family: 'Syne', sans-serif;
+  font-size: clamp(32px, 4vw, 52px);
+  font-weight: 800; line-height: 1.1; color: var(--white); margin-bottom: 16px;
+}
+.sec-heading .og  { color: var(--orange); }
+.sec-heading .dim { color: var(--white30); }
+.sec-sub {
+  font-size: 16px; line-height: 1.75; color: var(--white55); max-width: 560px;
+}
+
+/* ═══ STORY ═══ */
+.story-grid {
+  display: grid; grid-template-columns: 1fr 1fr;
+  gap: 80px; align-items: center; margin-top: 64px;
+}
+.story-img { position: relative; }
+.story-img-inner {
+  width: 100%; aspect-ratio: 4/3;
+  border-radius: 16px; overflow: hidden; border: 1px solid var(--border-w);
+}
+.story-img-inner img {
+  width: 100%; height: 100%; object-fit: cover; transition: transform 0.6s;
+}
+.story-img-inner:hover img { transform: scale(1.04); }
+.story-badge {
+  position: absolute; bottom: -20px; left: -20px;
+  background: var(--orange);
+  padding: 20px 24px; border-radius: 12px;
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 32px; letter-spacing: 0.04em; color: var(--white); line-height: 1;
+  box-shadow: 0 8px 32px rgba(255,98,0,0.35);
+}
+.story-badge span {
+  display: block; font-family: 'Manrope', sans-serif;
+  font-size: 11px; font-weight: 600; letter-spacing: 0.1em;
+  text-transform: uppercase; color: rgba(255,255,255,0.7); margin-top: 4px;
+}
+.story-text h3 {
+  font-family: 'Syne', sans-serif;
+  font-size: 28px; font-weight: 700; color: var(--white);
+  margin-bottom: 20px; line-height: 1.25;
+}
+.story-text p { font-size: 15px; line-height: 1.85; color: var(--white55); margin-bottom: 20px; }
+.story-text p strong { color: var(--white85); font-weight: 600; }
+.story-divider { width: 48px; height: 2px; background: var(--orange); margin: 28px 0; }
+
+/* ═══ MISSION ═══ */
+.mission-grid {
+  display: grid; grid-template-columns: repeat(3,1fr);
+  gap: 24px; margin-top: 56px;
+}
+.mission-card {
+  background: var(--black5); border: 1px solid var(--border-w);
+  border-radius: 16px; padding: 36px 32px;
+  position: relative; overflow: hidden;
+  transition: border-color 0.3s, transform 0.3s;
+}
+.mission-card::before {
+  content: ''; position: absolute; inset: 0;
+  background: var(--og-dim); opacity: 0; transition: opacity 0.3s;
+}
+.mission-card:hover { border-color: var(--border); transform: translateY(-4px); }
+.mission-card:hover::before { opacity: 1; }
+.mission-card-num {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 64px; letter-spacing: 0.04em;
+  color: var(--white06); line-height: 1;
+  position: absolute; top: 20px; right: 24px; transition: color 0.3s;
+}
+.mission-card:hover .mission-card-num { color: var(--og); }
+.mission-icon {
+  width: 48px; height: 48px; background: var(--og);
+  border-radius: 12px; display: flex; align-items: center; justify-content: center;
+  font-size: 20px; color: var(--orange); margin-bottom: 24px; border: 1px solid var(--border);
+}
+.mission-card h4 {
+  font-family: 'Syne', sans-serif; font-size: 20px; font-weight: 700;
+  color: var(--white); margin-bottom: 12px;
+}
+.mission-card p { font-size: 14px; line-height: 1.8; color: var(--white55); }
+
+/* ═══ VALUES ═══ */
+.values-wrap {
+  display: grid; grid-template-columns: 380px 1fr;
+  gap: 80px; align-items: start; margin-top: 64px;
+}
+/* FIX 3: padding-left added so the orange ::before side bar is visible */
+.value-list { display: flex; flex-direction: column; gap: 0; padding-left: 28px; }
+.value-item {
+  padding: 28px 0; border-bottom: 1px solid var(--border-w);
+  cursor: pointer; transition: padding-left 0.3s; position: relative;
+}
+.value-item::before {
+  content: ''; position: absolute; left: -28px; top: 0; bottom: 0;
+  width: 2px; background: var(--orange);
+  transform: scaleY(0); transition: transform 0.3s; transform-origin: top;
+}
+.value-item.active { padding-left: 12px; }
+.value-item.active::before { transform: scaleY(1); }
+.value-num {
+  font-size: 10px; font-weight: 700;
+  letter-spacing: 0.15em; text-transform: uppercase; color: var(--orange); margin-bottom: 8px;
+}
+.value-name {
+  font-family: 'Syne', sans-serif; font-size: 20px; font-weight: 700;
+  color: var(--white55); transition: color 0.3s;
+}
+.value-item.active .value-name { color: var(--white); }
+.value-display {
+  background: var(--black5); border: 1px solid var(--border-w);
+  border-radius: 20px; padding: 48px; min-height: 360px;
+  display: flex; flex-direction: column; justify-content: center;
+  position: relative; overflow: hidden;
+}
+.value-display::before {
+  content: ''; position: absolute; top: -60px; right: -60px;
+  width: 200px; height: 200px; border-radius: 50%;
+  background: radial-gradient(circle, var(--og-glow) 0%, transparent 70%);
+  pointer-events: none;
+}
+.vd-icon { font-size: 40px; color: var(--orange); margin-bottom: 28px; }
+.vd-title { font-family: 'Syne', sans-serif; font-size: 28px; font-weight: 800; color: var(--white); margin-bottom: 16px; }
+.vd-desc { font-size: 15px; line-height: 1.85; color: var(--white55); max-width: 400px; }
+
+/* ═══ SERVICES ═══ */
+.services-grid {
+  display: grid; grid-template-columns: repeat(3,1fr);
+  gap: 2px; margin-top: 56px;
+  border: 1px solid var(--border-w); border-radius: 16px; overflow: hidden;
+}
+.svc-item {
+  background: var(--black5); padding: 40px 32px;
+  border-right: 1px solid var(--border-w);
+  position: relative; overflow: hidden; transition: background 0.3s;
+}
+/* FIX 4: nth-child(3n) removes right border on every 3rd item, not just :last-child */
+.svc-item:nth-child(3n) { border-right: none; }
+.svc-item:hover { background: var(--black6); }
+.svc-item::after {
+  content: ''; position: absolute; bottom: 0; left: 0; right: 0;
+  height: 2px; background: var(--orange);
+  transform: scaleX(0); transition: transform 0.35s; transform-origin: left;
+}
+.svc-item:hover::after { transform: scaleX(1); }
+.svc-icon-wrap {
+  width: 52px; height: 52px; background: var(--og-dim);
+  border: 1px solid var(--border); border-radius: 14px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 22px; color: var(--orange); margin-bottom: 20px;
+}
+.svc-item h4 { font-family: 'Syne', sans-serif; font-size: 18px; font-weight: 700; color: var(--white); margin-bottom: 10px; }
+.svc-item p  { font-size: 13px; line-height: 1.8; color: var(--white55); }
+
+/* ═══ TEAM ═══ */
+.team-grid {
+  display: grid; grid-template-columns: repeat(4,1fr);
+  gap: 24px; margin-top: 56px;
+}
+.team-card {
+  background: var(--black5); border: 1px solid var(--border-w);
+  border-radius: 16px; overflow: hidden;
+  transition: border-color 0.3s, transform 0.3s;
+}
+.team-card:hover { border-color: var(--border); transform: translateY(-6px); }
+.team-img { width: 100%; aspect-ratio: 3/2; overflow: hidden; background: var(--black6); }
+.team-img-placeholder {
+  width: 100%; height: 100%;
+  display: flex; align-items: center; justify-content: center;
+  font-family: 'Bebas Neue', sans-serif; font-size: 48px;
+  color: var(--orange); background: var(--og-dim);
+}
+.team-body { padding: 20px; }
+.team-name { font-family: 'Syne', sans-serif; font-size: 16px; font-weight: 700; color: var(--white); margin-bottom: 4px; }
+.team-role { font-size: 12px; font-weight: 500; letter-spacing: 0.08em; text-transform: uppercase; color: var(--orange); margin-bottom: 12px; }
+.team-socials { display: flex; gap: 10px; }
+.team-soc {
+  width: 30px; height: 30px; border: 1px solid var(--border-w); border-radius: 6px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 12px; color: var(--white55); text-decoration: none;
+  transition: border-color 0.2s, color 0.2s;
+}
+.team-soc:hover { border-color: var(--orange); color: var(--orange); }
+
+/* ═══ TIMELINE ═══ */
+.timeline { position: relative; margin-top: 64px; }
+.timeline-line {
+  position: absolute; left: 50%; top: 0; bottom: 0;
+  width: 1px; background: var(--border-w); transform: translateX(-50%);
+}
+.tl-item {
+  display: grid; grid-template-columns: 1fr 60px 1fr;
+  align-items: start; margin-bottom: 56px;
+}
+.tl-left { text-align: right; padding-right: 32px; }
+.tl-right { padding-left: 32px; }
+.tl-dot {
+  width: 14px; height: 14px; background: var(--orange); border-radius: 50%;
+  margin: 6px auto; box-shadow: 0 0 0 4px var(--og);
+}
+.tl-year { font-family: 'Bebas Neue', sans-serif; font-size: 28px; letter-spacing: 0.06em; color: var(--orange); margin-bottom: 6px; }
+.tl-title { font-family: 'Syne', sans-serif; font-size: 18px; font-weight: 700; color: var(--white); margin-bottom: 8px; }
+.tl-desc { font-size: 13px; line-height: 1.75; color: var(--white55); }
+
+/* ═══ CONTACT / COMPANY INFO ═══ */
+.contact-grid {
+  display: grid; grid-template-columns: 1fr 1fr;
+  gap: 60px; align-items: start; margin-top: 56px;
+}
+.contact-info-block { display: flex; flex-direction: column; gap: 20px; }
+.contact-row {
+  display: flex; align-items: flex-start; gap: 20px;
+  background: var(--black5); border: 1px solid var(--border-w);
+  border-radius: 14px; padding: 24px 28px;
+  transition: border-color 0.3s, transform 0.2s;
+}
+.contact-row:hover { border-color: var(--border); transform: translateX(4px); }
+.contact-row-icon {
+  width: 44px; height: 44px; flex-shrink: 0;
+  background: var(--og); border: 1px solid var(--border); border-radius: 12px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 18px; color: var(--orange);
+}
+.contact-row-label {
+  font-size: 10px; font-weight: 700; letter-spacing: 0.14em;
+  text-transform: uppercase; color: var(--white30); margin-bottom: 6px;
+}
+.contact-row-value {
+  font-size: 14px; font-weight: 500; color: var(--white85); line-height: 1.7;
+}
+.contact-row-value a { color: var(--orange); text-decoration: none; }
+.contact-row-value a:hover { text-decoration: underline; }
+
+.company-card {
+  background: var(--black5); border: 1px solid var(--border-w);
+  border-radius: 20px; padding: 40px;
+  position: relative; overflow: hidden;
+}
+.company-card::before {
+  content: ''; position: absolute; top: -80px; right: -80px;
+  width: 220px; height: 220px; border-radius: 50%;
+  background: radial-gradient(circle, var(--og-glow) 0%, transparent 70%);
+  pointer-events: none;
+}
+.company-card-logo {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 36px; letter-spacing: 0.05em; color: var(--white); margin-bottom: 8px;
+}
+.company-card-logo span { color: var(--orange); }
+.company-card-tagline {
+  font-size: 13px; color: var(--white30); margin-bottom: 28px;
+  line-height: 1.6; max-width: 320px;
+}
+.company-divider { width: 40px; height: 1.5px; background: var(--orange); margin-bottom: 28px; }
+.company-detail-row {
+  display: flex; justify-content: space-between; align-items: center;
+  padding: 13px 0; border-bottom: 1px solid var(--border-w);
+}
+.company-detail-row:last-child { border-bottom: none; padding-bottom: 0; }
+.cdl { font-size: 12px; color: var(--white30); font-weight: 500; }
+.cdv { font-size: 13px; color: var(--white85); font-weight: 600; text-align: right; }
+
+/* ═══ CTA STRIP ═══ */
+.cta-strip {
+  background: var(--black2); padding: 96px 80px;
+  position: relative; overflow: hidden;
+}
+.cta-strip-glow {
+  position: absolute; inset: 0;
+  background: radial-gradient(ellipse at center, rgba(255,98,0,0.07) 0%, transparent 70%);
+  pointer-events: none;
+}
+.cta-strip-inner {
+  position: relative; z-index: 2;
+  display: flex; align-items: center; justify-content: space-between; gap: 40px; flex-wrap: wrap;
+}
+.cta-strip h2 {
+  font-family: 'Syne', sans-serif; font-size: clamp(28px, 4vw, 44px);
+  font-weight: 800; color: var(--white); line-height: 1.2;
+}
+.cta-strip h2 .og { color: var(--orange); }
+.cta-strip p { font-size: 15px; color: var(--white55); margin-top: 12px; max-width: 480px; line-height: 1.7; }
+.cta-actions { display: flex; gap: 14px; flex-shrink: 0; flex-wrap: wrap; }
+
+/* ═══ FOOTER ═══ */
+footer { background: var(--black); border-top: 1px solid var(--border-w); }
+.footer-top {
+  display: grid; grid-template-columns: 2fr 1fr 1fr 1fr;
+  gap: 48px; padding: 64px 80px;
+}
+.footer-logo {
+  font-family: 'Bebas Neue', sans-serif; font-size: 32px;
+  letter-spacing: 0.04em; color: var(--white); text-decoration: none;
+  display: block; margin-bottom: 16px;
+}
+.footer-about { font-size: 13px; line-height: 1.8; color: var(--white30); margin-bottom: 24px; max-width: 280px; }
+.footer-socials { display: flex; gap: 10px; }
+.fsoc {
+  width: 36px; height: 36px; border: 1px solid var(--border-w); border-radius: 8px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 14px; color: var(--white30); text-decoration: none;
+  transition: border-color 0.2s, color 0.2s;
+}
+.fsoc:hover { border-color: var(--orange); color: var(--orange); }
+.footer-col-title {
+  font-size: 11px; font-weight: 700; letter-spacing: 0.12em;
+  text-transform: uppercase; color: var(--white); margin-bottom: 20px;
+}
+.footer-link {
+  display: block; font-size: 13px; color: var(--white30);
+  text-decoration: none; margin-bottom: 10px; transition: color 0.2s;
+}
+.footer-link:hover { color: var(--orange); }
+.footer-bottom {
+  border-top: 1px solid var(--border-w); padding: 24px 80px;
+  display: flex; align-items: center; justify-content: space-between;
+  font-size: 12px; color: var(--white30);
+}
+.footer-bottom-right { display: flex; gap: 24px; }
+.footer-bottom-right a { color: var(--white30); text-decoration: none; transition: color 0.2s; }
+.footer-bottom-right a:hover { color: var(--white55); }
+
+/* ═══ REVEAL ═══ */
+.reveal { opacity: 0; transform: translateY(28px); transition: opacity 0.6s ease, transform 0.6s ease; }
+.reveal.visible { opacity: 1; transform: translateY(0); }
+.reveal-d1 { transition-delay: 0.1s; }
+.reveal-d2 { transition-delay: 0.2s; }
+.reveal-d3 { transition-delay: 0.3s; }
+.reveal-d4 { transition-delay: 0.4s; }
+
+/* ═══ SCROLLBAR ═══ */
+::-webkit-scrollbar { width: 4px; }
+::-webkit-scrollbar-track { background: var(--black2); }
+::-webkit-scrollbar-thumb { background: var(--orange3); border-radius: 2px; }
+</style>
+</head>
+<body>
+
+<div id="cur-dot"></div>
+<div id="cur-ring"></div>
+
+<!-- TOPBAR -->
+
+
+<!-- NAVBAR — cart removed, About Us active -->
+<header class="navbar">
+  <a href="#" class="logo">Vend<span class="accent">r</span>ix</a>
+  <div class="nav-right">
+    <a href="/vendrix/toc" class="nav-about">Terms & Condition </a>
+    <a href="/vendrix" class="nav-about">Home </a>
+
+  </div>
+</header>
+
+<!-- HERO -->
+<section class="about-hero">
+  <div class="hero-noise"></div>
+  <div class="hero-orb"></div>
+  <div class="hero-orb2"></div>
+  <div class="about-hero-inner">
+    <div class="hero-eyebrow reveal">
+      <span class="hero-eyebrow-line"></span>
+      <span>Our Story</span>
+    </div>
+    <h1 class="reveal reveal-d1">
+      We Believe<br>
+      <span class="og">Tech</span> Should<br>
+      <span class="dim">Last Longer.</span>
+    </h1>
+    <p class="hero-lead reveal reveal-d2">
+      Vendrix was founded with a single conviction: <strong>premium technology should not be disposable.</strong> We are building India's most trusted ecosystem for certified pre-owned devices &#8212; where every gadget is tested, graded and guaranteed.
+    </p>
+    <div class="hero-actions reveal reveal-d3">
+      <a href="#story" class="btn-fill">Read Our Story <i class="fas fa-arrow-down"></i></a>
+      <a href="#contact" class="btn-ghost">Contact Us <i class="fas fa-arrow-right"></i></a>
+    </div>
+  </div>
+  <div class="hero-stats-bar">
+    <div class="hstat reveal">
+      <div class="hstat-num">5K+</div>
+      <div class="hstat-label">Devices Sold</div>
+    </div>
+    <div class="hstat reveal reveal-d1">
+      <div class="hstat-num">4.9&#9733;</div>
+      <div class="hstat-label">Avg Customer Rating</div>
+    </div>
+    <div class="hstat reveal reveal-d2">
+      <div class="hstat-num">15+</div>
+      <div class="hstat-label">Trusted Brands</div>
+    </div>
+    <div class="hstat reveal reveal-d3">
+      <div class="hstat-num">24H</div>
+      <div class="hstat-label">Fast Delivery</div>
+    </div>
+  </div>
+</section>
+
+<!-- STORY -->
+<section class="sec" id="story">
+  <div class="story-grid">
+    <div class="story-img reveal">
+      <div class="story-img-inner">
+        <img src="https://cdn.cosmos.so/7d633d1d-8698-497b-b984-8c0765c74057?format=jpeg" alt="Vendrix HQ">
+      </div>
+      <div class="story-badge">2026<span>Founded</span></div>
+    </div>
+    <div class="story-text reveal reveal-d1">
+      <div class="sec-label"><span class="sec-label-line"></span><span>How It Started</span></div>
+      <h3>From a garage idea to India's most loved tech marketplace.</h3>
+      <p>It started with a frustration most of us know &#8212; wanting the best technology, but watching it become e-waste within two years. Our founders saw a broken loop: <strong>devices discarded too early, new ones priced too high.</strong></p>
+      <div class="story-divider"></div>
+      <p>Vendrix was built to close that loop. We source, inspect, certify and sell pre-owned phones, laptops, cameras, wearables and audio gear &#8212; all backed by a 1-year warranty and 7-day hassle-free returns.</p>
+      <p>Today we are more than a store. We <strong>buy, sell, rent, repair, refurbish and recycle</strong> tech &#8212; giving every device a second life and every customer a smarter way to own the gadgets they love.</p>
+    </div>
+  </div>
+</section>
+
+<!-- MISSION -->
+<section class="sec sec-alt">
+  <div class="sec-label reveal"><span class="sec-label-line"></span><span>What Drives Us</span></div>
+  <div class="sec-heading reveal reveal-d1">Our <span class="og">Mission</span></div>
+  <p class="sec-sub reveal reveal-d2">Three pillars underpin everything we do &#8212; affordability, trust and sustainability.</p>
+  <div class="mission-grid">
+    <div class="mission-card reveal">
+      <div class="mission-card-num">01</div>
+      <div class="mission-icon"><i class="fas fa-hand-holding-heart"></i></div>
+      <h4>Make Premium Accessible</h4>
+      <p>The best gadgets should not be a luxury for the few. We certify and price devices so that everyone &#8212; students, professionals, creatives &#8212; can own world-class tech without breaking the bank.</p>
+    </div>
+    <div class="mission-card reveal reveal-d1">
+      <div class="mission-card-num">02</div>
+      <div class="mission-icon"><i class="fas fa-shield-alt"></i></div>
+      <h4>Build Unshakeable Trust</h4>
+      <p>Every device on Vendrix passes a 50-point quality check before listing. We grade each item transparently, back it with a real warranty, and stand behind every sale with 24/7 expert support.</p>
+    </div>
+    <div class="mission-card reveal reveal-d2">
+      <div class="mission-card-num">03</div>
+      <div class="mission-icon"><i class="fas fa-leaf"></i></div>
+      <h4>Extend Every Device's Life</h4>
+      <p>The greenest gadget is the one already made. Through refurbishment, repair and recycling, we keep electronics out of landfill and give them new purpose &#8212; reducing e-waste, one device at a time.</p>
+    </div>
+  </div>
+</section>
+
+<!-- VALUES -->
+<section class="sec sec-dark">
+  <div class="sec-label reveal"><span class="sec-label-line"></span><span>What We Stand For</span></div>
+  <div class="sec-heading reveal reveal-d1">Our Core <span class="og">Values</span></div>
+  <div class="values-wrap">
+    <div class="value-list reveal">
+      <div class="value-item active" onclick="setVal(0,this)">
+        <div class="value-num">01</div>
+        <div class="value-name">Transparency</div>
+      </div>
+      <div class="value-item" onclick="setVal(1,this)">
+        <div class="value-num">02</div>
+        <div class="value-name">Customer First</div>
+      </div>
+      <div class="value-item" onclick="setVal(2,this)">
+        <div class="value-num">03</div>
+        <div class="value-name">Quality Obsession</div>
+      </div>
+      <div class="value-item" onclick="setVal(3,this)">
+        <div class="value-num">04</div>
+        <div class="value-name">Sustainability</div>
+      </div>
+      <div class="value-item" onclick="setVal(4,this)">
+        <div class="value-num">05</div>
+        <div class="value-name">Innovation</div>
+      </div>
+    </div>
+    <div class="value-display reveal reveal-d1" id="valueDisplay">
+      <div class="vd-icon" id="vdIcon"><i class="fas fa-eye"></i></div>
+      <div class="vd-title" id="vdTitle">Transparency</div>
+      <div class="vd-desc" id="vdDesc">We grade every device honestly. No hidden conditions, no inflated specs. What you see on our listing is exactly what arrives at your door &#8212; graded, photographed and described with complete accuracy.</div>
+    </div>
+  </div>
+</section>
+
+<!-- SERVICES -->
+<section class="sec sec-alt">
+  <div class="sec-label reveal"><span class="sec-label-line"></span><span>What We Offer</span></div>
+  <div class="sec-heading reveal reveal-d1">Everything <span class="dim">you need,</span><br><span class="og">one platform.</span></div>
+  <div class="services-grid">
+    <div class="svc-item reveal">
+      <div class="svc-icon-wrap"><i class="fas fa-shopping-cart"></i></div>
+      <h4>Buy Devices</h4>
+      <p>New and certified pre-owned phones, laptops, cameras, audio and wearables. Every product tested, graded and shipped with a 1-year warranty and 7-day returns.</p>
+    </div>
+    <div class="svc-item reveal reveal-d1">
+      <div class="svc-icon-wrap"><i class="fas fa-tag"></i></div>
+      <h4>Sell Your Device</h4>
+      <p>Get instant valuations for your old gadgets. We offer the best buyback prices in the market &#8212; with free pickup and payment in under 24 hours.</p>
+    </div>
+    <div class="svc-item reveal reveal-d2">
+      <div class="svc-icon-wrap"><i class="fas fa-calendar-alt"></i></div>
+      <h4>Rent Tech</h4>
+      <p>Daily, weekly or monthly rentals for phones, laptops and cameras. Ideal for shoots, events or short trips &#8212; insurance included on every rental.</p>
+    </div>
+    <div class="svc-item reveal reveal-d3">
+      <div class="svc-icon-wrap"><i class="fas fa-tools"></i></div>
+      <h4>Expert Repair</h4>
+      <p>Screen, battery, charging port and more &#8212; same-day service at our certified repair centres across India. Genuine parts, expert technicians.</p>
+    </div>
+    <div class="svc-item reveal reveal-d1">
+      <div class="svc-icon-wrap"><i class="fas fa-recycle"></i></div>
+      <h4>Recycle Program</h4>
+      <p>Have a device too damaged to sell? Drop it in our recycling program and earn credits for your next purchase while keeping e-waste out of landfill.</p>
+    </div>
+    <div class="svc-item reveal reveal-d2">
+      <div class="svc-icon-wrap"><i class="fas fa-magic"></i></div>
+      <h4>Refurbishment</h4>
+      <p>We take raw used devices through a professional restoration process &#8212; cleaning, repair, data wipe, firmware update &#8212; to bring them back to peak condition.</p>
+    </div>
+  </div>
+</section>
+
+<!-- TEAM -->
+<section class="sec" id="team">
+  <div class="sec-label reveal"><span class="sec-label-line"></span><span>The People</span></div>
+  <div class="sec-heading reveal reveal-d1">Meet the <span class="og">Team</span></div>
+  <p class="sec-sub reveal reveal-d2">A passionate crew of tech lovers, logistics nerds and customer-care champions &#8212; all united by one goal.</p>
+  <div class="team-grid">
+    <div class="team-card reveal">
+      <div class="team-img"><div class="team-img-placeholder">PJ</div></div>
+      <div class="team-body">
+        <div class="team-name">Prisha Jain</div>
+        <div class="team-role">Co-Founder &amp; CEO</div>
+        <div class="team-socials">
+          <a href="#" class="team-soc"><i class="fab fa-linkedin-in"></i></a>
+          <a href="#" class="team-soc"><i class="fab fa-twitter"></i></a>
+        </div>
+      </div>
+    </div>
+    <div class="team-card reveal reveal-d1">
+      <div class="team-img"><div class="team-img-placeholder">AK</div></div>
+      <div class="team-body">
+        <div class="team-name">Ananya Vikash</div>
+        <div class="team-role">Co-Founder &amp; COO</div>
+        <div class="team-socials">
+          <a href="#" class="team-soc"><i class="fab fa-linkedin-in"></i></a>
+          <a href="#" class="team-soc"><i class="fab fa-twitter"></i></a>
+        </div>
+      </div>
+    </div>
+    <div class="team-card reveal reveal-d2">
+      <div class="team-img"><div class="team-img-placeholder">YV</div></div>
+      <div class="team-body">
+        <div class="team-name">Yatharth Vora</div>
+        <div class="team-role">Co-Founder &amp; CTO</div>
+        <div class="team-socials">
+          <a href="#" class="team-soc"><i class="fab fa-linkedin-in"></i></a>
+          <a href="#" class="team-soc"><i class="fab fa-github"></i></a>
+        </div>
+      </div>
+    </div>
+    <div class="team-card reveal reveal-d3">
+      <div class="team-img"><div class="team-img-placeholder">TK</div></div>
+      <div class="team-body">
+        <div class="team-name">Tanush Khetan</div>
+        <div class="team-role">Co-Founder &amp; CFO</div>
+        <div class="team-socials">
+          <a href="#" class="team-soc"><i class="fab fa-linkedin-in"></i></a>
+          <a href="#" class="team-soc"><i class="fab fa-twitter"></i></a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- TIMELINE -->
+<section class="sec sec-alt">
+  <div class="sec-label reveal" style="justify-content:center;margin-bottom:16px;">
+    <span class="sec-label-line"></span><span>Milestones</span>
+    <span class="sec-label-line" style="transform:scaleX(-1)"></span>
+  </div>
+  <div class="sec-heading reveal reveal-d1" style="text-align:center;">Our <span class="og">Journey</span></div>
+  <div class="timeline" style="margin-top:72px;">
+    <div class="timeline-line"></div>
+    <div class="tl-item reveal">
+      <div class="tl-left">
+        <div class="tl-year">2023</div>
+        <div class="tl-title">The Idea</div>
+        <div class="tl-desc">Three friends, a shared frustration with overpriced tech, and a Google Doc that became the blueprint for Vendrix.</div>
+      </div>
+      <div><div class="tl-dot"></div></div>
+      <div class="tl-right"></div>
+    </div>
+    <div class="tl-item reveal">
+      <div class="tl-left"></div>
+      <div><div class="tl-dot"></div></div>
+      <div class="tl-right">
+        <div class="tl-year">2024</div>
+        <div class="tl-title">First 100 Devices</div>
+        <div class="tl-desc">Launched in beta across Mumbai and Bengaluru. Sold our first 100 certified devices within 60 days &#8212; mostly iPhones and MacBooks.</div>
+      </div>
+    </div>
+    <div class="tl-item reveal">
+      <div class="tl-left">
+        <div class="tl-year">2024</div>
+        <div class="tl-title">Repair &amp; Rent Added</div>
+        <div class="tl-desc">Expanded beyond buying and selling &#8212; launched same-day repair services and our monthly device rental program for professionals.</div>
+      </div>
+      <div><div class="tl-dot"></div></div>
+      <div class="tl-right"></div>
+    </div>
+    <div class="tl-item reveal">
+      <div class="tl-left"></div>
+      <div><div class="tl-dot"></div></div>
+      <div class="tl-right">
+        <div class="tl-year">2025</div>
+        <div class="tl-title">5,000 Devices Sold</div>
+        <div class="tl-desc">Crossed 5,000 devices sold, expanded to 12 Indian cities, and launched the Vendrix Recycle Program to tackle e-waste head-on.</div>
+      </div>
+    </div>
+    <div class="tl-item reveal">
+      <div class="tl-left">
+        <div class="tl-year">2026</div>
+        <div class="tl-title">The Platform Era</div>
+        <div class="tl-desc">Launched the full Vendrix platform &#8212; buy, sell, rent, repair, recycle and refurbish all in one place. 200+ brands. Pan-India delivery.</div>
+      </div>
+      <div><div class="tl-dot"></div></div>
+      <div class="tl-right"></div>
+    </div>
+  </div>
+</section>
+
+<!-- CONTACT / COMPANY INFO -->
+<section class="sec sec-dark" id="contact">
+  <div class="sec-label reveal"><span class="sec-label-line"></span><span>Get In Touch</span></div>
+  <div class="sec-heading reveal reveal-d1">Company <span class="og">Information</span></div>
+  <p class="sec-sub reveal reveal-d2">Reach us anytime &#8212; our team is always available to help, support and guide you.</p>
+
+  <div class="contact-grid">
+    <div class="contact-info-block">
+      <div class="contact-row reveal">
+        <div class="contact-row-icon"><i class="fas fa-map-marker-alt"></i></div>
+        <div>
+          <div class="contact-row-label">Registered Address</div>
+          <div class="contact-row-value">
+            Vendrix Technologies Pvt. Ltd.<br>
+            14th Floor, Tower B, One BKC,<br>
+            Bandra Kurla Complex, Mumbai &#8212; 400 051<br>
+            Maharashtra, India
+          </div>
+        </div>
+      </div>
+      <div class="contact-row reveal reveal-d1">
+        <div class="contact-row-icon"><i class="fas fa-phone-alt"></i></div>
+        <div>
+          <div class="contact-row-label">Phone</div>
+          <div class="contact-row-value">
+            <a href="tel:+918001234567">+91 9820955122</a> &#8212; Sales &amp; Support<br>
+            <a href="tel:+918001234568">+91 9820355122</a> &#8212; Repair Helpline
+          </div>
+        </div>
+      </div>
+      <div class="contact-row reveal reveal-d2">
+        <div class="contact-row-icon"><i class="fas fa-envelope"></i></div>
+        <div>
+          <div class="contact-row-label">Email</div>
+          <div class="contact-row-value">
+            <a href="mailto:hello@vendrix.in">hello@vendrix.in</a> &#8212; General enquiries<br>
+            <a href="mailto:support@vendrix.in">support@vendrix.in</a> &#8212; Order support<br>
+            <a href="mailto:press@vendrix.in">press@vendrix.in</a> &#8212; Media &amp; press
+          </div>
+        </div>
+      </div>
+      <div class="contact-row reveal reveal-d3">
+        <div class="contact-row-icon"><i class="fas fa-clock"></i></div>
+        <div>
+          <div class="contact-row-label">Working Hours</div>
+          <div class="contact-row-value">
+            Mon &#8211; Sat: 9:00 AM &#8211; 8:00 PM IST<br>
+            Sunday: 10:00 AM &#8211; 6:00 PM IST<br>
+            Chat support available 24/7
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="company-card reveal reveal-d1">
+      <div class="company-card-logo">Vend<span>r</span>ix</div>
+      <div class="company-card-tagline">India's most trusted marketplace for certified pre-owned technology. Every device tested, graded and guaranteed.</div>
+      <div class="company-divider"></div>
+      <div class="company-detail-row">
+        <span class="cdl">Legal Name</span>
+        <span class="cdv">Vendrix Technologies Pvt. Ltd.</span>
+      </div>
+      <div class="company-detail-row">
+        <span class="cdl">Incorporated</span>
+        <span class="cdv">2023, India</span>
+      </div>
+      <div class="company-detail-row">
+        <span class="cdl">CIN</span>
+        <span class="cdv">U74999MH2023PTC000000</span>
+      </div>
+      <div class="company-detail-row">
+        <span class="cdl">GST Number</span>
+        <span class="cdv">27AABCV1234A1Z5</span>
+      </div>
+      <div class="company-detail-row">
+        <span class="cdl">Headquarters</span>
+        <span class="cdv">Mumbai, Maharashtra</span>
+      </div>
+      <div class="company-detail-row">
+        <span class="cdl">Operations</span>
+        <span class="cdv">Pan-India &#8212; 12+ Cities</span>
+      </div>
+      <div class="company-detail-row">
+        <span class="cdl">Team Size</span>
+        <span class="cdv">50+ Employees</span>
+      </div>
+      <div class="company-detail-row">
+        <span class="cdl">Devices Sold</span>
+        <span class="cdv">5,000+</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CTA -->
+<section class="cta-strip">
+  <div class="cta-strip-glow"></div>
+  <div class="cta-strip-inner">
+    <div class="reveal">
+      <h2>Ready to experience<br><span class="og">smarter tech?</span></h2>
+      <p>Shop certified devices, sell your old ones, or get your gadgets repaired &#8212; all in one place, backed by India's strongest guarantee.</p>
+    </div>
+    <div class="cta-actions reveal reveal-d1">
+      <a href="#" class="btn-fill">Shop Now <i class="fas fa-arrow-right"></i></a>
+      <a href="#" class="btn-ghost">Sell Your Device <i class="fas fa-arrow-right"></i></a>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-top">
+    <div>
+      <a href="#" class="footer-logo">Vend<span style="color:var(--orange)">r</span>ix</a>
+      <div class="footer-about">Premium tech for modern professionals. Every device certified, tested &amp; guaranteed &#8212; delivered fast across India.</div>
+      <div class="footer-socials">
+        <a href="#" class="fsoc"><i class="fab fa-instagram"></i></a>
+        <a href="#" class="fsoc"><i class="fab fa-twitter"></i></a>
+        <a href="#" class="fsoc"><i class="fab fa-facebook-f"></i></a>
+        <a href="#" class="fsoc"><i class="fab fa-youtube"></i></a>
+      </div>
+    </div>
+    <div>
+      <div class="footer-col-title">Company</div>
+      <a href="#" class="footer-link">About Us</a>
+      <a href="#" class="footer-link">Careers</a>
+      <a href="#" class="footer-link">Press</a>
+      <a href="#" class="footer-link">Blog</a>
+      <a href="#" class="footer-link">Store Locator</a>
+    </div>
+    <div>
+      <div class="footer-col-title">Support</div>
+      <a href="#" class="footer-link">Shipping Info</a>
+      <a href="#" class="footer-link">Returns &amp; Refunds</a>
+      <a href="#" class="footer-link">Warranty Policy</a>
+      <a href="#" class="footer-link">Track My Order</a>
+      <a href="#" class="footer-link">Contact Us</a>
+    </div>
+    <div>
+      <div class="footer-col-title">Services</div>
+      <a href="#" class="footer-link">Buy Devices</a>
+      <a href="#" class="footer-link">Sell Your Device</a>
+      <a href="#" class="footer-link">Rent Tech</a>
+      <a href="#" class="footer-link">Expert Repair</a>
+      <a href="#" class="footer-link">Recycle Program</a>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <span>&#169; 2026 Vendrix Technologies Pvt. Ltd. All rights reserved.</span>
+    <div class="footer-bottom-right">
+      <a href="#">Privacy Policy</a>
+      <a href="#">Terms of Use</a>
+      <a href="#">Cookie Policy</a>
+    </div>
+  </div>
+</footer>
+
+<script>
+/* CURSOR */
+const dot  = document.getElementById('cur-dot');
+const ring = document.getElementById('cur-ring');
+let mx = 0, my = 0, rx = 0, ry = 0;
+document.addEventListener('mousemove', function(e) { mx = e.clientX; my = e.clientY; });
+(function loop() {
+  rx += (mx - rx) * 0.15;
+  ry += (my - ry) * 0.15;
+  dot.style.left  = mx + 'px';
+  dot.style.top   = my + 'px';
+  ring.style.left = rx + 'px';
+  ring.style.top  = ry + 'px';
+  requestAnimationFrame(loop);
+})();
+
+/* REVEAL */
+var obs = new IntersectionObserver(function(entries) {
+  entries.forEach(function(e) { if (e.isIntersecting) e.target.classList.add('visible'); });
+}, { threshold: 0.12 });
+document.querySelectorAll('.reveal').forEach(function(el) { obs.observe(el); });
+
+/* VALUES TAB
+   FIX 5: all apostrophes and smart quotes replaced with HTML entities
+   inside JS strings to prevent quote-termination parse errors           */
+var vals = [
+  {
+    icon:  'fas fa-eye',
+    title: 'Transparency',
+    desc:  'We grade every device honestly. No hidden conditions, no inflated specs. What you see on our listing is exactly what arrives at your door \u2014 graded, photographed and described with complete accuracy.'
+  },
+  {
+    icon:  'fas fa-users',
+    title: 'Customer First',
+    desc:  'Every decision we make starts with one question: is this good for the customer? From our 7-day return policy to our 24/7 support team, we are obsessed with making every experience delightful.'
+  },
+  {
+    icon:  'fas fa-check-double',
+    title: 'Quality Obsession',
+    desc:  'Our 50-point inspection process is rigorous by design. We reject devices that do not meet our standards \u2014 even if that means smaller inventory. Better fewer, better.'
+  },
+  {
+    icon:  'fas fa-leaf',
+    title: 'Sustainability',
+    desc:  'The planet does not have a spare. We believe extending device lifecycles through refurbishment, rental and recycling is one of the most impactful things a tech company can do right now.'
+  },
+  {
+    icon:  'fas fa-bolt',
+    title: 'Innovation',
+    desc:  'We are building the infrastructure for circular tech in India \u2014 from AI-powered device grading to instant trade-in kiosks. The way we consume tech needs to change, and we are building the tools to do it.'
+  }
+];
+
+function setVal(idx, el) {
+  document.querySelectorAll('.value-item').forEach(function(v) { v.classList.remove('active'); });
+  el.classList.add('active');
+  var v = vals[idx];
+  document.getElementById('vdIcon').innerHTML  = '<i class="' + v.icon + '"></i>';
+  document.getElementById('vdTitle').textContent = v.title;
+  document.getElementById('vdDesc').textContent  = v.desc;
+}
+</script>
+</body>
+</html>

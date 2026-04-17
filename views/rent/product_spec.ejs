@@ -39,7 +39,7 @@
   <a href="#" class="logo">Vend<span class="accent">r</span>ix</a>
   <%- include('../partials/navbar.ejs') %>
   <div class="nav-right">
-    <a href="#" class="nav-about">About Us</a>
+    <a href="/vendrix/aboutUs" class="nav-about">About Us</a>
    <%if(currentUser){%>
       <a href="/vendrix/profile"><span class="reviewer-avatar"><%=currentUser.firstname.slice(0,1)%></span></a>
     <%}else{%>
@@ -178,11 +178,11 @@
       </span>
       </button>
     </div>
-    <div class="action-row reveal rd3" style="margin-top:-6px;">
-      <p>Start Date : <input name = "startdate" type = "date" id = "startdate"></p>
-      <p>End Date : <input name = "enddate" id = "enddate" type = "date"></p>
-      <button id="rent" class = "btn-buy" type = "button">Rent Now</button>
+    <div class="action-row reveal rd3 rent-dates" style="margin-top:-6px;">
+      <label>Start Date :</label><input name = "startdate" type = "date" id = "startdate">
+      <label>End Date : </label><input name = "enddate" id = "enddate" type = "date">
     </div>
+    <div class="action-row reveal rd3"><button id="rent" class = "btn-buy" type = "button">Rent Now</button></div>
     </form>
 
     <div class="trust-strip reveal rd4">
