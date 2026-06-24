@@ -218,7 +218,7 @@ module.exports.Register = async (req,res)=>{
         { expiresIn: "15m" }
         );
 
-    const verifyUrl = `http://localhost:3000/vendrix/auth/verify/${token}`;
+    const verifyUrl = `https://vendrix-yzwh.onrender.com/vendrix/auth/verify/${token}`;
 
         await transporter.sendMail({
   to: username,
