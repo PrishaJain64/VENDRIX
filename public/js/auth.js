@@ -392,7 +392,7 @@ function fpResetPw(){
   fetch("/forget/updatePassword",{
     method:"post",
     body:formdata
-  }).then(res=>res.json).then(data=>{
+  }).then(res=>res.json()).then(data=>{
     if(data.error){
       ch.className='fp-hint e';
       ch.innerHTML='<i class="fas fa-circle-exclamation"></i> User not found';

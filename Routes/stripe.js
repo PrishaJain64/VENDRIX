@@ -56,8 +56,8 @@ router.post("/checkoutSession",isLoggedIn,upload.none(), async (req, res) => {
           quantity: 1,
         },
       ],
-      success_url: `http://localhost:3000/confirmation/buy/${od._id}`,
-      cancel_url: "http://localhost:3000/cancel",
+      success_url: `https://vendrix-yzwh.onrender.com/confirmation/buy/${od._id}`,
+      cancel_url: "https://vendrix-yzwh.onrender.com/cancel",
     });
 
     res.json({ id: session.id });
