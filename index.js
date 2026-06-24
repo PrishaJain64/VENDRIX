@@ -56,7 +56,7 @@ app.use(express.urlencoded({extended:true}));
 app.use(express.json());
 app.use(express.static(path.join(__dirname, "public")));
 
-mongoose.connect("mongodb+srv://prishajain64_db_user:0IIZBOdU7rfgIrrJ@vendrix-web.cwdp4sj.mongodb.net/Vendrix?retryWrites=true&w=majority")
+mongoose.connect(process.env.MONGO_URI)
     .then(()=>{
         console.log("Mongo Connection Open");
     })
@@ -104,7 +104,7 @@ app.get("/newmod",(req,res)=>{
 })
 
 app.get("/",(req,res)=>{
-    app.redirect("/vendrix");
+    res.redirect("/vendrix");
 })
 
 app.listen(PORT,()=>{
