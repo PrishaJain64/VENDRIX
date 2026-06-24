@@ -9,6 +9,7 @@ const path=require('path');
 const methodOverride=require('method-override');
 const flash=require('connect-flash');
 
+const PORT = process.env.PORT || 3000;
 
 //model import
 const User=require('./models/users.js');
@@ -55,7 +56,7 @@ app.use(express.urlencoded({extended:true}));
 app.use(express.json());
 app.use(express.static(path.join(__dirname, "public")));
 
-mongoose.connect("mongodb://127.0.0.1:27017/vendrix")
+mongoose.connect(process.env.ATLASDB_URL)
     .then(()=>{
         console.log("Mongo Connection Open");
     })
@@ -102,7 +103,7 @@ app.get("/newmod",(req,res)=>{
 })
 
 
-app.listen(3000,()=>{
+app.listen(PORT,()=>{
     console.log(`Server Started`);
     require("./cron/schedular");
 })

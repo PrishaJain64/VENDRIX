@@ -2,7 +2,7 @@ const {Deployment,dailycheck} = require("../Controller/transfer");
 const {Rental_Repair} = require("../Controller/products");
 const cron = require("node-cron");
 
-cron.schedule('* * * * *',async ()=>{
+cron.schedule('0 0 * * *',async ()=>{
     try{
     if(await dailycheck()){
     await Rental_Repair();
