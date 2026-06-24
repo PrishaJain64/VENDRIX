@@ -56,12 +56,13 @@ app.use(express.urlencoded({extended:true}));
 app.use(express.json());
 app.use(express.static(path.join(__dirname, "public")));
 
-mongoose.connect(process.env.ATLASDB_URL)
+mongoose.connect("mongodb+srv://prishajain64_db_user:0IIZBOdU7rfgIrrJ@vendrix-web.cwdp4sj.mongodb.net/Vendrix?retryWrites=true&w=majority")
     .then(()=>{
         console.log("Mongo Connection Open");
     })
     .catch(err=>{
         console.log("Mongo Connection Failed");
+        console.log(err);
 });
 
 app.use(session(sessionConfig));
