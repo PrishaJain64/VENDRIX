@@ -220,6 +220,8 @@ module.exports.Register = async (req,res)=>{
 
     const verifyUrl = `https://vendrix-yzwh.onrender.com/vendrix/auth/verify/${token}`;
 
+    try{
+
         await transporter.sendMail({
   to: username,
   subject: "Email Verification",
@@ -272,7 +274,10 @@ module.exports.Register = async (req,res)=>{
     //     res.json({valid:true,redirect:redirectUrl});
     // })
     console.log("email sent");
-    res.json({valid:true,msg:"email sent"});
+    res.json({valid:true,msg:"email sent"});}
+    catch(err){
+        console.log(err);
+    }
 }
 
 module.exports.Login = (req,res,next)=>{
