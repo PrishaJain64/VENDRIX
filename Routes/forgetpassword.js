@@ -55,7 +55,7 @@ router.post("/generateOtp",upload.none(),async (req,res)=>{
   `
 });
     const tempToken = jwt.sign({email:username,otp:random},
-        process.env.jwt_secret,
+        process.env.JWT_SECRET,
         {expiresIn:'10m'}
     );
     console.log(random)
