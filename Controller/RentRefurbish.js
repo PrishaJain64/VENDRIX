@@ -1,5 +1,6 @@
 const {Product} = require('../models/products');
 const {Review} = require('../models/reviews');
+const Redis = require('../lib/redis.js');
 
 module.exports.Details =async (req,res)=>{
     const prod_name = req.params.name;
@@ -8,8 +9,15 @@ module.exports.Details =async (req,res)=>{
     const intent = req.intent;
     const start = req.query.startdate||null;
     const end = req.query.enddate||null;
+    const cachekey = `product${prod_name+intent+label+color}`;
+    var result;
 
-     const [result] = await Product.aggregate([
+    const cached = await Redis.get(cachekey);
+    if(cached){
+        result = JSON.parse(cached);
+    }else{
+
+     [result] = await Product.aggregate([
   {
     $match: { name: prod_name,intent:intent }
   },
@@ -57,6 +65,8 @@ module.exports.Details =async (req,res)=>{
     }
   }
 ]);
+ await Redis.set(cachekey,JSON.stringify(result),'EX',600);
+    }
   if(req.session.shoppingCart){
         var cart = req.session.shoppingCart.find(c=>c.product_id === result.selectedDoc[0]._id.toString());
         if(cart){
@@ -96,7 +106,6 @@ module.exports.Details =async (req,res)=>{
             reviews.forEach(r => {
                 count[r.stars]++
             });
-            console.log(start);
     res.render(`${intent}/product_spec`, {result,reviews,count,option,star,start,end});
 }
 

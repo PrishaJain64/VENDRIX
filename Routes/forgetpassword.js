@@ -6,18 +6,12 @@ const express = require('express');
 const User=require('../models/users');
 const multer = require('multer');
 const jwt = require("jsonwebtoken");
-const nodemailer = require('nodemailer');
+const { Resend } = require('resend');
+const resend = new Resend(process.env.RESEND_API_KEY);
 
 const router = express.Router();
 const upload = multer();
-//transporter
-const transporter = nodemailer.createTransport({
-    service:'gmail',
-    auth:{
-        user : process.env.email,
-        pass : process.env.email_pass
-    }
-});
+
 router.post("/generateOtp",upload.none(),async (req,res)=>{
     console.log(req.body);
     try{

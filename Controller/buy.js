@@ -1,12 +1,23 @@
 const {Model} = require('../models/versions.js');
 const {Review} = require('../models/reviews.js');
+const Redis = require('../lib/redis.js');
 
 module.exports.Details = async (req,res)=>{
-    console.log(req.query);
+
     const id = req.params.id;
     const ctr = req.params.ctr;
     const color_key = req.params.color_key;
-    const spe = await Model.findById(id).lean();
+    const cachekey = `product:${id}`;
+
+    var spe;
+    const cached = await Redis.get(cachekey);
+    if(cached){
+        spe = JSON.parse(cached);
+    }else{
+    spe = await Model.findById(id).lean();
+    await Redis.set(cachekey,JSON.stringify(spe),'EX',600);
+    }
+
     if(req.session.shoppingCart && req.session.shoppingCart.length>0){
         var cart = req.session.shoppingCart.find(c=>c.product_id === spe._id.toString() && c.variant_no==ctr &&c.color_no == color_key);
         if(cart){
